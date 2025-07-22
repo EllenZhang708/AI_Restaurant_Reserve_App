@@ -1,0 +1,1447 @@
+/* Merchant Dashboard Styles - MapleTable Business */
+
+/* 基础布局 */
+.merchant-dashboard-app {
+    display: flex;
+    min-height: 100vh;
+    background: var(--background);
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* 侧边栏样式 */
+.dashboard-sidebar {
+    width: 280px;
+    background: var(--card-background);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+    transition: all 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar-header {
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.logo-section .logo {
+    font-size: 1.5rem;
+}
+
+.logo-text h2 {
+    font-size: var(--font-lg);
+    font-weight: 700;
+    margin: 0;
+    color: var(--canadian-red);
+}
+
+.logo-text span {
+    font-size: var(--font-xs);
+    color: var(--medium-text);
+    font-weight: 500;
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: var(--medium-text);
+    font-size: var(--font-lg);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    background: var(--background);
+    color: var(--canadian-red);
+}
+
+/* 餐厅信息 */
+.restaurant-info {
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.restaurant-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(45deg, var(--canadian-red), #CC0000);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-lg);
+}
+
+.restaurant-details h3 {
+    font-size: var(--font-md);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--dark-text);
+}
+
+.restaurant-details p {
+    font-size: var(--font-sm);
+    color: var(--medium-text);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.status-badge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 12px;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.active {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+/* 侧边栏导航 */
+.sidebar-nav {
+    flex: 1;
+    padding: var(--spacing-md) 0;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: var(--spacing-xs);
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--medium-text);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-item a:hover {
+    background: rgba(255, 0, 0, 0.05);
+    color: var(--canadian-red);
+}
+
+.nav-item.active a {
+    background: rgba(255, 0, 0, 0.1);
+    color: var(--canadian-red);
+    font-weight: 600;
+}
+
+.nav-item.active a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--canadian-red);
+}
+
+.nav-item i {
+    font-size: var(--font-lg);
+    width: 20px;
+    text-align: center;
+}
+
+.notification-badge {
+    background: var(--canadian-red);
+    color: white;
+    border-radius: 10px;
+    padding: 0.2rem 0.5rem;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    margin-left: auto;
+    min-width: 20px;
+    text-align: center;
+}
+
+.new-badge {
+    background: var(--forest-green);
+    color: white;
+    border-radius: 8px;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    margin-left: auto;
+    letter-spacing: 0.5px;
+}
+
+/* 侧边栏底部 */
+.sidebar-footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.upgrade-btn {
+    width: 100%;
+    background: linear-gradient(45deg, var(--maple-gold), #FF8C00);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.upgrade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 140, 0, 0.3);
+}
+
+/* 主内容区域 */
+.dashboard-main {
+    flex: 1;
+    margin-left: 280px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.dashboard-main.expanded {
+    margin-left: 70px;
+}
+
+/* 头部栏 */
+.dashboard-header {
+    background: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--medium-text);
+    font-size: var(--font-lg);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+}
+
+.breadcrumb i {
+    font-size: var(--font-xs);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.weather-widget {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--winter-blue);
+    font-size: var(--font-sm);
+    font-weight: 500;
+}
+
+.notification-btn {
+    position: relative;
+    background: none;
+    border: none;
+    color: var(--medium-text);
+    font-size: var(--font-lg);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.notification-btn:hover {
+    background: var(--background);
+    color: var(--canadian-red);
+}
+
+.notification-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--canadian-red);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-menu {
+    position: relative;
+}
+
+.user-btn {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.user-btn:hover {
+    background: var(--background);
+}
+
+.user-btn img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-btn span {
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.user-btn i {
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: var(--spacing-sm) 0;
+    min-width: 200px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+}
+
+.user-dropdown.show {
+    display: block;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--dark-text);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.user-dropdown a:hover {
+    background: var(--background);
+    color: var(--canadian-red);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: var(--spacing-sm) 0;
+}
+
+/* 内容区域 */
+.dashboard-content {
+    flex: 1;
+    padding: var(--spacing-xl);
+    overflow-y: auto;
+}
+
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.section-header h1 {
+    font-size: var(--font-2xl);
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+/* 统计卡片 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.stat-card {
+    background: var(--card-background);
+    border-radius: 16px;
+    padding: var(--spacing-xl);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-xl);
+    color: white;
+}
+
+.stat-card.revenue .stat-icon {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.stat-card.bookings .stat-icon {
+    background: linear-gradient(45deg, var(--canadian-red), #dc3545);
+}
+
+.stat-card.capacity .stat-icon {
+    background: linear-gradient(45deg, var(--winter-blue), #6f42c1);
+}
+
+.stat-card.rating .stat-icon {
+    background: linear-gradient(45deg, var(--maple-gold), #fd7e14);
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.stat-content p {
+    color: var(--medium-text);
+    margin: 0 0 var(--spacing-sm) 0;
+    font-size: var(--font-sm);
+}
+
+.trend {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.trend.positive {
+    color: #28a745;
+}
+
+.trend.negative {
+    color: #dc3545;
+}
+
+.trend.neutral {
+    color: var(--medium-text);
+}
+
+/* 概览网格 */
+.overview-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.overview-card {
+    background: var(--card-background);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-header h3 {
+    font-size: var(--font-lg);
+    font-weight: 600;
+    color: var(--dark-text);
+    margin: 0;
+}
+
+.date-display {
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+}
+
+.table-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.table-stats span {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.table-stats .occupied {
+    color: var(--canadian-red);
+}
+
+.table-stats .available {
+    color: var(--forest-green);
+}
+
+.table-stats small {
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+/* 预订时间线 */
+.booking-timeline {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-item:last-child {
+    border-bottom: none;
+}
+
+.timeline-time {
+    width: 60px;
+    font-weight: 600;
+    color: var(--canadian-red);
+    font-size: var(--font-sm);
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-content h4 {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--dark-text);
+}
+
+.timeline-content p {
+    font-size: var(--font-xs);
+    color: var(--medium-text);
+    margin: 0;
+}
+
+/* 桌位布局预览 */
+.table-layout-preview {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background: var(--background);
+    position: relative;
+    min-height: 200px;
+}
+
+.preview-table {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    color: var(--dark-text);
+    transition: all 0.3s ease;
+}
+
+.preview-table.occupied {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: var(--canadian-red);
+    color: var(--canadian-red);
+}
+
+.preview-table.available {
+    background: rgba(40, 167, 69, 0.1);
+    border-color: var(--forest-green);
+    color: var(--forest-green);
+}
+
+/* 最近活动 */
+.recent-activity {
+    background: var(--card-background);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.recent-activity .card-header a {
+    color: var(--canadian-red);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: var(--font-sm);
+}
+
+.activity-list {
+    padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-md);
+    color: white;
+    flex-shrink: 0;
+}
+
+.activity-icon.booking {
+    background: var(--canadian-red);
+}
+
+.activity-icon.payment {
+    background: var(--forest-green);
+}
+
+.activity-icon.review {
+    background: var(--maple-gold);
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-content h4 {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--dark-text);
+}
+
+.activity-content p {
+    font-size: var(--font-xs);
+    color: var(--medium-text);
+    margin: 0;
+}
+
+.activity-time {
+    font-size: var(--font-xs);
+    color: var(--medium-text);
+    font-weight: 500;
+}
+
+/* 预订管理 */
+.booking-filters {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+}
+
+.filter-tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.filter-tab {
+    background: var(--background);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: 600;
+}
+
+.filter-tab.active {
+    background: var(--canadian-red);
+    color: white;
+    border-color: var(--canadian-red);
+}
+
+.filter-tab .count {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 0.2rem 0.5rem;
+    font-size: var(--font-xs);
+    min-width: 20px;
+    text-align: center;
+}
+
+.search-box {
+    position: relative;
+    min-width: 250px;
+}
+
+.search-box i {
+    position: absolute;
+    left: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--medium-text);
+}
+
+.search-box input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 2.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--card-background);
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--canadian-red);
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+/* 预订表格 */
+.bookings-table {
+    background: var(--card-background);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1.5fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background: var(--background);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    color: var(--dark-text);
+    font-size: var(--font-sm);
+}
+
+.table-body {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.booking-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1.5fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    align-items: center;
+}
+
+.booking-row:hover {
+    background: var(--background);
+}
+
+.booking-row:last-child {
+    border-bottom: none;
+}
+
+.customer-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.customer-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--canadian-red);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: var(--font-sm);
+}
+
+.customer-details h4 {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--dark-text);
+}
+
+.customer-details p {
+    font-size: var(--font-xs);
+    color: var(--medium-text);
+    margin: 0;
+}
+
+.booking-status {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 12px;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.booking-status.pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.booking-status.confirmed {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.booking-status.completed {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.booking-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.action-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: var(--spacing-xs);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.action-btn:hover {
+    border-color: var(--canadian-red);
+    color: var(--canadian-red);
+}
+
+/* 桌位管理 */
+.table-management-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--spacing-xl);
+    height: calc(100vh - 300px);
+}
+
+.table-toolbar {
+    background: var(--card-background);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+}
+
+.toolbar-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.toolbar-section h3 {
+    font-size: var(--font-md);
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: var(--spacing-md);
+}
+
+.table-types {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.table-type-btn {
+    background: var(--background);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.table-type-btn:hover {
+    border-color: var(--canadian-red);
+    background: rgba(255, 0, 0, 0.05);
+}
+
+.table-icon {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--canadian-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--canadian-red);
+    font-size: var(--font-sm);
+}
+
+.table-icon.round {
+    border-radius: 50%;
+}
+
+.table-icon.square {
+    border-radius: 8px;
+}
+
+.table-icon.rectangle {
+    width: 50px;
+    border-radius: 8px;
+}
+
+.table-type-btn span {
+    font-size: var(--font-xs);
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.feature-types {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.feature-btn {
+    background: var(--background);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    text-align: left;
+}
+
+.feature-btn:hover {
+    border-color: var(--canadian-red);
+    background: rgba(255, 0, 0, 0.05);
+}
+
+.feature-btn i {
+    color: var(--canadian-red);
+    font-size: var(--font-lg);
+    width: 20px;
+    text-align: center;
+}
+
+.feature-btn span {
+    font-size: var(--font-sm);
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.selected-table-info {
+    background: var(--background);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+}
+
+.selected-table-info p {
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+    margin: 0;
+    text-align: center;
+}
+
+/* 桌位布局画布 */
+.table-layout-canvas {
+    background: var(--card-background);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.canvas-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.canvas-title h3 {
+    font-size: var(--font-lg);
+    font-weight: 600;
+    color: var(--dark-text);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.canvas-size {
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+}
+
+.canvas-tools {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.tool-btn {
+    background: var(--background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+.tool-btn:hover {
+    border-color: var(--canadian-red);
+    color: var(--canadian-red);
+}
+
+.zoom-level {
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+    font-weight: 500;
+    margin-left: var(--spacing-sm);
+}
+
+.canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.table-canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    min-height: 500px;
+    background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), 
+                linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #f8f9fa 75%), 
+                linear-gradient(-45deg, transparent 75%, #f8f9fa 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+.canvas-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.3;
+}
+
+/* 画布中的桌子 */
+.canvas-table {
+    position: absolute;
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--dark-text);
+    cursor: move;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.canvas-table.selected {
+    border-color: var(--canadian-red);
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.2);
+}
+
+.canvas-table.round {
+    border-radius: 50%;
+}
+
+.canvas-table.square {
+    border-radius: 8px;
+}
+
+.canvas-table.rectangle {
+    border-radius: 8px;
+}
+
+.canvas-table:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 通知面板 */
+.notification-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: var(--card-background);
+    border-left: 1px solid var(--border-color);
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-panel.show {
+    right: 0;
+}
+
+.notification-panel .panel-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notification-panel .panel-header h3 {
+    font-size: var(--font-lg);
+    font-weight: 600;
+    color: var(--dark-text);
+    margin: 0;
+}
+
+.close-panel {
+    background: none;
+    border: none;
+    color: var(--medium-text);
+    font-size: var(--font-lg);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.close-panel:hover {
+    background: var(--background);
+    color: var(--canadian-red);
+}
+
+.notification-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-md);
+}
+
+.notification-item {
+    background: var(--background);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border-left: 4px solid var(--canadian-red);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+    transform: translateX(4px);
+}
+
+.notification-item h4 {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--dark-text);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.notification-item p {
+    font-size: var(--font-xs);
+    color: var(--medium-text);
+    margin: 0 0 var(--spacing-xs) 0;
+    line-height: 1.4;
+}
+
+.notification-time {
+    font-size: var(--font-xs);
+    color: var(--medium-text);
+    opacity: 0.8;
+}
+
+/* 占位页面 */
+.coming-soon {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+    color: var(--medium-text);
+}
+
+.coming-soon i {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.3;
+}
+
+.coming-soon h2 {
+    font-size: var(--font-2xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    color: var(--dark-text);
+}
+
+.coming-soon p {
+    font-size: var(--font-lg);
+    line-height: 1.5;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* 升级模态框 */
+.upgrade-modal {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.upgrade-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+}
+
+.upgrade-features .feature-item {
+    text-align: center;
+}
+
+.upgrade-features .feature-item i {
+    font-size: 2rem;
+    color: var(--canadian-red);
+    margin-bottom: var(--spacing-md);
+}
+
+.upgrade-features .feature-item h4 {
+    font-size: var(--font-md);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--dark-text);
+}
+
+.upgrade-features .feature-item p {
+    font-size: var(--font-sm);
+    color: var(--medium-text);
+    margin: 0;
+}
+
+.pricing {
+    text-align: center;
+    margin: var(--spacing-xl) 0;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--canadian-red);
+    margin-bottom: var(--spacing-sm);
+}
+
+.price span {
+    font-size: var(--font-lg);
+    color: var(--medium-text);
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .dashboard-sidebar {
+        width: 70px;
+    }
+    
+    .dashboard-sidebar .logo-text,
+    .dashboard-sidebar .restaurant-details,
+    .sidebar-nav span,
+    .notification-badge,
+    .new-badge {
+        display: none;
+    }
+    
+    .dashboard-main {
+        margin-left: 70px;
+    }
+    
+    .table-management-container {
+        grid-template-columns: 250px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    .dashboard-sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .dashboard-main {
+        margin-left: 0;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .dashboard-content {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .booking-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .table-header,
+    .booking-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .table-management-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    
+    .notification-panel {
+        width: 100%;
+        right: -100%;
+    }
+}

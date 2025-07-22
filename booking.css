@@ -1,0 +1,726 @@
+/* Booking Page Styles - Canadian Restaurant App */
+
+/* 预订页面特定样式 */
+.booking-app {
+    min-height: 100vh;
+    background: var(--background);
+    padding-bottom: var(--spacing-xl);
+}
+
+/* 预订头部 */
+.booking-header {
+    background: var(--canadian-red);
+    color: white;
+    padding: var(--spacing-lg) var(--spacing-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+}
+
+.booking-header .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.booking-header h1 {
+    font-size: var(--font-xl);
+    font-weight: 700;
+    margin: 0;
+}
+
+/* 餐厅信息部分 */
+.restaurant-info {
+    background: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.restaurant-header {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.restaurant-header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.restaurant-details {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    padding: var(--spacing-xl) var(--spacing-md) var(--spacing-md);
+}
+
+.restaurant-details h2 {
+    font-size: var(--font-xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+}
+
+.restaurant-details p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--spacing-sm);
+}
+
+.restaurant-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--maple-gold);
+}
+
+.rating-count {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: var(--font-sm);
+}
+
+/* 冬季提示 */
+.winter-notice {
+    background: linear-gradient(45deg, var(--winter-blue), var(--forest-green));
+    color: white;
+    padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.winter-notice i {
+    font-size: var(--font-xl);
+    opacity: 0.9;
+}
+
+.notice-content h4 {
+    font-size: var(--font-md);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.notice-content p {
+    font-size: var(--font-sm);
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* 预订表单 */
+.booking-form-section {
+    padding: var(--spacing-lg) var(--spacing-md);
+}
+
+.booking-form {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-xl);
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-md);
+}
+
+.form-group label i {
+    color: var(--canadian-red);
+    font-size: var(--font-lg);
+}
+
+/* 日期输入 */
+input[type="date"] {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: var(--font-md);
+    background: var(--card-background);
+    color: var(--dark-text);
+    transition: all 0.3s ease;
+    margin-bottom: var(--spacing-md);
+}
+
+input[type="date"]:focus {
+    outline: none;
+    border-color: var(--canadian-red);
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+/* 日期建议 */
+.date-suggestions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.date-option {
+    flex: 1;
+    background: var(--background);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.date-option:hover,
+.date-option.selected {
+    background: var(--canadian-red);
+    color: white;
+    border-color: var(--canadian-red);
+}
+
+.date-option span {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.date-option small {
+    font-size: var(--font-xs);
+    opacity: 0.8;
+}
+
+/* 时间段选择 */
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.time-slot {
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.time-slot:hover {
+    border-color: var(--canadian-red);
+    transform: translateY(-2px);
+}
+
+.time-slot.selected {
+    background: var(--canadian-red);
+    color: white;
+    border-color: var(--canadian-red);
+}
+
+.time-slot.unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--background);
+}
+
+.time-slot.winter-preferred {
+    border-color: var(--winter-blue);
+    background: rgba(74, 144, 226, 0.05);
+}
+
+.time-slot.winter-preferred::after {
+    content: '❄️';
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    font-size: 0.7rem;
+}
+
+/* 人数选择器 */
+.party-size-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    background: var(--background);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.size-btn {
+    background: var(--canadian-red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: var(--font-lg);
+}
+
+.size-btn:hover {
+    transform: scale(1.1);
+    background: #CC0000;
+}
+
+.party-size-display {
+    text-align: center;
+    min-width: 80px;
+}
+
+.party-size-display span {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--canadian-red);
+    line-height: 1;
+}
+
+.party-size-display small {
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+    font-weight: 500;
+}
+
+/* 座位偏好 */
+.seating-preferences {
+    background: var(--background);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+}
+
+.seating-preferences h4 {
+    color: var(--dark-text);
+    font-size: var(--font-md);
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    text-align: center;
+}
+
+.preference-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.preference-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--card-background);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.preference-option:hover {
+    border-color: var(--canadian-red);
+}
+
+.preference-option input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.preference-option input:checked + .checkmark {
+    background: var(--canadian-red);
+    border-color: var(--canadian-red);
+}
+
+.preference-option input:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.preference-option input:checked ~ span:last-child {
+    color: var(--canadian-red);
+    font-weight: 600;
+}
+
+.preference-option i {
+    color: var(--canadian-red);
+    font-size: var(--font-md);
+}
+
+/* 联系信息 */
+.contact-inputs {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.contact-inputs input {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: var(--font-md);
+    background: var(--card-background);
+    transition: all 0.3s ease;
+}
+
+.contact-inputs input:focus {
+    outline: none;
+    border-color: var(--canadian-red);
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+/* 特殊要求 */
+textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: var(--font-md);
+    background: var(--card-background);
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    margin-bottom: var(--spacing-md);
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--canadian-red);
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+/* 快速要求标签 */
+.quick-requests {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.request-tag {
+    background: var(--background);
+    border: 2px solid var(--border-color);
+    border-radius: 20px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-sm);
+    font-weight: 500;
+}
+
+.request-tag:hover,
+.request-tag.selected {
+    background: var(--canadian-red);
+    color: white;
+    border-color: var(--canadian-red);
+}
+
+.request-tag i {
+    font-size: var(--font-sm);
+}
+
+/* 预订摘要 */
+.booking-summary {
+    background: var(--background);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+    border: 2px solid var(--border-color);
+}
+
+.booking-summary h3 {
+    color: var(--dark-text);
+    font-size: var(--font-lg);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    text-align: center;
+}
+
+.summary-details {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--card-background);
+    border-radius: 12px;
+    color: var(--dark-text);
+}
+
+.summary-item i {
+    color: var(--canadian-red);
+    font-size: var(--font-lg);
+    width: 24px;
+    text-align: center;
+}
+
+/* 预订按钮 */
+.book-btn {
+    width: 100%;
+    background: linear-gradient(45deg, var(--canadian-red), #CC0000);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+    font-size: var(--font-lg);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-xl) 0;
+    box-shadow: var(--shadow);
+}
+
+.book-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(255, 0, 0, 0.3);
+}
+
+.book-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 政策说明 */
+.booking-policy {
+    background: var(--background);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    border-left: 4px solid var(--winter-blue);
+}
+
+.booking-policy p {
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+    line-height: 1.5;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.booking-policy i {
+    color: var(--winter-blue);
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+}
+
+/* 确认模态框 */
+.confirmation-content {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.confirmation-header {
+    padding: var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: var(--forest-green);
+    margin-bottom: var(--spacing-md);
+    animation: bounceIn 0.8s ease;
+}
+
+.confirmation-header h2 {
+    color: var(--forest-green);
+    font-size: var(--font-2xl);
+    font-weight: 700;
+    margin: 0;
+}
+
+.confirmation-details {
+    padding: var(--spacing-xl);
+}
+
+.confirmation-number {
+    background: var(--background);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.confirmation-number span {
+    display: block;
+    color: var(--medium-text);
+    font-size: var(--font-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.confirmation-number strong {
+    color: var(--canadian-red);
+    font-size: var(--font-xl);
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.reservation-info h3 {
+    color: var(--dark-text);
+    font-size: var(--font-xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--background);
+    border-radius: 12px;
+    color: var(--dark-text);
+}
+
+.info-item i {
+    color: var(--canadian-red);
+    font-size: var(--font-lg);
+    width: 20px;
+    text-align: center;
+}
+
+/* 冬季提醒 */
+.winter-reminder {
+    background: linear-gradient(45deg, var(--winter-blue), var(--forest-green));
+    color: white;
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    text-align: left;
+}
+
+.winter-reminder i {
+    font-size: var(--font-xl);
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+}
+
+.winter-reminder h4 {
+    font-size: var(--font-md);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.winter-reminder p {
+    font-size: var(--font-sm);
+    opacity: 0.9;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.confirmation-actions {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    gap: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+/* 响应式设计 */
+@media (min-width: 768px) {
+    .booking-form {
+        max-width: 600px;
+    }
+    
+    .time-slots {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .contact-inputs {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .info-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .confirmation-actions {
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 480px) {
+    .time-slots {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .preference-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .confirmation-actions {
+        flex-direction: column;
+    }
+}
+
+/* 动画增强 */
+@keyframes bounceIn {
+    0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0) scale(1); }
+    40%, 43% { transform: scale(1.1); }
+    70% { transform: scale(1.05); }
+}

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, user-scalable=no"
+        />
+        <title
+            data-en="MapleTable - Discover Canada's Best Restaurants"
+            data-fr="MapleTable - Découvrez les Meilleurs Restaurants du Canada"
+        >
+            MapleTable - Discover Canada's Best Restaurants
+        </title>
+        <link rel="stylesheet" href="styles.css" />
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+        />
+        <link rel="manifest" href="manifest.json" />
+        <meta name="theme-color" content="#FF0000" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    </head>
+    <body>
+        <div class="app">
+            <!-- 启动屏幕 -->
+            <div id="splashScreen" class="splash-screen">
+                <div class="splash-content">
+                    <div class="app-logo">🍁</div>
+                    <h1>MapleTable</h1>
+                    <p
+                        class="app-tagline"
+                        data-en="Discover Canada's Culinary Diversity"
+                        data-fr="Découvrez la Diversité Culinaire du Canada"
+                    >
+                        Discover Canada's Culinary Diversity
+                    </p>
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+
+            <!-- 主应用界面 -->
+            <div id="mainApp" class="main-app" style="display: none">
+                <!-- 商家快速入口 -->
+                <div class="merchant-quick-access">
+                    <button class="merchant-btn" onclick="goToMerchantAuth()">
+                        <i class="fas fa-store"></i>
+                        <span
+                            data-en="Business Login"
+                            data-fr="Connexion Entreprise"
+                            >Business Login</span
+                        >
+                    </button>
+                </div>
+
+                <!-- 头部导航 -->
+                <header class="app-header">
+                    <div class="header-content">
+                        <div class="location-selector">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <select
+                                id="citySelector"
+                                onchange="changeCity(this.value)"
+                            >
+                                <option value="toronto">Toronto, ON</option>
+                                <option value="vancouver">Vancouver, BC</option>
+                                <option value="montreal">Montréal, QC</option>
+                                <option value="calgary">Calgary, AB</option>
+                                <option value="ottawa">Ottawa, ON</option>
+                                <option value="edmonton">Edmonton, AB</option>
+                                <option value="winnipeg">Winnipeg, MB</option>
+                                <option value="quebec">Québec City, QC</option>
+                                <option value="halifax">Halifax, NS</option>
+                            </select>
+                        </div>
+
+                        <div class="header-controls">
+                            <button
+                                class="lang-toggle"
+                                onclick="toggleLanguage()"
+                            >
+                                <span id="currentLang">EN</span>
+                            </button>
+                            <button class="weather-btn" onclick="showWeather()">
+                                <i class="fas fa-cloud-sun"></i>
+                                <span id="weatherTemp">-12°C</span>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- 主内容布局 -->
+                <div class="main-layout">
+                    <!-- 左侧广告栏 -->
+                    <aside class="sidebar-ads">
+                        <div class="ad-section">
+                            <div class="ad-header">
+                                <span data-en="Promoted" data-fr="Promu"
+                                    >Promoted</span
+                                >
+                            </div>
+
+                            <!-- 付费推广广告 -->
+                            <div
+                                class="premium-ad"
+                                onclick="viewPromotedRestaurant('premium-1')"
+                            >
+                                <div class="ad-badge premium">
+                                    <i class="fas fa-crown"></i>
+                                    <span data-en="PREMIUM" data-fr="PREMIUM"
+                                        >PREMIUM</span
+                                    >
+                                </div>
+                                <img
+                                    src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=300&h=200&fit=crop"
+                                    alt="Premium Restaurant"
+                                />
+                                <div class="ad-content">
+                                    <h4>The Keg Steakhouse</h4>
+                                    <p
+                                        data-en="Premium Canadian Steaks"
+                                        data-fr="Steaks Canadiens Premium"
+                                    >
+                                        Premium Canadian Steaks
+                                    </p>
+                                    <div class="ad-rating">
+                                        <div class="stars">★★★★★</div>
+                                        <span>4.9</span>
+                                    </div>
+                                    <div class="ad-offer">
+                                        <span
+                                            class="offer-badge"
+                                            data-en="20% OFF"
+                                            data-fr="20% RABAIS"
+                                            >20% OFF</span
+                                        >
+                                        <span
+                                            class="offer-text"
+                                            data-en="Winter Special"
+                                            data-fr="Spécial Hiver"
+                                            >Winter Special</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 标准推广广告 -->
+                            <div
+                                class="standard-ad"
+                                onclick="viewPromotedRestaurant('standard-1')"
+                            >
+                                <div class="ad-badge standard">
+                                    <span data-en="FEATURED" data-fr="VEDETTE"
+                                        >FEATURED</span
+                                    >
+                                </div>
+                                <img
+                                    src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&h=150&fit=crop"
+                                    alt="Featured Restaurant"
+                                />
+                                <div class="ad-content">
+                                    <h5>CN Tower 360 Restaurant</h5>
+                                    <p
+                                        data-en="Fine Dining Experience"
+                                        data-fr="Expérience Gastronomique"
+                                    >
+                                        Fine Dining Experience
+                                    </p>
+                                    <div class="ad-price">
+                                        <span
+                                            data-en="From $85/person"
+                                            data-fr="À partir de 85$/personne"
+                                            >From $85/person</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="standard-ad"
+                                onclick="viewPromotedRestaurant('standard-2')"
+                            >
+                                <div class="ad-badge standard">
+                                    <span data-en="FEATURED" data-fr="VEDETTE"
+                                        >FEATURED</span
+                                    >
+                                </div>
+                                <img
+                                    src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&h=150&fit=crop"
+                                    alt="Featured Restaurant"
+                                />
+                                <div class="ad-content">
+                                    <h5>Schwartz's Deli</h5>
+                                    <p
+                                        data-en="Authentic Montreal Smoked Meat"
+                                        data-fr="Authentique Viande Fumée de Montréal"
+                                    >
+                                        Authentic Montreal Smoked Meat
+                                    </p>
+                                    <div class="ad-price">
+                                        <span
+                                            data-en="From $25/person"
+                                            data-fr="À partir de 25$/personne"
+                                            >From $25/person</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 季节性推广 -->
+                            <div class="seasonal-ad">
+                                <div class="ad-badge seasonal">
+                                    <i class="fas fa-snowflake"></i>
+                                    <span data-en="WINTER" data-fr="HIVER"
+                                        >WINTER</span
+                                    >
+                                </div>
+                                <div class="seasonal-content">
+                                    <h4
+                                        data-en="Winter Dining Guide"
+                                        data-fr="Guide des Restaurants d'Hiver"
+                                    >
+                                        Winter Dining Guide
+                                    </h4>
+                                    <p
+                                        data-en="Discover heated patios & cozy indoor dining"
+                                        data-fr="Découvrez les terrasses chauffées et les repas intérieurs chaleureux"
+                                    >
+                                        Discover heated patios & cozy indoor
+                                        dining
+                                    </p>
+                                    <button
+                                        class="cta-btn"
+                                        onclick="showWinterGuide()"
+                                    >
+                                        <span
+                                            data-en="Explore"
+                                            data-fr="Explorer"
+                                            >Explore</span
+                                        >
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 商家推广CTA -->
+                            <div class="merchant-cta">
+                                <div class="cta-content">
+                                    <h4
+                                        data-en="List Your Restaurant"
+                                        data-fr="Inscrivez Votre Restaurant"
+                                    >
+                                        List Your Restaurant
+                                    </h4>
+                                    <p
+                                        data-en="Reach thousands of customers"
+                                        data-fr="Atteignez des milliers de clients"
+                                    >
+                                        Reach thousands of customers
+                                    </p>
+                                    <button
+                                        class="cta-btn secondary"
+                                        onclick="goToMerchantAuth()"
+                                    >
+                                        <i class="fas fa-plus"></i>
+                                        <span
+                                            data-en="Get Started"
+                                            data-fr="Commencer"
+                                            >Get Started</span
+                                        >
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- 主内容区域 -->
+                    <main class="content-main">
+                        <!-- 搜索区域 -->
+                        <section class="search-section">
+                            <div class="search-container">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input
+                                        type="text"
+                                        id="searchInput"
+                                        data-en="Search restaurants, cuisine, location..."
+                                        data-fr="Rechercher restaurants, cuisine, lieu..."
+                                        placeholder="Search restaurants, cuisine, location..."
+                                        oninput="handleSearch()"
+                                    />
+                                    <button
+                                        class="filter-btn"
+                                        onclick="showFilters()"
+                                    >
+                                        <i class="fas fa-sliders-h"></i>
+                                    </button>
+                                </div>
+
+                                <!-- 语音搜索 -->
+                                <button
+                                    class="voice-search-btn"
+                                    onclick="startVoiceSearch()"
+                                >
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+
+                            <!-- 快速筛选 -->
+                            <div class="quick-filters">
+                                <button
+                                    class="filter-chip active"
+                                    data-filter="all"
+                                    data-en="All"
+                                    data-fr="Tous"
+                                >
+                                    All
+                                </button>
+                                <button
+                                    class="filter-chip"
+                                    data-filter="canadian"
+                                    data-en="Canadian"
+                                    data-fr="Canadien"
+                                >
+                                    Canadian
+                                </button>
+                                <button
+                                    class="filter-chip"
+                                    data-filter="poutine"
+                                    data-en="Poutine"
+                                    data-fr="Poutine"
+                                >
+                                    Poutine
+                                </button>
+                                <button
+                                    class="filter-chip"
+                                    data-filter="maple"
+                                    data-en="Maple"
+                                    data-fr="Érable"
+                                >
+                                    Maple
+                                </button>
+                                <button
+                                    class="filter-chip"
+                                    data-filter="winter-warm"
+                                    data-en="Winter Warm"
+                                    data-fr="Chaud d'Hiver"
+                                >
+                                    Winter Warm
+                                </button>
+                                <button
+                                    class="filter-chip"
+                                    data-filter="halal"
+                                    data-en="Halal"
+                                    data-fr="Halal"
+                                >
+                                    Halal
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- 特色推荐 -->
+                        <section class="featured-section">
+                            <div class="section-header">
+                                <h2
+                                    data-en="Featured This Week"
+                                    data-fr="À la Une Cette Semaine"
+                                >
+                                    Featured This Week
+                                </h2>
+                                <div class="season-badge">
+                                    <i class="fas fa-snowflake"></i>
+                                    <span
+                                        data-en="Winter Menu"
+                                        data-fr="Menu d'Hiver"
+                                        >Winter Menu</span
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="featured-carousel">
+                                <div class="featured-card winter-special">
+                                    <div class="card-image">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop"
+                                            alt="Winter Comfort Food"
+                                        />
+                                        <div class="card-badge seasonal">
+                                            <i class="fas fa-snowflake"></i>
+                                            <span
+                                                data-en="Winter Special"
+                                                data-fr="Spécial Hiver"
+                                                >Winter Special</span
+                                            >
+                                        </div>
+                                    </div>
+                                    <div class="card-content">
+                                        <h3
+                                            data-en="Cozy Winter Dining"
+                                            data-fr="Dîner Chaleureux d'Hiver"
+                                        >
+                                            Cozy Winter Dining
+                                        </h3>
+                                        <p
+                                            data-en="Warm up with hearty Canadian comfort food"
+                                            data-fr="Réchauffez-vous avec des plats réconfortants canadiens"
+                                        >
+                                            Warm up with hearty Canadian comfort
+                                            food
+                                        </p>
+                                        <div class="card-tags">
+                                            <span class="tag"
+                                                >Heated Patio</span
+                                            >
+                                            <span class="tag"
+                                                >Hot Beverages</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 餐厅分类 -->
+                        <section class="categories-section">
+                            <div class="section-header">
+                                <h2
+                                    data-en="Canadian Cuisine"
+                                    data-fr="Cuisine Canadienne"
+                                >
+                                    Canadian Cuisine
+                                </h2>
+                            </div>
+
+                            <div class="categories-grid">
+                                <div
+                                    class="category-card"
+                                    onclick="filterByCategory('canadian-classics')"
+                                >
+                                    <div class="category-icon">🍁</div>
+                                    <h3
+                                        data-en="Canadian Classics"
+                                        data-fr="Classiques Canadiens"
+                                    >
+                                        Canadian Classics
+                                    </h3>
+                                    <span class="restaurant-count"
+                                        >127 restaurants</span
+                                    >
+                                    <div class="category-examples">
+                                        <small
+                                            data-en="Poutine, Maple Syrup, Butter Tarts"
+                                            data-fr="Poutine, Sirop d'Érable, Tartes au Beurre"
+                                            >Poutine, Maple Syrup, Butter
+                                            Tarts</small
+                                        >
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="category-card"
+                                    onclick="filterByCategory('quebec-french')"
+                                >
+                                    <div class="category-icon">🥖</div>
+                                    <h3 data-en="Québécois" data-fr="Québécois">
+                                        Québécois
+                                    </h3>
+                                    <span class="restaurant-count"
+                                        >89 restaurants</span
+                                    >
+                                    <div class="category-examples">
+                                        <small
+                                            data-en="Tourtière, Sugar Pie, Smoked Meat"
+                                            data-fr="Tourtière, Tarte au Sucre, Viande Fumée"
+                                            >Tourtière, Sugar Pie, Smoked
+                                            Meat</small
+                                        >
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="category-card"
+                                    onclick="filterByCategory('maritime')"
+                                >
+                                    <div class="category-icon">🦞</div>
+                                    <h3 data-en="Maritime" data-fr="Maritime">
+                                        Maritime
+                                    </h3>
+                                    <span class="restaurant-count"
+                                        >64 restaurants</span
+                                    >
+                                    <div class="category-examples">
+                                        <small
+                                            data-en="Lobster Rolls, Fish & Chips, Scallops"
+                                            data-fr="Rouleaux de Homard, Fish & Chips, Pétoncles"
+                                            >Lobster Rolls, Fish & Chips,
+                                            Scallops</small
+                                        >
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="category-card"
+                                    onclick="filterByCategory('prairie')"
+                                >
+                                    <div class="category-icon">🥩</div>
+                                    <h3
+                                        data-en="Prairie BBQ"
+                                        data-fr="BBQ des Prairies"
+                                    >
+                                        Prairie BBQ
+                                    </h3>
+                                    <span class="restaurant-count"
+                                        >92 restaurants</span
+                                    >
+                                    <div class="category-examples">
+                                        <small
+                                            data-en="Alberta Beef, Bison, Saskatoon Berry"
+                                            data-fr="Bœuf d'Alberta, Bison, Baie de Saskatoon"
+                                            >Alberta Beef, Bison, Saskatoon
+                                            Berry</small
+                                        >
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="category-card"
+                                    onclick="filterByCategory('indigenous')"
+                                >
+                                    <div class="category-icon">🏕️</div>
+                                    <h3
+                                        data-en="Indigenous"
+                                        data-fr="Autochtone"
+                                    >
+                                        Indigenous
+                                    </h3>
+                                    <span class="restaurant-count"
+                                        >31 restaurants</span
+                                    >
+                                    <div class="category-examples">
+                                        <small
+                                            data-en="Wild Game, Bannock, Traditional"
+                                            data-fr="Gibier, Bannique, Traditionnel"
+                                            >Wild Game, Bannock,
+                                            Traditional</small
+                                        >
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="category-card"
+                                    onclick="filterByCategory('multicultural')"
+                                >
+                                    <div class="category-icon">🌍</div>
+                                    <h3
+                                        data-en="Multicultural"
+                                        data-fr="Multiculturel"
+                                    >
+                                        Multicultural
+                                    </h3>
+                                    <span class="restaurant-count"
+                                        >283 restaurants</span
+                                    >
+                                    <div class="category-examples">
+                                        <small
+                                            data-en="Italian, Chinese, Indian, Middle Eastern"
+                                            data-fr="Italien, Chinois, Indien, Moyen-Oriental"
+                                            >Italian, Chinese, Indian, Middle
+                                            Eastern</small
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 餐厅列表 -->
+                        <section class="restaurants-section">
+                            <div class="section-header">
+                                <h2
+                                    data-en="Nearby Restaurants"
+                                    data-fr="Restaurants à Proximité"
+                                >
+                                    Nearby Restaurants
+                                </h2>
+                                <div class="view-toggles">
+                                    <button
+                                        class="view-btn active"
+                                        data-view="list"
+                                    >
+                                        <i class="fas fa-list"></i>
+                                    </button>
+                                    <button class="view-btn" data-view="map">
+                                        <i class="fas fa-map"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="restaurantsList" class="restaurants-list">
+                                <!-- 餐厅卡片将通过JavaScript动态生成 -->
+                            </div>
+
+                            <div class="load-more-container">
+                                <button
+                                    class="load-more-btn"
+                                    onclick="loadMoreRestaurants()"
+                                >
+                                    <i class="fas fa-plus"></i>
+                                    <span
+                                        data-en="Load More"
+                                        data-fr="Charger Plus"
+                                        >Load More</span
+                                    >
+                                </button>
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            </div>
+
+            <!-- 底部导航 -->
+            <nav class="bottom-nav">
+                <button
+                    class="nav-item active"
+                    data-page="home"
+                    onclick="switchTab('home')"
+                >
+                    <i class="fas fa-home"></i>
+                    <span data-en="Home" data-fr="Accueil">Home</span>
+                </button>
+                <button
+                    class="nav-item"
+                    data-page="search"
+                    onclick="switchTab('search')"
+                >
+                    <i class="fas fa-search"></i>
+                    <span data-en="Search" data-fr="Recherche">Search</span>
+                </button>
+                <button
+                    class="nav-item"
+                    data-page="reservations"
+                    onclick="switchTab('reservations')"
+                >
+                    <i class="fas fa-calendar-check"></i>
+                    <span data-en="Bookings" data-fr="Réservations"
+                        >Bookings</span
+                    >
+                </button>
+                <button
+                    class="nav-item"
+                    data-page="favorites"
+                    onclick="switchTab('favorites')"
+                >
+                    <i class="fas fa-heart"></i>
+                    <span data-en="Favorites" data-fr="Favoris">Favorites</span>
+                </button>
+                <button
+                    class="nav-item"
+                    data-page="profile"
+                    onclick="switchTab('profile')"
+                >
+                    <i class="fas fa-user"></i>
+                    <span data-en="Profile" data-fr="Profil">Profile</span>
+                </button>
+            </nav>
+
+            <!-- 筛选面板 -->
+            <div id="filtersPanel" class="filters-panel">
+                <div class="panel-header">
+                    <h3 data-en="Filters" data-fr="Filtres">Filters</h3>
+                    <button class="close-btn" onclick="closeFilters()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <!-- 筛选选项将通过JavaScript生成 -->
+                </div>
+            </div>
+
+            <!-- 餐厅详情模态框 -->
+            <div id="restaurantModal" class="modal">
+                <div class="modal-content restaurant-details">
+                    <!-- 餐厅详情将通过JavaScript生成 -->
+                </div>
+            </div>
+
+            <!-- 预订模态框 -->
+            <div id="bookingModal" class="modal">
+                <div class="modal-content booking-form">
+                    <!-- 预订表单将通过JavaScript生成 -->
+                </div>
+            </div>
+        </div>
+
+        <script src="app.js"></script>
+    </body>
+</html>

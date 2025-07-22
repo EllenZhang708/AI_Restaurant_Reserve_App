@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title data-en="My Reservations - MapleTable" data-fr="Mes Réservations - MapleTable">My Reservations - MapleTable</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="reservations.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#FF0000">
+</head>
+<body>
+    <div class="reservations-app">
+        <!-- 头部导航 -->
+        <header class="reservations-header">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 data-en="My Reservations" data-fr="Mes Réservations">My Reservations</h1>
+                <button class="lang-toggle" onclick="toggleLanguage()">
+                    <span id="currentLang">EN</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 筛选选项 -->
+        <section class="filter-section">
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all" onclick="filterReservations('all')">
+                    <span data-en="All" data-fr="Toutes">All</span>
+                    <span class="count" id="allCount">0</span>
+                </button>
+                <button class="filter-tab" data-filter="upcoming" onclick="filterReservations('upcoming')">
+                    <span data-en="Upcoming" data-fr="À Venir">Upcoming</span>
+                    <span class="count" id="upcomingCount">0</span>
+                </button>
+                <button class="filter-tab" data-filter="past" onclick="filterReservations('past')">
+                    <span data-en="Past" data-fr="Passées">Past</span>
+                    <span class="count" id="pastCount">0</span>
+                </button>
+                <button class="filter-tab" data-filter="cancelled" onclick="filterReservations('cancelled')">
+                    <span data-en="Cancelled" data-fr="Annulées">Cancelled</span>
+                    <span class="count" id="cancelledCount">0</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 预订列表 -->
+        <section class="reservations-section">
+            <div id="reservationsList" class="reservations-list">
+                <!-- 预订卡片将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 空状态 -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+                <h3 data-en="No Reservations Found" data-fr="Aucune Réservation Trouvée">No Reservations Found</h3>
+                <p data-en="You haven't made any reservations yet." data-fr="Vous n'avez encore fait aucune réservation.">You haven't made any reservations yet.</p>
+                <button class="btn btn-primary" onclick="goToRestaurants()">
+                    <i class="fas fa-search"></i>
+                    <span data-en="Find Restaurants" data-fr="Trouver des Restaurants">Find Restaurants</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 快速操作按钮 -->
+        <div class="quick-actions">
+            <button class="quick-action-btn" onclick="goToRestaurants()">
+                <i class="fas fa-plus"></i>
+                <span data-en="New Reservation" data-fr="Nouvelle Réservation">New Reservation</span>
+            </button>
+        </div>
+
+        <!-- 预订详情模态框 -->
+        <div id="reservationModal" class="modal">
+            <div class="modal-content reservation-details">
+                <div class="modal-header">
+                    <h3 data-en="Reservation Details" data-fr="Détails de la Réservation">Reservation Details</h3>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="reservationDetailsBody">
+                    <!-- 详情内容将通过JavaScript生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 取消确认模态框 -->
+        <div id="cancelModal" class="modal">
+            <div class="modal-content cancel-confirmation">
+                <div class="modal-header">
+                    <h3 data-en="Cancel Reservation" data-fr="Annuler la Réservation">Cancel Reservation</h3>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="cancel-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4 data-en="Are you sure?" data-fr="Êtes-vous sûr?">Are you sure?</h4>
+                        <p data-en="This action cannot be undone. Your table will be released for other guests." 
+                           data-fr="Cette action ne peut pas être annulée. Votre table sera libérée pour d'autres clients.">
+                            This action cannot be undone. Your table will be released for other guests.
+                        </p>
+                    </div>
+                    
+                    <div class="cancel-options">
+                        <h4 data-en="Reason for cancellation (optional)" data-fr="Raison de l'annulation (optionnelle)">Reason for cancellation (optional)</h4>
+                        <div class="reason-options">
+                            <label class="reason-option">
+                                <input type="radio" name="cancelReason" value="schedule-change">
+                                <span data-en="Schedule change" data-fr="Changement d'horaire">Schedule change</span>
+                            </label>
+                            <label class="reason-option">
+                                <input type="radio" name="cancelReason" value="weather">
+                                <span data-en="Weather conditions" data-fr="Conditions météorologiques">Weather conditions</span>
+                            </label>
+                            <label class="reason-option">
+                                <input type="radio" name="cancelReason" value="emergency">
+                                <span data-en="Emergency" data-fr="Urgence">Emergency</span>
+                            </label>
+                            <label class="reason-option">
+                                <input type="radio" name="cancelReason" value="other">
+                                <span data-en="Other" data-fr="Autre">Other</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="closeModal()">
+                            <span data-en="Keep Reservation" data-fr="Garder la Réservation">Keep Reservation</span>
+                        </button>
+                        <button class="btn btn-danger" onclick="confirmCancellation()">
+                            <i class="fas fa-times"></i>
+                            <span data-en="Cancel Reservation" data-fr="Annuler la Réservation">Cancel Reservation</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 修改预订模态框 -->
+        <div id="modifyModal" class="modal">
+            <div class="modal-content modify-reservation">
+                <div class="modal-header">
+                    <h3 data-en="Modify Reservation" data-fr="Modifier la Réservation">Modify Reservation</h3>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modify-notice">
+                        <i class="fas fa-info-circle"></i>
+                        <p data-en="You can modify your reservation up to 2 hours before the scheduled time." 
+                           data-fr="Vous pouvez modifier votre réservation jusqu'à 2 heures avant l'heure prévue.">
+                            You can modify your reservation up to 2 hours before the scheduled time.
+                        </p>
+                    </div>
+                    
+                    <div class="modify-options">
+                        <div class="modify-option" onclick="modifyReservation('date')">
+                            <i class="fas fa-calendar"></i>
+                            <div>
+                                <h4 data-en="Change Date" data-fr="Changer la Date">Change Date</h4>
+                                <p data-en="Select a different date" data-fr="Sélectionner une date différente">Select a different date</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        
+                        <div class="modify-option" onclick="modifyReservation('time')">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <h4 data-en="Change Time" data-fr="Changer l'Heure">Change Time</h4>
+                                <p data-en="Select a different time slot" data-fr="Sélectionner un créneau horaire différent">Select a different time slot</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        
+                        <div class="modify-option" onclick="modifyReservation('party')">
+                            <i class="fas fa-users"></i>
+                            <div>
+                                <h4 data-en="Change Party Size" data-fr="Changer le Nombre de Personnes">Change Party Size</h4>
+                                <p data-en="Adjust number of guests" data-fr="Ajuster le nombre d'invités">Adjust number of guests</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        
+                        <div class="modify-option" onclick="modifyReservation('requests')">
+                            <i class="fas fa-comment"></i>
+                            <div>
+                                <h4 data-en="Special Requests" data-fr="Demandes Spéciales">Special Requests</h4>
+                                <p data-en="Update dietary restrictions or preferences" data-fr="Mettre à jour les restrictions alimentaires ou préférences">Update dietary restrictions or preferences</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+        <button class="nav-item" onclick="goToHome()">
+            <i class="fas fa-home"></i>
+            <span data-en="Home" data-fr="Accueil">Home</span>
+        </button>
+        <button class="nav-item" onclick="goToSearch()">
+            <i class="fas fa-search"></i>
+            <span data-en="Search" data-fr="Recherche">Search</span>
+        </button>
+        <button class="nav-item active">
+            <i class="fas fa-calendar-check"></i>
+            <span data-en="Bookings" data-fr="Réservations">Bookings</span>
+        </button>
+        <button class="nav-item" onclick="goToFavorites()">
+            <i class="fas fa-heart"></i>
+            <span data-en="Favorites" data-fr="Favoris">Favorites</span>
+        </button>
+        <button class="nav-item" onclick="goToProfile()">
+            <i class="fas fa-user"></i>
+            <span data-en="Profile" data-fr="Profil">Profile</span>
+        </button>
+    </nav>
+
+    <script src="app.js"></script>
+    <script src="reservations.js"></script>
+</body>
+</html>

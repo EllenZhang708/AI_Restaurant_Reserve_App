@@ -1,0 +1,61 @@
+{
+  "name": "MapleTable - Canadian Restaurant Discovery",
+  "short_name": "MapleTable",
+  "description": "Discover Canada's best restaurants with bilingual support and seasonal menus",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FF0000",
+  "theme_color": "#FF0000",
+  "orientation": "portrait-primary",
+  "lang": "en-CA",
+  "dir": "ltr",
+  "categories": ["food", "lifestyle", "travel"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🍁%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🍁%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='800' viewBox='0 0 400 800'%3E%3Crect width='400' height='800' fill='%23F8FAFC'/%3E%3Ctext x='200' y='400' text-anchor='middle' font-size='24' fill='%23FF0000'%3EMapleTable%3C/text%3E%3C/svg%3E",
+      "sizes": "400x800",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Restaurants",
+      "short_name": "Search",
+      "description": "Find restaurants near you",
+      "url": "/?action=search",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔍%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "My Favorites",
+      "short_name": "Favorites",
+      "description": "View your favorite restaurants",
+      "url": "/?action=favorites",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E❤️%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

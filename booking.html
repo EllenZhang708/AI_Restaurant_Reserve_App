@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title data-en="Book Your Table - MapleTable" data-fr="Réservez Votre Table - MapleTable">Book Your Table - MapleTable</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="booking.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#FF0000">
+</head>
+<body>
+    <div class="booking-app">
+        <!-- 头部导航 -->
+        <header class="booking-header">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 data-en="Reserve Table" data-fr="Réserver Table">Reserve Table</h1>
+                <button class="lang-toggle" onclick="toggleLanguage()">
+                    <span id="currentLang">EN</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 餐厅信息 -->
+        <section class="restaurant-info">
+            <div class="restaurant-header">
+                <img id="restaurantImage" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop" alt="Restaurant">
+                <div class="restaurant-details">
+                    <h2 id="restaurantName">Loading...</h2>
+                    <p id="restaurantCuisine">Canadian Fine Dining</p>
+                    <div class="restaurant-rating">
+                        <i class="fas fa-star"></i>
+                        <span id="restaurantRating">4.8</span>
+                        <span class="rating-count">(<span id="reviewCount">2847</span> <span data-en="reviews" data-fr="avis">reviews</span>)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 冬季特别提示 -->
+            <div class="winter-notice">
+                <i class="fas fa-snowflake"></i>
+                <div class="notice-content">
+                    <h4 data-en="Winter Dining Available" data-fr="Repas d'Hiver Disponible">Winter Dining Available</h4>
+                    <p data-en="Heated patio and cozy indoor seating" data-fr="Terrasse chauffée et places intérieures confortables">Heated patio and cozy indoor seating</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 预订表单 -->
+        <section class="booking-form-section">
+            <form class="booking-form" id="bookingForm">
+                <!-- 日期选择 -->
+                <div class="form-group">
+                    <label data-en="Select Date" data-fr="Sélectionner la Date">
+                        <i class="fas fa-calendar"></i>
+                        Select Date
+                    </label>
+                    <input type="date" id="bookingDate" required>
+                    <div class="date-suggestions">
+                        <button type="button" class="date-option today" onclick="selectToday()">
+                            <span data-en="Today" data-fr="Aujourd'hui">Today</span>
+                            <small id="todayDate"></small>
+                        </button>
+                        <button type="button" class="date-option tomorrow" onclick="selectTomorrow()">
+                            <span data-en="Tomorrow" data-fr="Demain">Tomorrow</span>
+                            <small id="tomorrowDate"></small>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 时间选择 -->
+                <div class="form-group">
+                    <label data-en="Select Time" data-fr="Sélectionner l'Heure">
+                        <i class="fas fa-clock"></i>
+                        Select Time
+                    </label>
+                    <div class="time-slots" id="timeSlots">
+                        <!-- 时间段动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 人数选择 -->
+                <div class="form-group">
+                    <label data-en="Party Size" data-fr="Nombre de Personnes">
+                        <i class="fas fa-users"></i>
+                        Party Size
+                    </label>
+                    <div class="party-size-selector">
+                        <button type="button" class="size-btn" onclick="changePartySize(-1)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <div class="party-size-display">
+                            <span id="partySize">2</span>
+                            <small data-en="guests" data-fr="invités">guests</small>
+                        </div>
+                        <button type="button" class="size-btn" onclick="changePartySize(1)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- 特殊座位偏好 -->
+                    <div class="seating-preferences">
+                        <h4 data-en="Seating Preferences" data-fr="Préférences de Siège">Seating Preferences</h4>
+                        <div class="preference-options">
+                            <label class="preference-option">
+                                <input type="checkbox" name="preferences" value="heated-patio">
+                                <span class="checkmark"></span>
+                                <i class="fas fa-fire"></i>
+                                <span data-en="Heated Patio" data-fr="Terrasse Chauffée">Heated Patio</span>
+                            </label>
+                            <label class="preference-option">
+                                <input type="checkbox" name="preferences" value="window-seat">
+                                <span class="checkmark"></span>
+                                <i class="fas fa-mountain"></i>
+                                <span data-en="Window View" data-fr="Vue par la Fenêtre">Window View</span>
+                            </label>
+                            <label class="preference-option">
+                                <input type="checkbox" name="preferences" value="quiet-area">
+                                <span class="checkmark"></span>
+                                <i class="fas fa-volume-mute"></i>
+                                <span data-en="Quiet Area" data-fr="Zone Calme">Quiet Area</span>
+                            </label>
+                            <label class="preference-option">
+                                <input type="checkbox" name="preferences" value="wheelchair-accessible">
+                                <span class="checkmark"></span>
+                                <i class="fas fa-wheelchair"></i>
+                                <span data-en="Wheelchair Accessible" data-fr="Accessible Fauteuil Roulant">Wheelchair Accessible</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 联系信息 -->
+                <div class="form-group">
+                    <label data-en="Contact Information" data-fr="Informations de Contact">
+                        <i class="fas fa-user"></i>
+                        Contact Information
+                    </label>
+                    <div class="contact-inputs">
+                        <input type="text" id="firstName" placeholder="First Name / Prénom" required>
+                        <input type="text" id="lastName" placeholder="Last Name / Nom de Famille" required>
+                        <input type="tel" id="phoneNumber" placeholder="Phone / Téléphone" required>
+                        <input type="email" id="emailAddress" placeholder="Email / Courriel" required>
+                    </div>
+                </div>
+
+                <!-- 特殊要求 -->
+                <div class="form-group">
+                    <label data-en="Special Requests" data-fr="Demandes Spéciales">
+                        <i class="fas fa-comment"></i>
+                        Special Requests
+                    </label>
+                    <textarea 
+                        id="specialRequests" 
+                        data-en="Any dietary restrictions, celebrations, or special requests..."
+                        data-fr="Restrictions alimentaires, célébrations ou demandes spéciales..."
+                        placeholder="Any dietary restrictions, celebrations, or special requests..."
+                        rows="3"
+                    ></textarea>
+                    
+                    <!-- 快速选择 -->
+                    <div class="quick-requests">
+                        <button type="button" class="request-tag" onclick="addQuickRequest('birthday')">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span data-en="Birthday" data-fr="Anniversaire">Birthday</span>
+                        </button>
+                        <button type="button" class="request-tag" onclick="addQuickRequest('anniversary')">
+                            <i class="fas fa-heart"></i>
+                            <span data-en="Anniversary" data-fr="Anniversaire">Anniversary</span>
+                        </button>
+                        <button type="button" class="request-tag" onclick="addQuickRequest('vegetarian')">
+                            <i class="fas fa-leaf"></i>
+                            <span data-en="Vegetarian" data-fr="Végétarien">Vegetarian</span>
+                        </button>
+                        <button type="button" class="request-tag" onclick="addQuickRequest('halal')">
+                            <i class="fas fa-mosque"></i>
+                            <span data-en="Halal" data-fr="Halal">Halal</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 预订确认 -->
+                <div class="booking-summary">
+                    <h3 data-en="Booking Summary" data-fr="Résumé de la Réservation">Booking Summary</h3>
+                    <div class="summary-details">
+                        <div class="summary-item">
+                            <i class="fas fa-calendar"></i>
+                            <span id="summaryDate">Select date</span>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-clock"></i>
+                            <span id="summaryTime">Select time</span>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-users"></i>
+                            <span id="summaryParty">2 guests</span>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-snowflake"></i>
+                            <span data-en="Winter dining ready" data-fr="Prêt pour le repas d'hiver">Winter dining ready</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 提交按钮 -->
+                <button type="submit" class="book-btn" id="bookBtn">
+                    <i class="fas fa-check"></i>
+                    <span data-en="Confirm Reservation" data-fr="Confirmer la Réservation">Confirm Reservation</span>
+                </button>
+
+                <!-- 政策说明 -->
+                <div class="booking-policy">
+                    <p>
+                        <i class="fas fa-info-circle"></i>
+                        <span data-en="Free cancellation up to 2 hours before your reservation. No-show fees may apply." 
+                              data-fr="Annulation gratuite jusqu'à 2 heures avant votre réservation. Des frais de non-présentation peuvent s'appliquer.">
+                            Free cancellation up to 2 hours before your reservation. No-show fees may apply.
+                        </span>
+                    </p>
+                </div>
+            </form>
+        </section>
+
+        <!-- 确认模态框 -->
+        <div id="confirmationModal" class="modal">
+            <div class="modal-content confirmation-content">
+                <div class="confirmation-header">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2 data-en="Reservation Confirmed!" data-fr="Réservation Confirmée!">Reservation Confirmed!</h2>
+                </div>
+                
+                <div class="confirmation-details">
+                    <div class="confirmation-number">
+                        <span data-en="Confirmation Number" data-fr="Numéro de Confirmation">Confirmation Number</span>
+                        <strong id="confirmationNumber">MT240125001</strong>
+                    </div>
+                    
+                    <div class="reservation-info">
+                        <h3 id="confirmedRestaurant">Restaurant Name</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <i class="fas fa-calendar"></i>
+                                <span id="confirmedDate">Date</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span id="confirmedTime">Time</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-users"></i>
+                                <span id="confirmedParty">Party Size</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span id="confirmedPhone">Phone</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="winter-reminder">
+                        <i class="fas fa-snowflake"></i>
+                        <div>
+                            <h4 data-en="Winter Dining Reminder" data-fr="Rappel Repas d'Hiver">Winter Dining Reminder</h4>
+                            <p data-en="Dress warmly if you've selected patio seating. Indoor heaters available." 
+                               data-fr="Habillez-vous chaudement si vous avez sélectionné une terrasse. Chauffages intérieurs disponibles.">
+                                Dress warmly if you've selected patio seating. Indoor heaters available.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="confirmation-actions">
+                    <button class="btn btn-secondary" onclick="addToCalendar()">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span data-en="Add to Calendar" data-fr="Ajouter au Calendrier">Add to Calendar</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="goToReservations()">
+                        <i class="fas fa-list"></i>
+                        <span data-en="View Reservations" data-fr="Voir les Réservations">View Reservations</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="booking.js"></script>
+</body>
+</html>
