@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title data-en="My Bookings - MapleTable" data-fr="Mes Réservations - MapleTable">My Bookings - MapleTable</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="toolbar-styles.css">
+    <link rel="stylesheet" href="bookings.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#FF0000">
+</head>
+<body>
+    <div class="bookings-app">
+        <!-- 头部导航 -->
+        <header class="bookings-header">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 data-en="My Bookings" data-fr="Mes Réservations">My Bookings</h1>
+                <div class="header-actions">
+                    <button class="filter-btn" onclick="toggleFilters()">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <button class="calendar-btn" onclick="toggleCalendarView()">
+                        <i class="fas fa-calendar-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 预订状态筛选 -->
+        <section class="booking-filters" id="bookingFilters">
+            <div class="filter-scroll">
+                <button class="filter-chip active" data-status="all" onclick="filterBookings('all')">
+                    <i class="fas fa-list"></i>
+                    <span data-en="All" data-fr="Tout">All</span>
+                    <span class="count">8</span>
+                </button>
+                <button class="filter-chip" data-status="upcoming" onclick="filterBookings('upcoming')">
+                    <i class="fas fa-clock"></i>
+                    <span data-en="Upcoming" data-fr="Prochaines">Upcoming</span>
+                    <span class="count">3</span>
+                </button>
+                <button class="filter-chip" data-status="confirmed" onclick="filterBookings('confirmed')">
+                    <i class="fas fa-check-circle"></i>
+                    <span data-en="Confirmed" data-fr="Confirmées">Confirmed</span>
+                    <span class="count">2</span>
+                </button>
+                <button class="filter-chip" data-status="pending" onclick="filterBookings('pending')">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span data-en="Pending" data-fr="En Attente">Pending</span>
+                    <span class="count">1</span>
+                </button>
+                <button class="filter-chip" data-status="completed" onclick="filterBookings('completed')">
+                    <i class="fas fa-check-double"></i>
+                    <span data-en="Completed" data-fr="Terminées">Completed</span>
+                    <span class="count">2</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 快速操作栏 -->
+        <section class="quick-actions">
+            <button class="quick-action-btn" onclick="makeNewBooking()">
+                <i class="fas fa-plus"></i>
+                <span data-en="New Booking" data-fr="Nouvelle Réservation">New Booking</span>
+            </button>
+            <button class="quick-action-btn" onclick="findRestaurants()">
+                <i class="fas fa-search"></i>
+                <span data-en="Find Restaurants" data-fr="Trouver Restaurants">Find Restaurants</span>
+            </button>
+            <button class="quick-action-btn" onclick="viewFavorites()">
+                <i class="fas fa-heart"></i>
+                <span data-en="Favorites" data-fr="Favoris">Favorites</span>
+            </button>
+        </section>
+
+        <!-- 预订列表 -->
+        <section class="bookings-list" id="bookingsList">
+            <!-- 动态内容 -->
+        </section>
+
+        <!-- 空状态 -->
+        <section class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-illustration">
+                <i class="fas fa-calendar-times"></i>
+            </div>
+            <h3 data-en="No bookings found" data-fr="Aucune réservation trouvée">No bookings found</h3>
+            <p data-en="Start exploring restaurants and make your first booking!" data-fr="Commencez à explorer les restaurants et faites votre première réservation!">
+                Start exploring restaurants and make your first booking!
+            </p>
+            <button class="cta-btn" onclick="makeNewBooking()">
+                <i class="fas fa-plus"></i>
+                <span data-en="Make a Booking" data-fr="Faire une Réservation">Make a Booking</span>
+            </button>
+        </section>
+
+        <!-- 日历视图模态框 -->
+        <div class="calendar-modal" id="calendarModal" style="display: none;">
+            <div class="calendar-content">
+                <div class="calendar-header">
+                    <h3 data-en="Booking Calendar" data-fr="Calendrier des Réservations">Booking Calendar</h3>
+                    <button class="close-calendar" onclick="toggleCalendarView()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="calendar-container" id="calendarContainer">
+                    <!-- 日历内容 -->
+                    <div class="month-navigation">
+                        <button class="nav-btn" onclick="previousMonth()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h4 id="currentMonth">January 2024</h4>
+                        <button class="nav-btn" onclick="nextMonth()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- 动态生成日历 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 预订详情模态框 -->
+        <div class="booking-details-modal" id="bookingDetailsModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 data-en="Booking Details" data-fr="Détails de la Réservation">Booking Details</h3>
+                    <button class="close-modal" onclick="closeBookingDetails()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="bookingDetailsContent">
+                    <!-- 动态内容 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <button class="nav-item" data-page="home" onclick="switchTab('home')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-home"></i>
+                </div>
+                <span class="nav-label" data-en="Home" data-fr="Accueil">Home</span>
+            </button>
+            
+            <button class="nav-item" data-page="explore" onclick="switchTab('explore')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <span class="nav-label" data-en="Explore" data-fr="Explorer">Explore</span>
+            </button>
+            
+            <button class="nav-item book-center" onclick="quickBook()">
+                <div class="book-icon-wrapper">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <span class="nav-label" data-en="Book" data-fr="Réserver">Book</span>
+            </button>
+            
+            <button class="nav-item active" data-page="bookings" onclick="switchTab('bookings')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="nav-notification-dot" id="bookingsDot">3</span>
+                </div>
+                <span class="nav-label" data-en="Bookings" data-fr="Réservations">Bookings</span>
+            </button>
+            
+            <button class="nav-item" data-page="profile" onclick="switchTab('profile')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <span class="nav-label" data-en="Profile" data-fr="Profil">Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="bookings.js"></script>
+</body>
+</html>

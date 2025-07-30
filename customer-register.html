@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title data-en="Sign Up - MapleTable" data-fr="S'inscrire - MapleTable">Sign Up - MapleTable</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="toolbar-styles.css">
+    <link rel="stylesheet" href="login-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#FF0000">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <!-- 返回按钮 -->
+        <header class="login-header">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                <span data-en="Back" data-fr="Retour">Back</span>
+            </button>
+            <button class="lang-toggle" onclick="toggleLanguage()">
+                <span id="currentLang">EN</span>
+            </button>
+        </header>
+
+        <!-- 注册卡片 -->
+        <div class="login-card customer-card">
+            <!-- Logo 和标题 -->
+            <div class="login-brand">
+                <div class="brand-logo">🍁</div>
+                <h1>MapleTable</h1>
+                <h2 data-en="Join the Community!" data-fr="Rejoignez la Communauté!">Join the Community!</h2>
+                <p data-en="Discover amazing restaurants and earn rewards" data-fr="Découvrez des restaurants incroyables et gagnez des récompenses">Discover amazing restaurants and earn rewards</p>
+            </div>
+
+            <!-- 社交注册按钮 -->
+            <div class="social-login-section">
+                <button class="social-login-btn google" onclick="registerWithGoogle()">
+                    <i class="fab fa-google"></i>
+                    <span data-en="Sign up with Google" data-fr="S'inscrire avec Google">Sign up with Google</span>
+                </button>
+                <button class="social-login-btn facebook" onclick="registerWithFacebook()">
+                    <i class="fab fa-facebook-f"></i>
+                    <span data-en="Sign up with Facebook" data-fr="S'inscrire avec Facebook">Sign up with Facebook</span>
+                </button>
+            </div>
+
+            <!-- 分隔线 -->
+            <div class="divider">
+                <span data-en="or sign up with email" data-fr="ou s'inscrire avec email">or sign up with email</span>
+            </div>
+
+            <!-- 注册表单 -->
+            <form class="login-form" id="customerRegisterForm">
+                <div class="form-group">
+                    <label data-en="First Name" data-fr="Prénom">
+                        <i class="fas fa-user"></i>
+                        First Name
+                    </label>
+                    <input type="text" id="firstName" placeholder="John" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Last Name" data-fr="Nom de Famille">
+                        <i class="fas fa-user"></i>
+                        Last Name
+                    </label>
+                    <input type="text" id="lastName" placeholder="Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Email Address" data-fr="Adresse Email">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <input type="email" id="customerEmail" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Phone Number" data-fr="Numéro de Téléphone">
+                        <i class="fas fa-phone"></i>
+                        Phone Number
+                    </label>
+                    <input type="tel" id="phoneNumber" placeholder="(416) 555-0123" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Password" data-fr="Mot de Passe">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <div class="password-input">
+                        <input type="password" id="customerPassword" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('customerPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small class="password-hint" data-en="At least 6 characters" data-fr="Au moins 6 caractères">At least 6 characters</small>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Confirm Password" data-fr="Confirmer le Mot de Passe">
+                        <i class="fas fa-lock"></i>
+                        Confirm Password
+                    </label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <span class="checkmark"></span>
+                        <span data-en="I agree to the Terms of Service and Privacy Policy" data-fr="J'accepte les conditions d'utilisation et la politique de confidentialité">I agree to the Terms of Service and Privacy Policy</span>
+                    </label>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="receiveEmails">
+                        <span class="checkmark"></span>
+                        <span data-en="Send me restaurant recommendations and special offers" data-fr="M'envoyer des recommandations de restaurants et des offres spéciales">Send me restaurant recommendations and special offers</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="login-btn customer-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span data-en="Create My Account" data-fr="Créer mon Compte">Create My Account</span>
+                </button>
+            </form>
+
+            <!-- 登录提示 -->
+            <div class="signup-prompt">
+                <p>
+                    <span data-en="Already have an account?" data-fr="Vous avez déjà un compte?">Already have an account?</span>
+                    <a href="customer-login.html" data-en="Sign in here" data-fr="Connectez-vous ici">Sign in here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- 底部信息 -->
+        <div class="login-footer">
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <i class="fas fa-gift"></i>
+                    <h4 data-en="Welcome Bonus" data-fr="Bonus de Bienvenue">Welcome Bonus</h4>
+                    <p data-en="Get 500 points when you join" data-fr="Obtenez 500 points en vous inscrivant">Get 500 points when you join</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-percent"></i>
+                    <h4 data-en="Exclusive Discounts" data-fr="Remises Exclusives">Exclusive Discounts</h4>
+                    <p data-en="Members-only special offers" data-fr="Offres spéciales réservées aux membres">Members-only special offers</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-crown"></i>
+                    <h4 data-en="VIP Treatment" data-fr="Traitement VIP">VIP Treatment</h4>
+                    <p data-en="Priority reservations and service" data-fr="Réservations et service prioritaires">Priority reservations and service</p>
+                </div>
+            </div>
+            
+            <div class="trust-indicators">
+                <p data-en="Join 50,000+ food lovers across Canada" data-fr="Rejoignez plus de 50 000 amoureux de la cuisine au Canada">Join 50,000+ food lovers across Canada</p>
+                <div class="trust-badges">
+                    <span class="trust-badge">🔒 <span data-en="Secure" data-fr="Sécurisé">Secure</span></span>
+                    <span class="trust-badge">📧 <span data-en="No Spam" data-fr="Pas de Spam">No Spam</span></span>
+                    <span class="trust-badge">🍁 <span data-en="Canadian" data-fr="Canadien">Canadian</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="login.js"></script>
+    <script>
+        // 注册相关函数
+        function registerWithGoogle() {
+            alert('正在通过Google注册账户...');
+            setTimeout(() => {
+                const userData = {
+                    name: 'New User',
+                    email: 'newuser@gmail.com',
+                    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face',
+                    provider: 'google'
+                };
+                completeRegistration(userData);
+            }, 1500);
+        }
+
+        function registerWithFacebook() {
+            alert('正在通过Facebook注册账户...');
+            setTimeout(() => {
+                const userData = {
+                    name: 'New User',
+                    email: 'newuser@facebook.com',
+                    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612e04c?w=64&h=64&fit=crop&crop=face',
+                    provider: 'facebook'
+                };
+                completeRegistration(userData);
+            }, 1500);
+        }
+
+        function completeRegistration(userData) {
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            localStorage.setItem('userType', 'customer');
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            alert(`欢迎加入MapleTable，${userData.name}！您已获得500积分作为欢迎奖励。`);
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 500);
+        }
+
+        // 表单提交处理
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.getElementById('customerRegisterForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const firstName = document.getElementById('firstName').value;
+                    const lastName = document.getElementById('lastName').value;
+                    const email = document.getElementById('customerEmail').value;
+                    const phone = document.getElementById('phoneNumber').value;
+                    const password = document.getElementById('customerPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    const agreeTerms = document.getElementById('agreeTerms').checked;
+                    
+                    // 验证
+                    if (!firstName || !lastName || !email || !phone || !password) {
+                        alert('请填写所有必填字段');
+                        return;
+                    }
+                    
+                    if (password.length < 6) {
+                        alert('密码至少需要6个字符');
+                        return;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        alert('两次输入的密码不一致');
+                        return;
+                    }
+                    
+                    if (!agreeTerms) {
+                        alert('请同意服务条款和隐私政策');
+                        return;
+                    }
+                    
+                    // 创建用户数据
+                    const userData = {
+                        name: `${firstName} ${lastName}`,
+                        email: email,
+                        phone: phone,
+                        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face',
+                        provider: 'email'
+                    };
+                    
+                    completeRegistration(userData);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

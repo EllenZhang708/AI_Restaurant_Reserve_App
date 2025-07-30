@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Merchant Dashboard UI</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .test-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .success { border-left-color: #28a745; background: #d4edda; }
+        .error { border-left-color: #dc3545; background: #f8d7da; }
+        .warning { border-left-color: #ffc107; background: #fff3cd; }
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .nav-links {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .nav-link {
+            display: inline-block;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .primary-link {
+            background: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🏪 Merchant Dashboard UI Test</h1>
+        
+        <button class="test-btn" onclick="testCSSFiles()">Test CSS Files</button>
+        <button class="test-btn" onclick="testMerchantLogin()">Setup Merchant Login</button>
+        <button class="test-btn" onclick="openDashboard()">Open Dashboard</button>
+        
+        <div id="testResults" class="test-result">
+Ready to test merchant dashboard UI. Click buttons above to run tests.
+        </div>
+        
+        <div class="nav-links">
+            <a href="merchant-dashboard.html?restaurant=rest_001" class="nav-link primary-link">🏪 Open Merchant Dashboard</a>
+            <a href="index.html" class="nav-link">🏠 Main Page</a>
+            <a href="browser-test.html" class="nav-link">🧪 Browser Test</a>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const results = document.getElementById('testResults');
+            const timestamp = new Date().toLocaleTimeString();
+            results.textContent += `[${timestamp}] ${message}\n`;
+            
+            if (type === 'success') {
+                results.className = 'test-result success';
+            } else if (type === 'error') {
+                results.className = 'test-result error';
+            } else if (type === 'warning') {
+                results.className = 'test-result warning';
+            }
+            
+            results.scrollTop = results.scrollHeight;
+        }
+
+        function testCSSFiles() {
+            const results = document.getElementById('testResults');
+            results.textContent = '';
+            results.className = 'test-result';
+            
+            log('🎨 Testing CSS Files for Merchant Dashboard');
+            log('=' .repeat(40));
+            
+            const cssFiles = [
+                'styles.css',
+                'toolbar-styles.css', 
+                'merchant-dashboard.css'
+            ];
+            
+            let allLoaded = true;
+            
+            cssFiles.forEach(file => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = file;
+                
+                link.onload = () => {
+                    log(`✅ ${file}: Loaded successfully`);
+                };
+                
+                link.onerror = () => {
+                    log(`❌ ${file}: Failed to load`, 'error');
+                    allLoaded = false;
+                };
+                
+                document.head.appendChild(link);
+            });
+            
+            // Test Font Awesome
+            const fontAwesome = document.querySelector('link[href*="font-awesome"]');
+            if (fontAwesome) {
+                log('✅ Font Awesome: Already loaded');
+            } else {
+                const faLink = document.createElement('link');
+                faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+                faLink.rel = 'stylesheet';
+                faLink.onload = () => log('✅ Font Awesome: Loaded');
+                faLink.onerror = () => log('❌ Font Awesome: Failed to load', 'error');
+                document.head.appendChild(faLink);
+            }
+            
+            setTimeout(() => {
+                if (allLoaded) {
+                    log('\n🎉 All CSS files should be loaded!', 'success');
+                    log('The merchant dashboard should now have proper styling.');
+                } else {
+                    log('\n⚠️ Some CSS files failed to load', 'warning');
+                }
+            }, 2000);
+        }
+
+        function testMerchantLogin() {
+            log('\n👔 Setting up merchant login for dashboard access');
+            
+            // Setup merchant authentication data
+            const merchantData = {
+                id: 'merchant_001',
+                restaurantName: 'The Maple Leaf Restaurant',
+                restaurant: {
+                    id: 'rest_001',
+                    name: 'The Maple Leaf Restaurant',
+                    cuisine: 'Canadian Fine Dining',
+                    address: '123 Maple Street, Toronto, ON M5V 3A8',
+                    phone: '(416) 555-MAPLE'
+                },
+                email: 'manager@mapleleaf.ca',
+                setupTime: new Date().toISOString()
+            };
+            
+            try {
+                localStorage.setItem('merchantLogin', JSON.stringify(merchantData));
+                localStorage.setItem('merchantLoginData', JSON.stringify(merchantData));
+                localStorage.setItem('userType', 'merchant');
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                log('✅ Merchant login data configured');
+                log(`   Restaurant: ${merchantData.restaurant.name}`);
+                log(`   ID: ${merchantData.restaurant.id}`);
+                log('✅ You can now access the merchant dashboard');
+                
+            } catch (error) {
+                log(`❌ Failed to setup merchant login: ${error.message}`, 'error');
+            }
+        }
+
+        function openDashboard() {
+            log('\n🚀 Opening merchant dashboard...');
+            
+            // Check if merchant login is setup
+            const merchantData = localStorage.getItem('merchantLoginData');
+            if (!merchantData) {
+                log('⚠️ Merchant login not found. Setting up first...', 'warning');
+                testMerchantLogin();
+                setTimeout(() => {
+                    window.open('merchant-dashboard.html?restaurant=rest_001', '_blank');
+                    log('✅ Dashboard opened in new tab');
+                }, 1000);
+            } else {
+                window.open('merchant-dashboard.html?restaurant=rest_001', '_blank');
+                log('✅ Dashboard opened in new tab');
+            }
+        }
+
+        // Auto-run CSS test on load
+        setTimeout(() => {
+            log('🎨 Auto-testing CSS files...');
+            testCSSFiles();
+        }, 500);
+    </script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+/* 登录页面样式 */
+.login-body {
+    background: linear-gradient(135deg, #ff0000 0%, #dc2626 25%, #991b1b 50%, #7f1d1d 75%, #450a0a 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.login-body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="maple" patternUnits="userSpaceOnUse" width="100" height="100"><path d="M50 10l5 15h15l-12 9 5 15-13-9-13 9 5-15-12-9h15z" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23maple)"/></svg>') repeat;
+    pointer-events: none;
+    opacity: 0.1;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    z-index: 1;
+}
+
+/* 登录头部 */
+.login-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 10px 16px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.lang-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 8px 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    min-width: 50px;
+    backdrop-filter: blur(10px);
+}
+
+.lang-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 登录卡片 */
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 30px;
+}
+
+.merchant-card {
+    border-top: 4px solid #0066cc;
+}
+
+.customer-card {
+    border-top: 4px solid var(--canadian-red);
+}
+
+/* 品牌区域 */
+.login-brand {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.brand-logo {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 2px 8px rgba(255, 0, 0, 0.3));
+}
+
+.login-brand h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--canadian-red), var(--maple-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+}
+
+.login-brand h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 8px;
+}
+
+.login-brand p {
+    color: var(--medium-text);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* 社交登录 */
+.social-login-section {
+    margin-bottom: 20px;
+}
+
+.social-login-btn {
+    width: 100%;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--dark-text);
+}
+
+.social-login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.social-login-btn.google {
+    border-color: #db4437;
+}
+
+.social-login-btn.google:hover {
+    background: #db4437;
+    color: white;
+}
+
+.social-login-btn.facebook {
+    border-color: #4267B2;
+}
+
+.social-login-btn.facebook:hover {
+    background: #4267B2;
+    color: white;
+}
+
+.social-login-btn i {
+    font-size: 1.2rem;
+}
+
+/* 分隔线 */
+.divider {
+    position: relative;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.divider span {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0 20px;
+    color: var(--medium-text);
+    font-size: 0.9rem;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+}
+
+/* 表单样式 */
+.login-form {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.form-group label i {
+    color: var(--canadian-red);
+    width: 16px;
+}
+
+.form-group input {
+    width: 100%;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 1rem;
+    color: var(--dark-text);
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--canadian-red);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+.password-input {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--medium-text);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: var(--canadian-red);
+    background: rgba(255, 0, 0, 0.1);
+}
+
+/* 表单选项 */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--medium-text);
+}
+
+.checkbox-label input {
+    display: none;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.checkbox-label input:checked + .checkmark {
+    background: var(--canadian-red);
+    border-color: var(--canadian-red);
+}
+
+.checkbox-label input:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.forgot-link {
+    color: var(--canadian-red);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+    color: #dc2626;
+}
+
+/* 登录按钮 */
+.login-btn {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 24px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.customer-btn {
+    background: linear-gradient(45deg, var(--canadian-red), #dc2626);
+    color: white;
+}
+
+.customer-btn:hover {
+    background: linear-gradient(45deg, #dc2626, #b91c1c);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
+}
+
+.merchant-btn {
+    background: linear-gradient(45deg, #0066cc, #2563eb);
+    color: white;
+}
+
+.merchant-btn:hover {
+    background: linear-gradient(45deg, #2563eb, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 102, 204, 0.3);
+}
+
+/* 访客选项 */
+.guest-option {
+    margin-bottom: 20px;
+}
+
+.guest-btn {
+    width: 100%;
+    background: #f1f5f9;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 20px;
+    color: var(--medium-text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.guest-btn:hover {
+    background: #e2e8f0;
+    border-color: var(--canadian-red);
+    color: var(--canadian-red);
+    transform: translateY(-1px);
+}
+
+/* 快速操作 */
+.quick-actions {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.action-link {
+    flex: 1;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    text-decoration: none;
+    color: var(--medium-text);
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.action-link:hover {
+    background: white;
+    border-color: var(--canadian-red);
+    color: var(--canadian-red);
+    transform: translateY(-1px);
+}
+
+.action-link i {
+    font-size: 1.2rem;
+}
+
+/* 注册提示 */
+.signup-prompt {
+    text-align: center;
+    color: var(--medium-text);
+    font-size: 0.9rem;
+}
+
+.signup-prompt a {
+    color: var(--canadian-red);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.signup-prompt a:hover {
+    text-decoration: underline;
+}
+
+/* 底部信息 */
+.login-footer {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    padding: 30px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.features-grid, .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.feature-item, .benefit-item {
+    text-align: center;
+}
+
+.feature-item i, .benefit-item i {
+    font-size: 2rem;
+    color: var(--canadian-red);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.feature-item h4, .benefit-item h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 5px;
+}
+
+.feature-item p, .benefit-item p {
+    font-size: 0.8rem;
+    color: var(--medium-text);
+    line-height: 1.4;
+}
+
+/* 信任指标 */
+.trust-indicators {
+    text-align: center;
+}
+
+.trust-indicators p {
+    color: var(--medium-text);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.trust-badge {
+    background: #f1f5f9;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    color: var(--medium-text);
+    font-weight: 600;
+}
+
+/* 应用下载 */
+.app-download {
+    text-align: center;
+}
+
+.app-download p {
+    color: var(--medium-text);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.download-btn {
+    background: black;
+    color: white;
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.download-btn:hover {
+    background: #333;
+    transform: translateY(-1px);
+}
+
+.download-btn i {
+    font-size: 1.2rem;
+}
+
+.download-btn div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.download-btn small {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+.download-btn strong {
+    font-size: 0.9rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .login-body {
+        padding: 15px;
+    }
+    
+    .login-card {
+        padding: 30px 25px;
+    }
+    
+    .features-grid, .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .download-btn {
+        width: 200px;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .trust-badges {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-header {
+        margin-bottom: 20px;
+    }
+    
+    .login-card {
+        padding: 25px 20px;
+    }
+    
+    .brand-logo {
+        font-size: 2.5rem;
+    }
+    
+    .login-brand h1 {
+        font-size: 1.8rem;
+    }
+    
+    .login-brand h2 {
+        font-size: 1.3rem;
+    }
+}

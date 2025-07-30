@@ -17,7 +17,10 @@
                 <button class="back-btn" onclick="goBack()">
                     <i class="fas fa-arrow-left"></i>
                 </button>
-                <h1 data-en="My Reservations" data-fr="Mes Réservations">My Reservations</h1>
+                <div class="header-title">
+                    <h1 id="pageTitle" data-en="My Reservations" data-fr="Mes Réservations">My Reservations</h1>
+                    <p id="restaurantName" class="restaurant-subtitle" style="display: none;"></p>
+                </div>
                 <button class="lang-toggle" onclick="toggleLanguage()">
                     <span id="currentLang">EN</span>
                 </button>
@@ -221,6 +224,8 @@
         </button>
     </nav>
 
+    <script src="api-service.js"></script>
+    <script src="websocket-service.js"></script>
     <script src="app.js"></script>
     <script src="reservations.js"></script>
 </body>

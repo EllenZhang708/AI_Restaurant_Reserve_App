@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title data-en="Join MapleTable - Partner Registration" data-fr="Rejoindre MapleTable - Inscription Partenaire">Join MapleTable - Partner Registration</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="toolbar-styles.css">
+    <link rel="stylesheet" href="login-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#FF0000">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <!-- 返回按钮 -->
+        <header class="login-header">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                <span data-en="Back" data-fr="Retour">Back</span>
+            </button>
+            <button class="lang-toggle" onclick="toggleLanguage()">
+                <span id="currentLang">EN</span>
+            </button>
+        </header>
+
+        <!-- 注册卡片 -->
+        <div class="login-card merchant-card">
+            <!-- Logo 和标题 -->
+            <div class="login-brand">
+                <div class="brand-logo">🍁</div>
+                <h1>MapleTable</h1>
+                <h2 data-en="Join Our Partner Network" data-fr="Rejoignez Notre Réseau de Partenaires">Join Our Partner Network</h2>
+                <p data-en="List your restaurant and grow your business" data-fr="Inscrivez votre restaurant et développez votre entreprise">List your restaurant and grow your business</p>
+            </div>
+
+            <!-- 注册表单 -->
+            <form class="login-form" id="merchantRegisterForm">
+                <div class="form-group">
+                    <label data-en="Restaurant Name" data-fr="Nom du Restaurant">
+                        <i class="fas fa-utensils"></i>
+                        Restaurant Name
+                    </label>
+                    <input type="text" id="restaurantName" placeholder="Your Restaurant Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Owner/Manager Name" data-fr="Nom du Propriétaire/Gérant">
+                        <i class="fas fa-user-tie"></i>
+                        Owner/Manager Name
+                    </label>
+                    <input type="text" id="ownerName" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Business Email" data-fr="Email Professionnel">
+                        <i class="fas fa-envelope"></i>
+                        Business Email
+                    </label>
+                    <input type="email" id="businessEmail" placeholder="contact@restaurant.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Restaurant Phone" data-fr="Téléphone du Restaurant">
+                        <i class="fas fa-phone"></i>
+                        Restaurant Phone
+                    </label>
+                    <input type="tel" id="restaurantPhone" placeholder="(416) 555-0123" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Restaurant Address" data-fr="Adresse du Restaurant">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Restaurant Address
+                    </label>
+                    <input type="text" id="restaurantAddress" placeholder="123 Main St, Toronto, ON" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Cuisine Type" data-fr="Type de Cuisine">
+                        <i class="fas fa-pizza-slice"></i>
+                        Cuisine Type
+                    </label>
+                    <select id="cuisineType" required>
+                        <option value="">Select Cuisine Type</option>
+                        <option value="canadian">Canadian</option>
+                        <option value="french">French</option>
+                        <option value="italian">Italian</option>
+                        <option value="asian">Asian</option>
+                        <option value="seafood">Seafood</option>
+                        <option value="steakhouse">Steakhouse</option>
+                        <option value="fast-casual">Fast Casual</option>
+                        <option value="fine-dining">Fine Dining</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Number of Tables" data-fr="Nombre de Tables">
+                        <i class="fas fa-chair"></i>
+                        Number of Tables
+                    </label>
+                    <input type="number" id="tableCount" placeholder="20" min="1" max="200" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-en="Password" data-fr="Mot de Passe">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <div class="password-input">
+                        <input type="password" id="merchantPassword" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('merchantPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small class="password-hint" data-en="At least 6 characters" data-fr="Au moins 6 caractères">At least 6 characters</small>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <span class="checkmark"></span>
+                        <span data-en="I agree to the Partner Terms and Privacy Policy" data-fr="J'accepte les conditions partenaires et la politique de confidentialité">I agree to the Partner Terms and Privacy Policy</span>
+                    </label>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="receiveUpdates">
+                        <span class="checkmark"></span>
+                        <span data-en="Send me business tips and marketing updates" data-fr="M'envoyer des conseils d'affaires et des mises à jour marketing">Send me business tips and marketing updates</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="login-btn merchant-btn">
+                    <i class="fas fa-handshake"></i>
+                    <span data-en="Join MapleTable" data-fr="Rejoindre MapleTable">Join MapleTable</span>
+                </button>
+            </form>
+
+            <!-- 登录提示 -->
+            <div class="signup-prompt">
+                <p>
+                    <span data-en="Already a partner?" data-fr="Déjà partenaire?">Already a partner?</span>
+                    <a href="merchant-login.html" data-en="Sign in to dashboard" data-fr="Connectez-vous au tableau de bord">Sign in to dashboard</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- 底部信息 -->
+        <div class="login-footer">
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-chart-growth"></i>
+                    <h4 data-en="Increase Revenue" data-fr="Augmenter les Revenus">Increase Revenue</h4>
+                    <p data-en="Average 25% increase in bookings" data-fr="Augmentation moyenne de 25% des réservations">Average 25% increase in bookings</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-robot"></i>
+                    <h4 data-en="AI Management" data-fr="Gestion IA">AI Management</h4>
+                    <p data-en="Automated table assignments" data-fr="Attribution automatique des tables">Automated table assignments</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h4 data-en="Mobile First" data-fr="Mobile First">Mobile First</h4>
+                    <p data-en="Easy-to-use mobile dashboard" data-fr="Tableau de bord mobile facile à utiliser">Easy-to-use mobile dashboard</p>
+                </div>
+            </div>
+            
+            <div class="pricing-preview">
+                <h4 data-en="Simple Pricing" data-fr="Tarification Simple">Simple Pricing</h4>
+                <div class="pricing-info">
+                    <div class="price-tier">
+                        <span class="price">$49</span>
+                        <span class="period" data-en="/month" data-fr="/mois">/month</span>
+                        <span class="desc" data-en="Up to 50 tables" data-fr="Jusqu'à 50 tables">Up to 50 tables</span>
+                    </div>
+                    <div class="features-list">
+                        <span>✓ <span data-en="AI Table Management" data-fr="Gestion IA des Tables">AI Table Management</span></span>
+                        <span>✓ <span data-en="Real-time Analytics" data-fr="Analyses en Temps Réel">Real-time Analytics</span></span>
+                        <span>✓ <span data-en="Customer Support" data-fr="Support Client">Customer Support</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trust-indicators">
+                <p data-en="Trusted by 2000+ restaurants across Canada" data-fr="Approuvé par plus de 2000 restaurants au Canada">Trusted by 2000+ restaurants across Canada</p>
+                <div class="trust-badges">
+                    <span class="trust-badge">🛡️ <span data-en="Secure" data-fr="Sécurisé">Secure</span></span>
+                    <span class="trust-badge">📊 <span data-en="Analytics" data-fr="Analyses">Analytics</span></span>
+                    <span class="trust-badge">🇨🇦 <span data-en="Canadian" data-fr="Canadien">Canadian</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="login.js"></script>
+    <script>
+        // 商家注册相关函数
+        function completeMerchantRegistration(merchantData) {
+            localStorage.setItem('currentMerchant', JSON.stringify(merchantData));
+            localStorage.setItem('userType', 'merchant');
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            alert(`欢迎加入MapleTable合作伙伴计划，${merchantData.restaurantName}！我们的团队将在24小时内联系您完成设置。`);
+            
+            setTimeout(() => {
+                window.location.href = 'merchant-dashboard.html';
+            }, 500);
+        }
+
+        // 表单提交处理
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.getElementById('merchantRegisterForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const restaurantName = document.getElementById('restaurantName').value;
+                    const ownerName = document.getElementById('ownerName').value;
+                    const businessEmail = document.getElementById('businessEmail').value;
+                    const restaurantPhone = document.getElementById('restaurantPhone').value;
+                    const restaurantAddress = document.getElementById('restaurantAddress').value;
+                    const cuisineType = document.getElementById('cuisineType').value;
+                    const tableCount = document.getElementById('tableCount').value;
+                    const password = document.getElementById('merchantPassword').value;
+                    const agreeTerms = document.getElementById('agreeTerms').checked;
+                    
+                    // 验证
+                    if (!restaurantName || !ownerName || !businessEmail || !restaurantPhone || 
+                        !restaurantAddress || !cuisineType || !tableCount || !password) {
+                        alert('请填写所有必填字段');
+                        return;
+                    }
+                    
+                    if (password.length < 6) {
+                        alert('密码至少需要6个字符');
+                        return;
+                    }
+                    
+                    if (!agreeTerms) {
+                        alert('请同意合作伙伴条款和隐私政策');
+                        return;
+                    }
+                    
+                    // 创建商家数据
+                    const merchantData = {
+                        id: Date.now(), // 临时ID
+                        restaurantName: restaurantName,
+                        ownerName: ownerName,
+                        email: businessEmail,
+                        phone: restaurantPhone,
+                        address: restaurantAddress,
+                        cuisineType: cuisineType,
+                        tableCount: parseInt(tableCount),
+                        avatar: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=64&h=64&fit=crop',
+                        restaurant: {
+                            id: Date.now(),
+                            name: restaurantName,
+                            cuisine: cuisineType,
+                            address: restaurantAddress,
+                            phone: restaurantPhone
+                        },
+                        status: 'pending_approval'
+                    };
+                    
+                    completeMerchantRegistration(merchantData);
+                });
+            }
+        });
+        
+        // 添加表单验证样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .pricing-preview {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 20px;
+                margin: 20px 0;
+                text-align: center;
+            }
+            .pricing-preview h4 {
+                margin-bottom: 15px;
+                color: var(--dark-text);
+            }
+            .pricing-info {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            .price-tier {
+                display: flex;
+                align-items: baseline;
+                justify-content: center;
+                gap: 5px;
+            }
+            .price {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #0066cc;
+            }
+            .period {
+                font-size: 1rem;
+                color: var(--medium-text);
+            }
+            .desc {
+                font-size: 0.9rem;
+                color: var(--medium-text);
+                margin-left: 10px;
+            }
+            .features-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                font-size: 0.9rem;
+            }
+            .features-list span {
+                color: var(--medium-text);
+            }
+            select {
+                width: 100%;
+                background: #f8fafc;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 14px 16px;
+                font-size: 1rem;
+                color: var(--dark-text);
+                transition: all 0.3s ease;
+            }
+            select:focus {
+                outline: none;
+                border-color: var(--canadian-red);
+                background: white;
+                box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

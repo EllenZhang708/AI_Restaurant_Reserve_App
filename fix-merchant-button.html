@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Merchant Button - MapleTable</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .fix-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 500px;
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .success {
+            background: #d4fdf0;
+            color: #065f46;
+        }
+        .progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6b42c2 100%);
+            transform: translateY(-2px);
+        }
+        .steps {
+            text-align: left;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .step {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .step-icon.completed {
+            background: #10b981;
+            color: white;
+        }
+        .step-icon.current {
+            background: #3b82f6;
+            color: white;
+        }
+        .step-icon.pending {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="fix-container">
+        <h1>🔧 Fix Merchant Button</h1>
+        <p>Automatically fix the "For Business" button display issue</p>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-icon pending" id="step1">1</div>
+                <span>Clear merchant login data</span>
+            </div>
+            <div class="step">
+                <div class="step-icon pending" id="step2">2</div>
+                <span>Reset button state</span>
+            </div>
+            <div class="step">
+                <div class="step-icon pending" id="step3">3</div>
+                <span>Redirect to main page</span>
+            </div>
+        </div>
+        
+        <div id="status" class="status progress">
+            Click the button below to automatically fix the merchant button issue.
+        </div>
+        
+        <button class="button" onclick="autoFix()" id="fixButton">🚀 Auto Fix Now</button>
+        
+        <div style="margin-top: 30px;">
+            <a href="index.html" class="button" style="background: #6b7280;">🏠 Go to Main Page</a>
+            <a href="clear-merchant-login.html" class="button" style="background: #6b7280;">🔧 Manual Fix</a>
+        </div>
+    </div>
+
+    <script>
+        function updateStep(stepNumber, status) {
+            const stepIcon = document.getElementById(`step${stepNumber}`);
+            stepIcon.className = `step-icon ${status}`;
+            if (status === 'completed') {
+                stepIcon.textContent = '✓';
+            } else if (status === 'current') {
+                stepIcon.textContent = stepNumber;
+            }
+        }
+
+        function updateStatus(message, type = 'progress') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+        }
+
+        async function autoFix() {
+            const fixButton = document.getElementById('fixButton');
+            fixButton.disabled = true;
+            fixButton.textContent = '🔄 Fixing...';
+            
+            // Step 1: Clear merchant data
+            updateStep(1, 'current');
+            updateStatus('Step 1: Clearing merchant login data...');
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const keysToRemove = [
+                'merchantLogin',
+                'merchantLoginData',
+                'currentMerchant'
+            ];
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+            
+            // Clear merchant user type
+            if (localStorage.getItem('userType') === 'merchant') {
+                localStorage.removeItem('userType');
+                localStorage.removeItem('isLoggedIn');
+            }
+            
+            updateStep(1, 'completed');
+            
+            // Step 2: Reset button state
+            updateStep(2, 'current');
+            updateStatus('Step 2: Resetting button state...');
+            
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            // Force reset any cached states
+            localStorage.setItem('forceButtonReset', 'true');
+            
+            updateStep(2, 'completed');
+            
+            // Step 3: Redirect
+            updateStep(3, 'current');
+            updateStatus('Step 3: Redirecting to main page...', 'success');
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            updateStep(3, 'completed');
+            updateStatus('✅ Fix completed! Redirecting now...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        // Check current status on load
+        window.addEventListener('load', () => {
+            const merchantLogin = localStorage.getItem('merchantLogin');
+            const currentMerchant = localStorage.getItem('currentMerchant');
+            const userType = localStorage.getItem('userType');
+            
+            if (merchantLogin || currentMerchant || userType === 'merchant') {
+                updateStatus('⚠️ Found merchant login data that may cause button display issues. Click "Auto Fix Now" to resolve.', 'progress');
+            } else {
+                updateStatus('✅ No merchant login data found. Button should display correctly as "For Business".', 'success');
+                document.getElementById('fixButton').textContent = '🏠 Go to Main Page';
+                document.getElementById('fixButton').onclick = () => window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

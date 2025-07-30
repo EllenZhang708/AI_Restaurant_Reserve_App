@@ -3,531 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title data-en="Restaurant Dashboard - MapleTable" data-fr="Tableau de Bord Restaurant - MapleTable">Restaurant Dashboard - MapleTable</title>
+    <title>Restaurant Dashboard - MapleTable</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="toolbar-styles.css">
+    <link rel="stylesheet" href="button-fix.css">
+    <link rel="stylesheet" href="merchant-ui-fix.css">
     <link rel="stylesheet" href="merchant-dashboard.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <meta name="theme-color" content="#FF0000">
+    <meta name="theme-color" content="#0066cc">
 </head>
 <body>
-    <div class="merchant-dashboard-app">
-        <!-- 侧边栏 -->
-        <aside class="dashboard-sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-section">
-                    <span class="logo">🍁</span>
-                    <div class="logo-text">
-                        <h2>MapleTable</h2>
-                        <span data-en="Business" data-fr="Affaires">Business</span>
-                    </div>
-                </div>
-                <button class="sidebar-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-
-            <div class="restaurant-info">
-                <div class="restaurant-avatar">
-                    <i class="fas fa-utensils"></i>
-                </div>
-                <div class="restaurant-details">
-                    <h3 id="restaurantName">The CN Tower Restaurant</h3>
-                    <p id="restaurantType">Canadian Fine Dining</p>
-                    <span class="status-badge active" data-en="Active" data-fr="Actif">Active</span>
-                </div>
-            </div>
-
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item active" data-section="overview">
-                        <a href="#" onclick="showSection('overview')">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span data-en="Overview" data-fr="Aperçu">Overview</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-section="bookings">
-                        <a href="#" onclick="showSection('bookings')">
-                            <i class="fas fa-calendar-check"></i>
-                            <span data-en="Bookings" data-fr="Réservations">Bookings</span>
-                            <span class="notification-badge" id="pendingBookings">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-section="tables">
-                        <a href="#" onclick="showSection('tables')">
-                            <i class="fas fa-th-large"></i>
-                            <span data-en="Table Layout" data-fr="Plan des Tables">Table Layout</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-section="menu">
-                        <a href="#" onclick="showSection('menu')">
-                            <i class="fas fa-book-open"></i>
-                            <span data-en="Menu Management" data-fr="Gestion du Menu">Menu Management</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-section="analytics">
-                        <a href="#" onclick="showSection('analytics')">
-                            <i class="fas fa-chart-bar"></i>
-                            <span data-en="Analytics" data-fr="Analyses">Analytics</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-section="promotion">
-                        <a href="#" onclick="showSection('promotion')">
-                            <i class="fas fa-bullhorn"></i>
-                            <span data-en="Promotions" data-fr="Promotions">Promotions</span>
-                            <span class="new-badge" data-en="NEW" data-fr="NOUVEAU">NEW</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-section="reviews">
-                        <a href="#" onclick="showSection('reviews')">
-                            <i class="fas fa-star"></i>
-                            <span data-en="Reviews" data-fr="Avis">Reviews</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-section="settings">
-                        <a href="#" onclick="showSection('settings')">
-                            <i class="fas fa-cog"></i>
-                            <span data-en="Settings" data-fr="Paramètres">Settings</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="sidebar-footer">
-                <button class="upgrade-btn" onclick="showUpgradeModal()">
-                    <i class="fas fa-crown"></i>
-                    <span data-en="Upgrade to Pro" data-fr="Passer au Pro">Upgrade to Pro</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- 主内容区域 -->
-        <main class="dashboard-main">
-            <!-- 头部栏 -->
-            <header class="dashboard-header">
+    <div class="dashboard-app">
+        <!-- Top Navigation Bar -->
+        <header class="dashboard-header">
+            <div class="header-content">
                 <div class="header-left">
-                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
-                        <i class="fas fa-bars"></i>
+                    <button class="back-btn" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i>
                     </button>
-                    <div class="breadcrumb">
-                        <span data-en="Dashboard" data-fr="Tableau de Bord">Dashboard</span>
-                        <i class="fas fa-chevron-right"></i>
-                        <span id="currentSection" data-en="Overview" data-fr="Aperçu">Overview</span>
+                    <div class="restaurant-info">
+                        <h1 id="restaurantName">Restaurant Management Dashboard</h1>
+                        <p id="restaurantDetails">Loading...</p>
                     </div>
                 </div>
-
                 <div class="header-right">
-                    <div class="weather-widget">
-                        <i class="fas fa-snowflake"></i>
-                        <span>-8°C Toronto</span>
+                    <div class="status-indicator">
+                        <span class="status-dot online"></span>
+                        <span>Open</span>
                     </div>
-                    
-                    <button class="notification-btn" onclick="toggleNotifications()">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-count">5</span>
-                    </button>
-
-                    <button class="lang-toggle" onclick="toggleLanguage()">
-                        <span id="currentLang">EN</span>
-                    </button>
-
-                    <div class="user-menu">
-                        <button class="user-btn" onclick="toggleUserMenu()">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="User">
-                            <span>John Smith</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="user-dropdown" id="userDropdown">
-                            <a href="#" data-en="Profile" data-fr="Profil">Profile</a>
-                            <a href="#" data-en="Account Settings" data-fr="Paramètres du Compte">Account Settings</a>
-                            <a href="#" data-en="Help Center" data-fr="Centre d'Aide">Help Center</a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" onclick="logout()" data-en="Sign Out" data-fr="Se Déconnecter">Sign Out</a>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- 内容区域 -->
-            <div class="dashboard-content">
-                <!-- 概览页面 -->
-                <section id="overviewSection" class="content-section active">
-                    <div class="section-header">
-                        <h1 data-en="Restaurant Overview" data-fr="Aperçu du Restaurant">Restaurant Overview</h1>
-                        <div class="header-actions">
-                            <button class="btn btn-secondary" onclick="exportReport()">
-                                <i class="fas fa-download"></i>
-                                <span data-en="Export Report" data-fr="Exporter le Rapport">Export Report</span>
-                            </button>
-                            <button class="btn btn-primary" onclick="showQuickBooking()">
-                                <i class="fas fa-plus"></i>
-                                <span data-en="New Booking" data-fr="Nouvelle Réservation">New Booking</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 统计卡片 -->
-                    <div class="stats-grid">
-                        <div class="stat-card revenue">
-                            <div class="stat-icon">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>$24,589</h3>
-                                <p data-en="Monthly Revenue" data-fr="Revenus Mensuels">Monthly Revenue</p>
-                                <span class="trend positive">+12% <i class="fas fa-arrow-up"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="stat-card bookings">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>147</h3>
-                                <p data-en="This Week's Bookings" data-fr="Réservations de cette Semaine">This Week's Bookings</p>
-                                <span class="trend positive">+8% <i class="fas fa-arrow-up"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="stat-card capacity">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>85%</h3>
-                                <p data-en="Average Occupancy" data-fr="Occupation Moyenne">Average Occupancy</p>
-                                <span class="trend neutral">+2% <i class="fas fa-minus"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="stat-card rating">
-                            <div class="stat-icon">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>4.8</h3>
-                                <p data-en="Customer Rating" data-fr="Note Client">Customer Rating</p>
-                                <span class="trend positive">+0.2 <i class="fas fa-arrow-up"></i></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 今日概览 -->
-                    <div class="overview-grid">
-                        <div class="overview-card today-bookings">
-                            <div class="card-header">
-                                <h3 data-en="Today's Bookings" data-fr="Réservations d'Aujourd'hui">Today's Bookings</h3>
-                                <span class="date-display" id="todayDate">March 15, 2024</span>
-                            </div>
-                            <div class="booking-timeline" id="todayTimeline">
-                                <!-- 今日预订时间线将由JavaScript生成 -->
-                            </div>
-                        </div>
-
-                        <div class="overview-card table-status">
-                            <div class="card-header">
-                                <h3 data-en="Table Status" data-fr="État des Tables">Table Status</h3>
-                                <div class="table-stats">
-                                    <span class="occupied">12 <small data-en="Occupied" data-fr="Occupées">Occupied</small></span>
-                                    <span class="available">8 <small data-en="Available" data-fr="Disponibles">Available</small></span>
-                                </div>
-                            </div>
-                            <div class="table-layout-preview" id="tablePreview">
-                                <!-- 桌位布局预览将由JavaScript生成 -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 最近活动 -->
-                    <div class="recent-activity">
-                        <div class="card-header">
-                            <h3 data-en="Recent Activity" data-fr="Activité Récente">Recent Activity</h3>
-                            <a href="#" data-en="View All" data-fr="Voir Tout">View All</a>
-                        </div>
-                        <div class="activity-list" id="activityList">
-                            <!-- 活动列表将由JavaScript生成 -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 预订管理页面 -->
-                <section id="bookingsSection" class="content-section">
-                    <div class="section-header">
-                        <h1 data-en="Booking Management" data-fr="Gestion des Réservations">Booking Management</h1>
-                        <div class="header-actions">
-                            <div class="date-filter">
-                                <input type="date" id="bookingDateFilter" onchange="filterBookings()">
-                            </div>
-                            <button class="btn btn-secondary" onclick="exportBookings()">
-                                <i class="fas fa-download"></i>
-                                <span data-en="Export" data-fr="Exporter">Export</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 预订筛选器 -->
-                    <div class="booking-filters">
-                        <div class="filter-tabs">
-                            <button class="filter-tab active" data-filter="all" onclick="filterBookings('all')">
-                                <span data-en="All Bookings" data-fr="Toutes Réservations">All Bookings</span>
-                                <span class="count">24</span>
-                            </button>
-                            <button class="filter-tab" data-filter="pending" onclick="filterBookings('pending')">
-                                <span data-en="Pending" data-fr="En Attente">Pending</span>
-                                <span class="count">3</span>
-                            </button>
-                            <button class="filter-tab" data-filter="confirmed" onclick="filterBookings('confirmed')">
-                                <span data-en="Confirmed" data-fr="Confirmées">Confirmed</span>
-                                <span class="count">18</span>
-                            </button>
-                            <button class="filter-tab" data-filter="completed" onclick="filterBookings('completed')">
-                                <span data-en="Completed" data-fr="Terminées">Completed</span>
-                                <span class="count">3</span>
-                            </button>
-                        </div>
-
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" placeholder="Search bookings..." data-en="Search bookings..." data-fr="Rechercher réservations..." oninput="searchBookings(this.value)">
-                        </div>
-                    </div>
-
-                    <!-- 预订列表 -->
-                    <div class="bookings-table">
-                        <div class="table-header">
-                            <div class="col-customer" data-en="Customer" data-fr="Client">Customer</div>
-                            <div class="col-datetime" data-en="Date & Time" data-fr="Date & Heure">Date & Time</div>
-                            <div class="col-party" data-en="Party Size" data-fr="Nombre">Party Size</div>
-                            <div class="col-table" data-en="Table" data-fr="Table">Table</div>
-                            <div class="col-status" data-en="Status" data-fr="Statut">Status</div>
-                            <div class="col-actions" data-en="Actions" data-fr="Actions">Actions</div>
-                        </div>
-                        <div class="table-body" id="bookingsTableBody">
-                            <!-- 预订记录将由JavaScript生成 -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 桌位管理页面 -->
-                <section id="tablesSection" class="content-section">
-                    <div class="section-header">
-                        <h1 data-en="Table Layout Management" data-fr="Gestion de l'Aménagement des Tables">Table Layout Management</h1>
-                        <div class="header-actions">
-                            <button class="btn btn-secondary" onclick="resetLayout()">
-                                <i class="fas fa-undo"></i>
-                                <span data-en="Reset Layout" data-fr="Réinitialiser">Reset Layout</span>
-                            </button>
-                            <button class="btn btn-primary" onclick="saveLayout()">
-                                <i class="fas fa-save"></i>
-                                <span data-en="Save Layout" data-fr="Sauvegarder">Save Layout</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="table-management-container">
-                        <!-- 桌位工具栏 -->
-                        <div class="table-toolbar">
-                            <div class="toolbar-section">
-                                <h3 data-en="Add Tables" data-fr="Ajouter des Tables">Add Tables</h3>
-                                <div class="table-types">
-                                    <button class="table-type-btn" onclick="addTable('round-2')" title="2-person round table">
-                                        <div class="table-icon round">2</div>
-                                        <span>Round 2</span>
-                                    </button>
-                                    <button class="table-type-btn" onclick="addTable('round-4')" title="4-person round table">
-                                        <div class="table-icon round">4</div>
-                                        <span>Round 4</span>
-                                    </button>
-                                    <button class="table-type-btn" onclick="addTable('square-4')" title="4-person square table">
-                                        <div class="table-icon square">4</div>
-                                        <span>Square 4</span>
-                                    </button>
-                                    <button class="table-type-btn" onclick="addTable('rect-6')" title="6-person rectangular table">
-                                        <div class="table-icon rectangle">6</div>
-                                        <span>Rect 6</span>
-                                    </button>
-                                    <button class="table-type-btn" onclick="addTable('rect-8')" title="8-person rectangular table">
-                                        <div class="table-icon rectangle">8</div>
-                                        <span>Rect 8</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="toolbar-section">
-                                <h3 data-en="Add Features" data-fr="Ajouter des Éléments">Add Features</h3>
-                                <div class="feature-types">
-                                    <button class="feature-btn" onclick="addFeature('bar')" title="Bar Counter">
-                                        <i class="fas fa-wine-glass"></i>
-                                        <span data-en="Bar" data-fr="Bar">Bar</span>
-                                    </button>
-                                    <button class="feature-btn" onclick="addFeature('kitchen')" title="Kitchen">
-                                        <i class="fas fa-utensils"></i>
-                                        <span data-en="Kitchen" data-fr="Cuisine">Kitchen</span>
-                                    </button>
-                                    <button class="feature-btn" onclick="addFeature('entrance')" title="Entrance">
-                                        <i class="fas fa-door-open"></i>
-                                        <span data-en="Entrance" data-fr="Entrée">Entrance</span>
-                                    </button>
-                                    <button class="feature-btn" onclick="addFeature('window')" title="Window">
-                                        <i class="fas fa-window-maximize"></i>
-                                        <span data-en="Window" data-fr="Fenêtre">Window</span>
-                                    </button>
-                                    <button class="feature-btn" onclick="addFeature('heater')" title="Heater (Winter)">
-                                        <i class="fas fa-fire"></i>
-                                        <span data-en="Heater" data-fr="Chauffage">Heater</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="toolbar-section">
-                                <h3 data-en="Table Info" data-fr="Info Table">Table Info</h3>
-                                <div class="selected-table-info" id="selectedTableInfo">
-                                    <p data-en="Select a table to edit" data-fr="Sélectionnez une table pour modifier">Select a table to edit</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 桌位布局画布 -->
-                        <div class="table-layout-canvas">
-                            <div class="canvas-header">
-                                <div class="canvas-title">
-                                    <h3 data-en="Restaurant Floor Plan" data-fr="Plan du Restaurant">Restaurant Floor Plan</h3>
-                                    <span class="canvas-size">40m × 30m</span>
-                                </div>
-                                <div class="canvas-tools">
-                                    <button class="tool-btn" onclick="toggleGrid()" title="Toggle Grid">
-                                        <i class="fas fa-th"></i>
-                                    </button>
-                                    <button class="tool-btn" onclick="zoomIn()" title="Zoom In">
-                                        <i class="fas fa-search-plus"></i>
-                                    </button>
-                                    <button class="tool-btn" onclick="zoomOut()" title="Zoom Out">
-                                        <i class="fas fa-search-minus"></i>
-                                    </button>
-                                    <span class="zoom-level">100%</span>
-                                </div>
-                            </div>
-                            
-                            <div class="canvas-container" id="canvasContainer">
-                                <div class="table-canvas" id="tableCanvas">
-                                    <!-- 桌位元素将由JavaScript动态生成 -->
-                                </div>
-                                <div class="canvas-grid" id="canvasGrid"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 其他页面占位 -->
-                <section id="menuSection" class="content-section">
-                    <div class="section-header">
-                        <h1 data-en="Menu Management" data-fr="Gestion du Menu">Menu Management</h1>
-                    </div>
-                    <div class="coming-soon">
-                        <i class="fas fa-utensils"></i>
-                        <h2 data-en="Coming Soon" data-fr="Bientôt Disponible">Coming Soon</h2>
-                        <p data-en="Menu management features will be available in the next update." data-fr="Les fonctionnalités de gestion du menu seront disponibles dans la prochaine mise à jour.">Menu management features will be available in the next update.</p>
-                    </div>
-                </section>
-
-                <section id="analyticsSection" class="content-section">
-                    <div class="section-header">
-                        <h1 data-en="Analytics & Reports" data-fr="Analyses & Rapports">Analytics & Reports</h1>
-                    </div>
-                    <div class="coming-soon">
-                        <i class="fas fa-chart-bar"></i>
-                        <h2 data-en="Coming Soon" data-fr="Bientôt Disponible">Coming Soon</h2>
-                        <p data-en="Advanced analytics and reporting features coming soon." data-fr="Fonctionnalités d'analyse et de rapport avancées bientôt disponibles.">Advanced analytics and reporting features coming soon.</p>
-                    </div>
-                </section>
-
-                <section id="promotionSection" class="content-section">
-                    <div class="section-header">
-                        <h1 data-en="Promotions & Marketing" data-fr="Promotions & Marketing">Promotions & Marketing</h1>
-                    </div>
-                    <div class="coming-soon">
-                        <i class="fas fa-bullhorn"></i>
-                        <h2 data-en="Coming Soon" data-fr="Bientôt Disponible">Coming Soon</h2>
-                        <p data-en="Promotional tools and marketing features coming soon." data-fr="Outils promotionnels et fonctionnalités marketing bientôt disponibles.">Promotional tools and marketing features coming soon.</p>
-                    </div>
-                </section>
-
-                <section id="reviewsSection" class="content-section">
-                    <div class="section-header">
-                        <h1 data-en="Customer Reviews" data-fr="Avis Clients">Customer Reviews</h1>
-                    </div>
-                    <div class="coming-soon">
-                        <i class="fas fa-star"></i>
-                        <h2 data-en="Coming Soon" data-fr="Bientôt Disponible">Coming Soon</h2>
-                        <p data-en="Review management system coming soon." data-fr="Système de gestion des avis bientôt disponible.">Review management system coming soon.</p>
-                    </div>
-                </section>
-
-                <section id="settingsSection" class="content-section">
-                    <div class="section-header">
-                        <h1 data-en="Restaurant Settings" data-fr="Paramètres du Restaurant">Restaurant Settings</h1>
-                    </div>
-                    <div class="coming-soon">
+                    <button class="settings-btn" onclick="showSettings()">
                         <i class="fas fa-cog"></i>
-                        <h2 data-en="Coming Soon" data-fr="Bientôt Disponible">Coming Soon</h2>
-                        <p data-en="Restaurant settings and configuration coming soon." data-fr="Paramètres et configuration du restaurant bientôt disponibles.">Restaurant settings and configuration coming soon.</p>
-                    </div>
-                </section>
-            </div>
-        </main>
-
-        <!-- 通知面板 -->
-        <div class="notification-panel" id="notificationPanel">
-            <div class="panel-header">
-                <h3 data-en="Notifications" data-fr="Notifications">Notifications</h3>
-                <button class="close-panel" onclick="toggleNotifications()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="notification-list" id="notificationList">
-                <!-- 通知列表将由JavaScript生成 -->
-            </div>
-        </div>
-
-        <!-- 模态框 -->
-        <div id="upgradeModal" class="modal">
-            <div class="modal-content upgrade-modal">
-                <div class="modal-header">
-                    <h2 data-en="Upgrade to MapleTable Pro" data-fr="Passer à MapleTable Pro">Upgrade to MapleTable Pro</h2>
-                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <div class="upgrade-features">
-                        <div class="feature-item">
+            </div>
+        </header>
+
+        <!-- Statistics Overview Cards -->
+        <section class="stats-overview">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon reservations">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalReservations">0</div>
+                        <div class="stat-label">Today's Reservations</div>
+                        <div class="stat-change positive" id="reservationChange">+12%</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon tables">
+                        <i class="fas fa-chair"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="occupiedTables">0/12</div>
+                        <div class="stat-label">Table Occupancy</div>
+                        <div class="stat-change" id="occupancyRate">67%</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="todayRevenue">$0</div>
+                        <div class="stat-label">Today's Revenue</div>
+                        <div class="stat-change positive" id="revenueChange">+8.3%</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon rating">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="avgRating">4.8</div>
+                        <div class="stat-label">Average Rating</div>
+                        <div class="stat-change positive" id="ratingChange">+0.2</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主要功能区域 -->
+        <section class="main-content">
+            <div class="content-grid">
+                <!-- Real-time Reservation Management -->
+                <div class="content-panel reservations-panel">
+                    <div class="panel-header">
+                        <h3>
+                            <i class="fas fa-calendar-alt"></i>
+                            Real-time Reservation Management
+                            <span class="live-indicator">LIVE</span>
+                        </h3>
+                        <div class="panel-actions">
+                            <button class="refresh-btn" onclick="refreshReservations()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="filter-btn" onclick="showReservationFilters()">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="reservations-list" id="reservationsList">
+                        <!-- Dynamically load reservation data -->
+                    </div>
+                </div>
+
+                <!-- AI Table Allocation Display -->
+                <div class="content-panel table-assignment-panel">
+                    <div class="panel-header">
+                        <h3>
+                            <i class="fas fa-brain"></i>
+                            AI Smart Table Allocation
+                        </h3>
+                        <div class="ai-status">
+                            <span class="ai-indicator active">AI Enabled</span>
+                        </div>
+                    </div>
+                    <div class="table-layout-container">
+                        <div class="table-layout" id="tableLayout">
+                            <!-- Dynamically display table layout and AI allocation results -->
+                        </div>
+                        <div class="ai-recommendations" id="aiRecommendations">
+                            <!-- AI recommendations and analysis -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Status Management -->
+                <div class="content-panel tables-panel">
+                    <div class="panel-header">
+                        <h3>
+                            <i class="fas fa-table"></i>
+                            Table Status Management
+                        </h3>
+                        <button class="add-table-btn" onclick="addNewTable()">
+                            <i class="fas fa-plus"></i>
+                            Add Table
+                        </button>
+                    </div>
+                    <div class="tables-grid" id="tablesGrid">
+                        <!-- Dynamically display table status -->
+                    </div>
+                </div>
+
+                <!-- Business Analytics -->
+                <div class="content-panel analytics-panel">
+                    <div class="panel-header">
+                        <h3>
                             <i class="fas fa-chart-line"></i>
-                            <h4 data-en="Advanced Analytics" data-fr="Analyses Avancées">Advanced Analytics</h4>
-                            <p data-en="Detailed insights and reports" data-fr="Informations et rapports détaillés">Detailed insights and reports</p>
+                            Business Analytics
+                        </h3>
+                        <select class="time-range-selector" onchange="updateAnalytics(this.value)">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                    <div class="analytics-content">
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
                         </div>
-                        <div class="feature-item">
-                            <i class="fas fa-bullhorn"></i>
-                            <h4 data-en="Premium Advertising" data-fr="Publicité Premium">Premium Advertising</h4>
-                            <p data-en="Featured placement in search results" data-fr="Placement en vedette dans les résultats de recherche">Featured placement in search results</p>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-headset"></i>
-                            <h4 data-en="Priority Support" data-fr="Support Prioritaire">Priority Support</h4>
-                            <p data-en="24/7 dedicated support team" data-fr="Équipe de support dédiée 24/7">24/7 dedicated support team</p>
+                        <div class="analytics-insights" id="analyticsInsights">
+                            <!-- Analytics Insights -->
                         </div>
                     </div>
-                    <div class="pricing">
-                        <div class="price">$99<span>/month</span></div>
-                        <p data-en="30-day free trial" data-fr="Essai gratuit de 30 jours">30-day free trial</p>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()" data-en="Maybe Later" data-fr="Peut-être Plus Tard">Maybe Later</button>
-                    <button class="btn btn-primary" onclick="startTrial()" data-en="Start Free Trial" data-fr="Commencer l'Essai Gratuit">Start Free Trial</button>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <script src="app.js"></script>
+    <script src="ai-table-allocation.js"></script>
+    <script src="enhanced-table-ai.js"></script>
+    <script src="ai-sync-bridge.js"></script>
+    <script src="debug-data-sync.js"></script>
+    <script src="debug-booking-sync.js"></script>
+    <script src="force-booking-sync.js"></script>
     <script src="merchant-dashboard.js"></script>
 </body>
 </html>

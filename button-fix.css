@@ -1,0 +1,181 @@
+/* 确保链接按钮看起来像按钮 */
+a.btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    gap: 8px !important;
+}
+
+a.btn:hover {
+    text-decoration: none !important;
+}
+
+/* 主要按钮样式 */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.2) !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6b42c2 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3) !important;
+    color: white !important;
+}
+
+/* 次要按钮样式 */
+.btn-secondary {
+    background: #f7fafc !important;
+    color: #4a5568 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+}
+
+.btn-secondary:hover {
+    background: #edf2f7 !important;
+    border-color: #cbd5e0 !important;
+    color: #2d3748 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* 餐厅卡片按钮修复 */
+.restaurant-card .restaurant-actions {
+    display: flex !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+}
+
+.restaurant-card .btn {
+    flex: 1 !important;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+    border-radius: 6px !important;
+}
+
+/* 模态框按钮修复 */
+.modal-actions {
+    display: flex !important;
+    gap: 12px !important;
+    margin-top: 20px !important;
+}
+
+.modal-actions .btn {
+    flex: 1 !important;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+}
+
+/* 确保按钮在所有容器中都正确显示 */
+.btn i {
+    font-size: 14px !important;
+}
+
+/* 小按钮变体 */
+.btn-sm {
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+    border-radius: 6px !important;
+}
+
+/* 大按钮变体 */
+.btn-lg {
+    padding: 16px 32px !important;
+    font-size: 16px !important;
+    border-radius: 10px !important;
+}
+
+/* 禁用状态 */
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+.btn:disabled:hover,
+.btn.disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* 图标按钮 */
+.btn-icon {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+}
+
+/* 成功/确认按钮 */
+.btn-success {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
+    color: white !important;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%) !important;
+    color: white !important;
+}
+
+/* 危险/删除按钮 */
+.btn-danger {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
+    color: white !important;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%) !important;
+    color: white !important;
+}
+
+/* 警告按钮 */
+.btn-warning {
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+    color: white !important;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%) !important;
+    color: white !important;
+}
+
+/* 信息按钮 */
+.btn-info {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+    color: white !important;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%) !important;
+    color: white !important;
+}
+
+/* 链接样式按钮 */
+.btn-link {
+    background: none !important;
+    color: #667eea !important;
+    border: none !important;
+    padding: 8px 0 !important;
+    text-decoration: underline !important;
+}
+
+.btn-link:hover {
+    color: #5a6fd8 !important;
+    background: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+}

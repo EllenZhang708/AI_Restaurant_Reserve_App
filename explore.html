@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title data-en="Explore - MapleTable" data-fr="Explorer - MapleTable">Explore - MapleTable</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="toolbar-styles.css">
+    <link rel="stylesheet" href="explore.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#FF0000">
+</head>
+<body>
+    <div class="explore-app">
+        <!-- 头部导航 -->
+        <header class="explore-header">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 data-en="Explore Canada" data-fr="Explorer le Canada">Explore Canada</h1>
+                <div class="header-actions">
+                    <button class="filter-btn" onclick="toggleFilters()">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <button class="map-btn" onclick="toggleMapView()">
+                        <i class="fas fa-map"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 探索筛选器 -->
+        <section class="explore-filters" id="exploreFilters">
+            <div class="filter-scroll">
+                <button class="filter-chip active" data-type="all" onclick="filterExplore('all')">
+                    <i class="fas fa-globe-americas"></i>
+                    <span data-en="All" data-fr="Tout">All</span>
+                </button>
+                <button class="filter-chip" data-type="trending" onclick="filterExplore('trending')">
+                    <i class="fas fa-fire"></i>
+                    <span data-en="Trending" data-fr="Tendances">Trending</span>
+                </button>
+                <button class="filter-chip" data-type="new" onclick="filterExplore('new')">
+                    <i class="fas fa-sparkles"></i>
+                    <span data-en="New" data-fr="Nouveau">New</span>
+                </button>
+                <button class="filter-chip" data-type="awards" onclick="filterExplore('awards')">
+                    <i class="fas fa-award"></i>
+                    <span data-en="Award Winners" data-fr="Gagnants">Award Winners</span>
+                </button>
+                <button class="filter-chip" data-type="local" onclick="filterExplore('local')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span data-en="Local Gems" data-fr="Pépites Locales">Local Gems</span>
+                </button>
+                <button class="filter-chip" data-type="premium" onclick="filterExplore('premium')">
+                    <i class="fas fa-crown"></i>
+                    <span data-en="Premium" data-fr="Premium">Premium</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 特色推荐 -->
+        <section class="featured-section">
+            <div class="section-header">
+                <h2 data-en="Featured This Week" data-fr="En Vedette Cette Semaine">Featured This Week</h2>
+                <button class="see-all-btn" onclick="showAllFeatured()">
+                    <span data-en="See All" data-fr="Voir Tout">See All</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="featured-carousel" id="featuredCarousel">
+                <!-- 动态内容 -->
+            </div>
+        </section>
+
+        <!-- 城市探索 -->
+        <section class="cities-section">
+            <div class="section-header">
+                <h2 data-en="Explore by City" data-fr="Explorer par Ville">Explore by City</h2>
+            </div>
+            
+            <div class="cities-grid" id="citiesGrid">
+                <!-- 动态内容 -->
+            </div>
+        </section>
+
+        <!-- 美食类型探索 -->
+        <section class="cuisines-section">
+            <div class="section-header">
+                <h2 data-en="Discover Cuisines" data-fr="Découvrir les Cuisines">Discover Cuisines</h2>
+            </div>
+            
+            <div class="cuisines-grid" id="cuisinesGrid">
+                <!-- 动态内容 -->
+            </div>
+        </section>
+
+        <!-- 特殊体验 -->
+        <section class="experiences-section">
+            <div class="section-header">
+                <h2 data-en="Unique Experiences" data-fr="Expériences Uniques">Unique Experiences</h2>
+            </div>
+            
+            <div class="experiences-list" id="experiencesList">
+                <!-- 动态内容 -->
+            </div>
+        </section>
+
+        <!-- 地图视图 -->
+        <div class="map-overlay" id="mapOverlay" style="display: none;">
+            <div class="map-header">
+                <h3 data-en="Restaurant Map" data-fr="Carte des Restaurants">Restaurant Map</h3>
+                <button class="close-map" onclick="toggleMapView()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="map-container" id="mapContainer">
+                <div class="map-placeholder">
+                    <i class="fas fa-map"></i>
+                    <p data-en="Interactive map coming soon" data-fr="Carte interactive bientôt disponible">Interactive map coming soon</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <button class="nav-item" data-page="home" onclick="switchTab('home')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-home"></i>
+                </div>
+                <span class="nav-label" data-en="Home" data-fr="Accueil">Home</span>
+            </button>
+            
+            <button class="nav-item active" data-page="explore" onclick="switchTab('explore')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <span class="nav-label" data-en="Explore" data-fr="Explorer">Explore</span>
+            </button>
+            
+            <button class="nav-item book-center" onclick="quickBook()">
+                <div class="book-icon-wrapper">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <span class="nav-label" data-en="Book" data-fr="Réserver">Book</span>
+            </button>
+            
+            <button class="nav-item" data-page="reservations" onclick="switchTab('reservations')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="nav-notification-dot reservation-dot" id="reservationDot">2</span>
+                </div>
+                <span class="nav-label" data-en="Bookings" data-fr="Réservations">Bookings</span>
+            </button>
+            
+            <button class="nav-item" data-page="profile" onclick="switchTab('profile')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <span class="nav-label" data-en="Profile" data-fr="Profil">Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="explore.js"></script>
+</body>
+</html>

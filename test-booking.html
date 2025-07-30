@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Booking System</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success { border-left-color: #28a745; }
+        .error { border-left-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Booking System Test</h1>
+    
+    <div class="test-card">
+        <h3>Test 1: Restaurant Data Storage</h3>
+        <button class="test-button" onclick="testRestaurantStorage()">Test Storage</button>
+        <div id="result1" class="result">Ready to test...</div>
+    </div>
+
+    <div class="test-card">
+        <h3>Test 2: Maple Restaurant Booking Flow</h3>
+        <button class="test-button" onclick="simulateMapleBooking()">Simulate Booking</button>
+        <div id="result2" class="result">Ready to test...</div>
+    </div>
+
+    <div class="test-card">
+        <h3>Test 3: Sync System</h3>
+        <button class="test-button" onclick="testSyncSystem()">Test Sync</button>
+        <div id="result3" class="result">Ready to test...</div>
+    </div>
+
+    <div class="test-card">
+        <h3>Quick Actions</h3>
+        <a href="index.html" class="test-button">Go to Main Page</a>
+        <a href="booking.html?restaurant=rest_001" class="test-button">Direct Maple Booking</a>
+        <a href="merchant-dashboard.html?restaurant=rest_001" class="test-button">Merchant Dashboard</a>
+        <button class="test-button" onclick="clearAllData()">Clear All Data</button>
+    </div>
+
+    <script src="force-booking-sync.js"></script>
+    <script>
+        function log(id, message, type = 'info') {
+            const result = document.getElementById(id);
+            result.className = `result ${type}`;
+            result.textContent = message;
+        }
+
+        function testRestaurantStorage() {
+            const restaurantData = {
+                id: 'rest_001',
+                name: 'The Maple Leaf Restaurant',
+                nameF: 'Restaurant Feuille d\'Érable',
+                cuisine: 'Canadian Fine Dining',
+                cuisineF: 'Grande Cuisine Canadienne',
+                rating: 4.9,
+                reviewCount: 1847,
+                image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop',
+                phone: '(416) 555-MAPLE',
+                address: '123 Maple Street, Toronto, ON M5V 3A8',
+                features: ['AI Table Allocation', 'Seasonal Menu', 'Wine Pairing'],
+                winterFeatures: ['Heated Patio', 'Winter Menu']
+            };
+
+            try {
+                localStorage.setItem('selectedRestaurant', JSON.stringify(restaurantData));
+                const retrieved = JSON.parse(localStorage.getItem('selectedRestaurant'));
+                
+                if (retrieved.id === 'rest_001' && retrieved.name.includes('Maple')) {
+                    log('result1', 'SUCCESS: Restaurant data stored and retrieved correctly', 'success');
+                } else {
+                    log('result1', 'ERROR: Data mismatch after storage', 'error');
+                }
+            } catch (error) {
+                log('result1', `ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function simulateMapleBooking() {
+            const booking = {
+                id: 'TEST_' + Date.now(),
+                restaurantId: 'rest_001',
+                restaurantName: 'The Maple Leaf Restaurant',
+                date: new Date().toISOString().split('T')[0],
+                time: '19:00',
+                partySize: 2,
+                customerInfo: {
+                    firstName: 'Test',
+                    lastName: 'User',
+                    phone: '(416) 555-TEST',
+                    email: 'test@mapletable.ca'
+                },
+                status: 'confirmed',
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                // Save to customer bookings
+                const customerBookings = JSON.parse(localStorage.getItem('mapleTableBookings') || '[]');
+                customerBookings.push(booking);
+                localStorage.setItem('mapleTableBookings', JSON.stringify(customerBookings));
+
+                // Save to merchant bookings
+                const merchantBookings = JSON.parse(localStorage.getItem('mapleTableMerchantBookings') || '[]');
+                merchantBookings.push({
+                    ...booking,
+                    merchantId: 'rest_001',
+                    syncTime: new Date().toISOString()
+                });
+                localStorage.setItem('mapleTableMerchantBookings', JSON.stringify(merchantBookings));
+
+                log('result2', `SUCCESS: Booking ${booking.id} created and synced`, 'success');
+            } catch (error) {
+                log('result2', `ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function testSyncSystem() {
+            if (window.forceBookingSync) {
+                try {
+                    const result = window.forceBookingSync.forceSyncAll();
+                    if (result.success) {
+                        log('result3', `SUCCESS: Sync completed, ${result.syncedCount} bookings synced`, 'success');
+                    } else {
+                        log('result3', `ERROR: Sync failed - ${result.error}`, 'error');
+                    }
+                } catch (error) {
+                    log('result3', `ERROR: Sync system error - ${error.message}`, 'error');
+                }
+            } else {
+                log('result3', 'ERROR: Sync system not available', 'error');
+            }
+        }
+
+        function clearAllData() {
+            const keys = [
+                'mapleTableBookings',
+                'mapleTableMerchantBookings',
+                'selectedRestaurant',
+                'merchantLogin',
+                'merchantLoginData'
+            ];
+            
+            keys.forEach(key => localStorage.removeItem(key));
+            localStorage.setItem('mapleTableBookings', JSON.stringify([]));
+            localStorage.setItem('mapleTableMerchantBookings', JSON.stringify([]));
+            
+            alert('All data cleared!');
+        }
+    </script>
+</body>
+</html>

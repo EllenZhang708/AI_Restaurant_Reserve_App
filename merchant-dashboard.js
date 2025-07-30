@@ -1,976 +1,1009 @@
-// Merchant Dashboard System - MapleTable Business
-
+// Merchant Management Dashboard - MapleTable Restaurant Management Dashboard
 class MerchantDashboard {
     constructor() {
-        this.currentLanguage = 'en';
-        this.currentSection = 'overview';
-        this.sidebarCollapsed = false;
-        this.selectedTable = null;
+        this.merchantData = null;
+        this.restaurantData = null;
+        this.realTimeReservations = [];
         this.tableLayout = [];
-        this.bookings = [];
-        this.zoomLevel = 100;
-        this.gridVisible = true;
-        
-        this.translations = {
-            en: {
-                'Dashboard': 'Dashboard',
-                'Overview': 'Overview',
-                'Bookings': 'Bookings',
-                'Table Layout': 'Table Layout',
-                'Menu Management': 'Menu Management',
-                'Analytics': 'Analytics',
-                'Promotions': 'Promotions',
-                'Reviews': 'Reviews',
-                'Settings': 'Settings',
-                'Restaurant Overview': 'Restaurant Overview',
-                'Monthly Revenue': 'Monthly Revenue',
-                'This Week\'s Bookings': 'This Week\'s Bookings',
-                'Average Occupancy': 'Average Occupancy',
-                'Customer Rating': 'Customer Rating',
-                'Today\'s Bookings': 'Today\'s Bookings',
-                'Table Status': 'Table Status',
-                'Recent Activity': 'Recent Activity'
-            },
-            fr: {
-                'Dashboard': 'Tableau de Bord',
-                'Overview': 'Aperçu',
-                'Bookings': 'Réservations',
-                'Table Layout': 'Plan des Tables',
-                'Menu Management': 'Gestion du Menu',
-                'Analytics': 'Analyses',
-                'Promotions': 'Promotions',
-                'Reviews': 'Avis',
-                'Settings': 'Paramètres',
-                'Restaurant Overview': 'Aperçu du Restaurant',
-                'Monthly Revenue': 'Revenus Mensuels',
-                'This Week\'s Bookings': 'Réservations de cette Semaine',
-                'Average Occupancy': 'Occupation Moyenne',
-                'Customer Rating': 'Note Client',
-                'Today\'s Bookings': 'Réservations d\'Aujourd\'hui',
-                'Table Status': 'État des Tables',
-                'Recent Activity': 'Activité Récente'
-            }
-        };
+        this.aiAssignments = [];
+        this.isLive = true;
+        this.refreshInterval = null;
         
         this.initialize();
     }
     
-    initialize() {
-        this.loadMerchantData();
-        this.setupEventListeners();
-        this.loadDashboardData();
-        this.initializeTableLayout();
-        this.loadLanguageFromStorage();
-        this.showSection('overview');
-    }
-    
-    loadMerchantData() {
-        // 从会话存储加载商家数据
-        const sessionData = JSON.parse(localStorage.getItem('mapleTableMerchantSession') || '{}');
-        if (sessionData.merchantId) {
-            const merchants = JSON.parse(localStorage.getItem('mapleTableMerchants') || '[]');
-            const merchant = merchants.find(m => m.id === sessionData.merchantId);
-            
-            if (merchant) {
-                this.updateRestaurantInfo(merchant);
-            }
+    async initialize() {
+        console.log('🏪 Initializing merchant management dashboard...');
+        
+        // Wait for page load completion
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.setup());
+        } else {
+            this.setup();
         }
     }
     
-    updateRestaurantInfo(merchant) {
-        document.getElementById('restaurantName').textContent = merchant.restaurant.name;
-        document.getElementById('restaurantType').textContent = merchant.restaurant.cuisine;
+    async setup() {
+        // 验证商家登录状态
+        await this.validateMerchantAccess();
+        
+        // Load restaurant data - get specific restaurant from URL parameters
+        await this.loadRestaurantData();
+        
+        // Update page display
+        this.updateRestaurantDisplay();
+        
+        // Load reservation data
+        await this.loadReservationsData();
+        
+        // Initialize table layout
+        this.initializeTableLayout();
+        
+        // Load AI allocation data
+        this.loadAIAssignments();
+        
+        // Render all content
+        this.renderDashboardContent();
+        
+        // Start real-time updates
+        this.startRealTimeUpdates();
+        
+        // Setup AI sync listeners
+        this.setupAISyncListeners();
+        
+        console.log('✅ 商家管理后台初始化完成');
     }
     
-    setupEventListeners() {
-        // 侧边栏切换
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.user-btn')) {
-                this.toggleUserMenu();
+    async validateMerchantAccess() {
+        const merchantLoginData = localStorage.getItem('merchantLoginData');
+        if (!merchantLoginData) {
+            console.warn('⚠️ 未找到商家登录信息，重定向到登录页面');
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        try {
+            this.merchantData = JSON.parse(merchantLoginData);
+            console.log('👔 商家已登录:', this.merchantData.restaurant?.name);
+        } catch (error) {
+            console.error('商家登录数据解析失败:', error);
+            localStorage.removeItem('merchantLoginData');
+            window.location.href = 'index.html';
+        }
+    }
+    
+    async loadRestaurantData() {
+        // 从URL参数获取特定餐厅ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const restaurantId = urlParams.get('restaurant');
+        const merchantName = urlParams.get('merchant');
+        
+        console.log('🔍 加载餐厅数据:', { restaurantId, merchantName });
+        
+        // 特殊处理rest_001 (Maple餐厅)
+        if (restaurantId === 'rest_001') {
+            this.restaurantData = {
+                id: 'rest_001',
+                name: 'The Maple Leaf Restaurant',
+                nameF: 'Restaurant Feuille d\'Érable',
+                merchantId: 'merchant_001',
+                address: '123 Maple Street, Toronto, ON M5V 3A8',
+                phone: '(416) 555-MAPLE',
+                cuisine: 'Canadian Fine Dining',
+                status: 'online',
+                openTime: '11:00',
+                closeTime: '22:00'
+            };
+            console.log('🍁 已加载Maple餐厅数据');
+        } else if (restaurantId && this.merchantData) {
+            // 使用URL参数中的餐厅信息
+            this.restaurantData = {
+                id: restaurantId,
+                name: decodeURIComponent(merchantName || '我的餐厅'),
+                merchantId: this.merchantData.id || 'merchant_001',
+                address: this.merchantData.restaurant?.address || '多伦多市中心',
+                phone: this.merchantData.restaurant?.phone || '(416) 123-4567',
+                status: 'online',
+                openTime: '11:00',
+                closeTime: '22:00'
+            };
+        } else {
+            // 降级到Maple餐厅默认数据
+            this.restaurantData = {
+                id: 'rest_001',
+                name: 'The Maple Leaf Restaurant',
+                merchantId: 'merchant_001',
+                address: '123 Maple Street, Toronto, ON M5V 3A8',
+                phone: '(416) 555-MAPLE',
+                status: 'online',
+                openTime: '11:00',
+                closeTime: '22:00'
+            };
+        }
+        
+        console.log('🏪 已加载餐厅数据:', this.restaurantData);
+    }
+    
+    updateRestaurantDisplay() {
+        const restaurantName = document.getElementById('restaurantName');
+        const restaurantDetails = document.getElementById('restaurantDetails');
+        
+        if (restaurantName) {
+            restaurantName.textContent = this.restaurantData.name;
+        }
+        
+        if (restaurantDetails) {
+            restaurantDetails.textContent = `${this.restaurantData.address} | ${this.restaurantData.phone}`;
+        }
+        
+        // 更新页面标题
+        document.title = `${this.restaurantData.name} - 管理后台 | MapleTable`;
+    }
+    
+    async loadReservationsData() {
+        console.log('📋 正在加载预订数据...');
+        
+        // 从多个数据源加载预订
+        const customerBookings = JSON.parse(localStorage.getItem('mapleTableBookings') || '[]');
+        const merchantBookings = JSON.parse(localStorage.getItem('mapleTableMerchantBookings') || '[]');
+        
+        console.log('📊 找到数据源:', {
+            customerBookings: customerBookings.length,
+            merchantBookings: merchantBookings.length
+        });
+        
+        // 合并并去重所有预订数据
+        const bookingMap = new Map();
+        
+        // 添加客户预订
+        customerBookings.forEach(booking => {
+            if (booking.id) {
+                bookingMap.set(booking.id, booking);
             }
         });
         
-        // 点击外部关闭下拉菜单
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.user-menu')) {
-                document.getElementById('userDropdown').classList.remove('show');
+        // 添加商家预订（可能会覆盖客户预订以获得最新数据）
+        merchantBookings.forEach(booking => {
+            if (booking.id) {
+                bookingMap.set(booking.id, booking);
             }
         });
         
-        // 键盘快捷键
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                switch (e.key) {
-                    case '1':
-                        e.preventDefault();
-                        this.showSection('overview');
-                        break;
-                    case '2':
-                        e.preventDefault();
-                        this.showSection('bookings');
-                        break;
-                    case '3':
-                        e.preventDefault();
-                        this.showSection('tables');
-                        break;
+        const allBookings = Array.from(bookingMap.values());
+        console.log('📋 去重后的预订数据:', allBookings.length);
+        
+        // 过滤属于当前餐厅的预订
+        this.realTimeReservations = allBookings.filter(booking => {
+            const matchesRestaurant = booking.restaurantId === this.restaurantData.id || 
+                                    booking.merchantId === this.restaurantData.id ||
+                                    booking.restaurantName === this.restaurantData.name;
+            
+            // 显示今天和未来7天的预订
+            const bookingDate = new Date(booking.date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const futureLimit = new Date(today);
+            futureLimit.setDate(today.getDate() + 7);
+            const isValidDate = bookingDate >= today && bookingDate <= futureLimit;
+            
+            // Debug logging for filtering
+            console.log(`📋 Filtering booking ${booking.id}:`, {
+                bookingRestaurantId: booking.restaurantId,
+                bookingMerchantId: booking.merchantId,
+                bookingRestaurantName: booking.restaurantName,
+                currentRestaurantId: this.restaurantData.id,
+                currentRestaurantName: this.restaurantData.name,
+                matchesRestaurant,
+                isValidDate,
+                bookingDate: booking.date,
+                include: matchesRestaurant && isValidDate
+            });
+            
+            return matchesRestaurant && isValidDate;
+        });
+        
+        console.log(`🎯 ${this.restaurantData.name} 的预订数据:`, this.realTimeReservations);
+        
+        // 按时间排序
+        this.realTimeReservations.sort((a, b) => {
+            const dateTimeA = new Date(`${a.date}T${a.time}:00`);
+            const dateTimeB = new Date(`${b.date}T${b.time}:00`);
+            return dateTimeA - dateTimeB;
+        });
+    }
+    
+    initializeTableLayout() {
+        // 生成餐厅桌位布局
+        this.tableLayout = [
+            { id: 'T1', type: 'window', capacity: 2, status: 'occupied', position: { x: 50, y: 100 }, zone: 'window' },
+            { id: 'T2', type: 'window', capacity: 2, status: 'available', position: { x: 150, y: 100 }, zone: 'window' },
+            { id: 'T3', type: 'standard', capacity: 4, status: 'reserved', position: { x: 50, y: 200 }, zone: 'main' },
+            { id: 'T4', type: 'standard', capacity: 4, status: 'available', position: { x: 150, y: 200 }, zone: 'main' },
+            { id: 'T5', type: 'standard', capacity: 6, status: 'occupied', position: { x: 250, y: 150 }, zone: 'main' },
+            { id: 'T6', type: 'private', capacity: 8, status: 'available', position: { x: 350, y: 150 }, zone: 'private' },
+            { id: 'T7', type: 'bar', capacity: 3, status: 'available', position: { x: 50, y: 300 }, zone: 'bar' },
+            { id: 'T8', type: 'bar', capacity: 3, status: 'occupied', position: { x: 150, y: 300 }, zone: 'bar' }
+        ];
+        
+        // 根据实际预订更新桌位状态
+        this.updateTableStatusFromReservations();
+    }
+    
+    updateTableStatusFromReservations() {
+        // 重置所有桌位为可用状态
+        this.tableLayout.forEach(table => {
+            if (table.status !== 'maintenance') {
+                table.status = 'available';
+            }
+        });
+        
+        // 根据预订更新桌位状态
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentDate = now.toISOString().split('T')[0];
+        
+        this.realTimeReservations.forEach(reservation => {
+            if (reservation.date === currentDate && reservation.assignedTable) {
+                const tableId = reservation.assignedTable.id;
+                const reservationHour = parseInt(reservation.time.split(':')[0]);
+                
+                // 如果预订时间在当前时间±2小时内，标记为占用或预订
+                if (Math.abs(reservationHour - currentHour) <= 2) {
+                    const table = this.tableLayout.find(t => t.id === tableId);
+                    if (table) {
+                        table.status = reservationHour <= currentHour ? 'occupied' : 'reserved';
+                        table.currentReservation = reservation;
+                    }
                 }
             }
         });
     }
     
-    showSection(sectionName) {
-        // 隐藏所有页面
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.classList.remove('active');
-        });
+    loadAIAssignments() {
+        // 生成AI分配历史和建议
+        this.aiAssignments = this.realTimeReservations.map(reservation => {
+            if (reservation.assignedTable && reservation.assignedTable.aiScore) {
+                return {
+                    reservationId: reservation.id,
+                    tableId: reservation.assignedTable.id,
+                    aiScore: reservation.assignedTable.aiScore,
+                    reasoning: reservation.assignedTable.aiReasoning || [],
+                    type: reservation.assignedTable.combinationType || 'single',
+                    customerInfo: `${reservation.customerInfo.firstName} ${reservation.customerInfo.lastName}`,
+                    partySize: reservation.partySize,
+                    time: reservation.time,
+                    preferences: reservation.preferences || []
+                };
+            }
+            return null;
+        }).filter(Boolean);
         
-        // 显示选中页面
-        document.getElementById(sectionName + 'Section').classList.add('active');
-        
-        // 更新导航状态
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
-        
-        // 更新面包屑
-        const sectionTitles = {
-            'overview': this.currentLanguage === 'fr' ? 'Aperçu' : 'Overview',
-            'bookings': this.currentLanguage === 'fr' ? 'Réservations' : 'Bookings',
-            'tables': this.currentLanguage === 'fr' ? 'Plan des Tables' : 'Table Layout',
-            'menu': this.currentLanguage === 'fr' ? 'Gestion du Menu' : 'Menu Management',
-            'analytics': this.currentLanguage === 'fr' ? 'Analyses' : 'Analytics',
-            'promotion': this.currentLanguage === 'fr' ? 'Promotions' : 'Promotions',
-            'reviews': this.currentLanguage === 'fr' ? 'Avis' : 'Reviews',
-            'settings': this.currentLanguage === 'fr' ? 'Paramètres' : 'Settings'
-        };
-        document.getElementById('currentSection').textContent = sectionTitles[sectionName];
-        
-        this.currentSection = sectionName;
-        
-        // 根据页面加载相应数据
-        switch (sectionName) {
-            case 'overview':
-                this.loadOverviewData();
-                break;
-            case 'bookings':
-                this.loadBookingsData();
-                break;
-            case 'tables':
-                this.renderTableLayout();
-                break;
-        }
+        console.log('🤖 AI分配数据:', this.aiAssignments);
     }
     
-    loadDashboardData() {
-        // 生成模拟数据
-        this.generateMockBookings();
-        this.updateDateDisplay();
+    renderDashboardContent() {
+        this.renderStatistics();
+        this.renderReservationsList();
+        this.renderTableLayout();
+        this.renderAIRecommendations();
+        this.renderTablesGrid();
     }
     
-    generateMockBookings() {
-        const today = new Date();
-        const customers = [
-            { name: 'John Smith', phone: '(416) 555-0123', avatar: 'JS' },
-            { name: 'Marie Dubois', phone: '(514) 555-0456', avatar: 'MD' },
-            { name: 'David Wong', phone: '(604) 555-0789', avatar: 'DW' },
-            { name: 'Sarah Johnson', phone: '(403) 555-0321', avatar: 'SJ' },
-            { name: 'Pierre Martin', phone: '(819) 555-0654', avatar: 'PM' }
-        ];
-        
-        this.bookings = [];
-        for (let i = 0; i < 24; i++) {
-            const customer = customers[Math.floor(Math.random() * customers.length)];
-            const bookingDate = new Date(today);
-            bookingDate.setDate(today.getDate() + Math.floor(Math.random() * 14) - 7);
-            
-            const booking = {
-                id: 'BK' + (1000 + i),
-                customer: customer,
-                date: bookingDate.toISOString().split('T')[0],
-                time: ['11:30', '12:00', '12:30', '13:00', '17:30', '18:00', '18:30', '19:00', '19:30'][Math.floor(Math.random() * 9)],
-                partySize: Math.floor(Math.random() * 6) + 2,
-                tableNumber: Math.floor(Math.random() * 20) + 1,
-                status: ['pending', 'confirmed', 'completed'][Math.floor(Math.random() * 3)],
-                specialRequests: Math.random() > 0.7 ? 'Vegetarian options needed' : '',
-                confirmationNumber: 'MT' + Date.now().toString().slice(-6) + i
-            };
-            
-            this.bookings.push(booking);
-        }
-    }
-    
-    loadOverviewData() {
-        this.renderTodayBookings();
-        this.renderTablePreview();
-        this.renderRecentActivity();
-    }
-    
-    renderTodayBookings() {
+    renderStatistics() {
         const today = new Date().toISOString().split('T')[0];
-        const todayBookings = this.bookings.filter(b => b.date === today);
+        const todayReservations = this.realTimeReservations.filter(r => r.date === today);
+        const occupiedTables = this.tableLayout.filter(t => t.status === 'occupied').length;
+        const totalTables = this.tableLayout.length;
+        const occupancyRate = Math.round((occupiedTables / totalTables) * 100);
         
-        const timeline = document.getElementById('todayTimeline');
-        timeline.innerHTML = '';
+        // 更新统计数据
+        const totalReservationsEl = document.getElementById('totalReservations');
+        const occupiedTablesEl = document.getElementById('occupiedTables');
+        const occupancyRateEl = document.getElementById('occupancyRate');
+        const todayRevenueEl = document.getElementById('todayRevenue');
         
-        if (todayBookings.length === 0) {
-            timeline.innerHTML = `
-                <div class="empty-timeline">
-                    <p>${this.currentLanguage === 'fr' ? 'Aucune réservation aujourd\'hui' : 'No bookings today'}</p>
+        if (totalReservationsEl) totalReservationsEl.textContent = todayReservations.length;
+        if (occupiedTablesEl) occupiedTablesEl.textContent = `${occupiedTables}/${totalTables}`;
+        if (occupancyRateEl) occupancyRateEl.textContent = `${occupancyRate}%`;
+        
+        // 模拟营收计算
+        const avgRevenue = 85;
+        const todayRevenue = todayReservations.reduce((sum, r) => sum + (r.partySize * avgRevenue), 0);
+        if (todayRevenueEl) todayRevenueEl.textContent = `$${todayRevenue.toLocaleString()}`;
+    }
+    
+    renderReservationsList() {
+        const container = document.getElementById('reservationsList');
+        if (!container) return;
+        
+        if (this.realTimeReservations.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h4>暂无预订</h4>
+                    <p>今天还没有预订记录</p>
+                    <button class="btn btn-primary" onclick="window.open('booking.html?restaurant=${this.restaurantData.id}', '_blank')">
+                        <i class="fas fa-plus"></i>
+                        手动添加预订
+                    </button>
                 </div>
             `;
             return;
         }
         
-        todayBookings.sort((a, b) => a.time.localeCompare(b.time));
-        
-        todayBookings.forEach(booking => {
-            const item = document.createElement('div');
-            item.className = 'timeline-item';
-            item.innerHTML = `
-                <div class="timeline-time">${booking.time}</div>
-                <div class="timeline-content">
-                    <h4>${booking.customer.name}</h4>
-                    <p>${booking.partySize} ${this.currentLanguage === 'fr' ? 'invités' : 'guests'} • Table ${booking.tableNumber}</p>
-                </div>
-            `;
-            timeline.appendChild(item);
-        });
-    }
-    
-    renderTablePreview() {
-        const preview = document.getElementById('tablePreview');
-        preview.innerHTML = '';
-        
-        // 生成示例桌位布局
-        const tables = [
-            { id: 1, x: 20, y: 30, size: 4, occupied: true },
-            { id: 2, x: 80, y: 30, size: 2, occupied: false },
-            { id: 3, x: 140, y: 30, size: 6, occupied: true },
-            { id: 4, x: 20, y: 80, size: 4, occupied: false },
-            { id: 5, x: 80, y: 80, size: 2, occupied: true },
-            { id: 6, x: 140, y: 80, size: 8, occupied: false },
-            { id: 7, x: 50, y: 130, size: 4, occupied: true },
-            { id: 8, x: 110, y: 130, size: 6, occupied: false }
-        ];
-        
-        tables.forEach(table => {
-            const tableEl = document.createElement('div');
-            tableEl.className = `preview-table ${table.occupied ? 'occupied' : 'available'}`;
-            tableEl.style.cssText = `
-                left: ${table.x}px;
-                top: ${table.y}px;
-                width: ${30 + table.size * 2}px;
-                height: ${30 + table.size * 2}px;
-            `;
-            tableEl.textContent = table.id;
-            preview.appendChild(tableEl);
-        });
-    }
-    
-    renderRecentActivity() {
-        const activities = [
-            {
-                type: 'booking',
-                icon: 'fas fa-calendar-plus',
-                iconClass: 'booking',
-                title: 'New booking received',
-                titleF: 'Nouvelle réservation reçue',
-                description: 'Sarah Johnson for 4 guests',
-                descriptionF: 'Sarah Johnson pour 4 invités',
-                time: '2 min ago',
-                timeF: 'Il y a 2 min'
-            },
-            {
-                type: 'payment',
-                icon: 'fas fa-dollar-sign',
-                iconClass: 'payment',
-                title: 'Payment received',
-                titleF: 'Paiement reçu',
-                description: '$89.50 from table 7',
-                descriptionF: '89,50$ de la table 7',
-                time: '15 min ago',
-                timeF: 'Il y a 15 min'
-            },
-            {
-                type: 'review',
-                icon: 'fas fa-star',
-                iconClass: 'review',
-                title: 'New review',
-                titleF: 'Nouvel avis',
-                description: '5 stars from David Wong',
-                descriptionF: '5 étoiles de David Wong',
-                time: '1 hour ago',
-                timeF: 'Il y a 1 heure'
-            }
-        ];
-        
-        const activityList = document.getElementById('activityList');
-        activityList.innerHTML = '';
-        
-        activities.forEach(activity => {
-            const item = document.createElement('div');
-            item.className = 'activity-item';
+        const reservationsHTML = this.realTimeReservations.map(reservation => {
+            const statusClass = this.getReservationStatusClass(reservation);
+            const aiInfo = reservation.assignedTable ? 
+                `<div class="ai-assignment">
+                    <i class="fas fa-brain"></i>
+                    AI分配: ${reservation.assignedTable.id} (分数: ${reservation.assignedTable.aiScore || 'N/A'})
+                </div>` : '';
             
-            const title = this.currentLanguage === 'fr' ? activity.titleF : activity.title;
-            const description = this.currentLanguage === 'fr' ? activity.descriptionF : activity.description;
-            const time = this.currentLanguage === 'fr' ? activity.timeF : activity.time;
-            
-            item.innerHTML = `
-                <div class="activity-icon ${activity.iconClass}">
-                    <i class="${activity.icon}"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>${title}</h4>
-                    <p>${description}</p>
-                </div>
-                <div class="activity-time">${time}</div>
-            `;
-            activityList.appendChild(item);
-        });
-    }
-    
-    loadBookingsData() {
-        this.renderBookingsTable();
-        this.updateBookingCounts();
-    }
-    
-    renderBookingsTable() {
-        const tableBody = document.getElementById('bookingsTableBody');
-        tableBody.innerHTML = '';
-        
-        this.bookings.forEach(booking => {
-            const row = document.createElement('div');
-            row.className = 'booking-row';
-            
-            const formattedDate = new Date(booking.date).toLocaleDateString(
-                this.currentLanguage === 'fr' ? 'fr-CA' : 'en-CA',
-                { month: 'short', day: 'numeric' }
-            );
-            
-            row.innerHTML = `
-                <div class="customer-info">
-                    <div class="customer-avatar">${booking.customer.avatar}</div>
-                    <div class="customer-details">
-                        <h4>${booking.customer.name}</h4>
-                        <p>${booking.customer.phone}</p>
+            return `
+                <div class="reservation-item ${statusClass}">
+                    <div class="reservation-header">
+                        <div class="customer-info">
+                            <h4>${reservation.customerInfo.firstName} ${reservation.customerInfo.lastName}</h4>
+                            <p>${reservation.customerInfo.phone} | ${reservation.customerInfo.email}</p>
+                        </div>
+                        <div class="reservation-status">
+                            <span class="status-badge ${statusClass}">${this.getStatusText(reservation)}</span>
+                        </div>
+                    </div>
+                    <div class="reservation-details">
+                        <div class="detail-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>${this.formatDate(reservation.date)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span>${reservation.time}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-users"></i>
+                            <span>${reservation.partySize} 人</span>
+                        </div>
+                        ${reservation.assignedTable ? `
+                            <div class="detail-item">
+                                <i class="fas fa-chair"></i>
+                                <span>桌位: ${reservation.assignedTable.id}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${aiInfo}
+                    ${reservation.specialRequests ? `
+                        <div class="special-requests">
+                            <i class="fas fa-comment"></i>
+                            <span>${reservation.specialRequests}</span>
+                        </div>
+                    ` : ''}
+                    <div class="reservation-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="editReservation('${reservation.id}')">
+                            <i class="fas fa-edit"></i>
+                            编辑
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="confirmArrival('${reservation.id}')">
+                            <i class="fas fa-check"></i>
+                            确认到店
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="cancelReservation('${reservation.id}')">
+                            <i class="fas fa-times"></i>
+                            取消
+                        </button>
                     </div>
                 </div>
-                <div class="booking-datetime">
-                    <div>${formattedDate}</div>
-                    <div>${booking.time}</div>
-                </div>
-                <div class="party-size">${booking.partySize}</div>
-                <div class="table-number">Table ${booking.tableNumber}</div>
-                <div class="booking-status ${booking.status}">${this.getStatusText(booking.status)}</div>
-                <div class="booking-actions">
-                    <button class="action-btn" onclick="viewBooking('${booking.id}')" title="View Details">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    ${booking.status === 'pending' ? `
-                        <button class="action-btn" onclick="confirmBooking('${booking.id}')" title="Confirm">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    ` : ''}
-                    <button class="action-btn" onclick="editBooking('${booking.id}')" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn" onclick="cancelBooking('${booking.id}')" title="Cancel">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
             `;
-            
-            tableBody.appendChild(row);
-        });
-    }
-    
-    getStatusText(status) {
-        const statusTexts = {
-            pending: this.currentLanguage === 'fr' ? 'En Attente' : 'Pending',
-            confirmed: this.currentLanguage === 'fr' ? 'Confirmée' : 'Confirmed',
-            completed: this.currentLanguage === 'fr' ? 'Terminée' : 'Completed'
-        };
-        return statusTexts[status] || status;
-    }
-    
-    updateBookingCounts() {
-        const counts = {
-            all: this.bookings.length,
-            pending: this.bookings.filter(b => b.status === 'pending').length,
-            confirmed: this.bookings.filter(b => b.status === 'confirmed').length,
-            completed: this.bookings.filter(b => b.status === 'completed').length
-        };
+        }).join('');
         
-        document.getElementById('pendingBookings').textContent = counts.pending;
-        
-        // 更新筛选标签计数
-        document.querySelectorAll('.filter-tab').forEach(tab => {
-            const filter = tab.getAttribute('data-filter');
-            const countElement = tab.querySelector('.count');
-            if (countElement && counts[filter] !== undefined) {
-                countElement.textContent = counts[filter];
-            }
-        });
-    }
-    
-    // 桌位布局管理
-    initializeTableLayout() {
-        this.createInitialLayout();
-    }
-    
-    createInitialLayout() {
-        this.tableLayout = [
-            { id: 't1', type: 'round-4', x: 100, y: 100, capacity: 4, name: 'Table 1' },
-            { id: 't2', type: 'round-2', x: 250, y: 100, capacity: 2, name: 'Table 2' },
-            { id: 't3', type: 'square-4', x: 400, y: 100, capacity: 4, name: 'Table 3' },
-            { id: 't4', type: 'rect-6', x: 100, y: 250, capacity: 6, name: 'Table 4' },
-            { id: 't5', type: 'rect-8', x: 300, y: 250, capacity: 8, name: 'Table 5' }
-        ];
+        container.innerHTML = reservationsHTML;
     }
     
     renderTableLayout() {
-        const canvas = document.getElementById('tableCanvas');
-        canvas.innerHTML = '';
+        const container = document.getElementById('tableLayout');
+        if (!container) return;
         
+        const svgWidth = 500;
+        const svgHeight = 400;
+        
+        let svgContent = `<svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}">`;
+        
+        // 绘制区域背景
+        const zones = [
+            { name: 'window', color: '#e3f2fd', x: 20, y: 50, width: 180, height: 100 },
+            { name: 'main', color: '#f3e5f5', x: 20, y: 160, width: 280, height: 120 },
+            { name: 'private', color: '#fff3e0', x: 320, y: 100, width: 160, height: 180 },
+            { name: 'bar', color: '#e8f5e8', x: 20, y: 290, width: 180, height: 80 }
+        ];
+        
+        zones.forEach(zone => {
+            svgContent += `
+                <rect x="${zone.x}" y="${zone.y}" width="${zone.width}" height="${zone.height}" 
+                      fill="${zone.color}" stroke="#ddd" stroke-width="1" rx="5"/>
+                <text x="${zone.x + 10}" y="${zone.y + 20}" font-size="12" fill="#666" font-weight="bold">
+                    ${zone.name.toUpperCase()}
+                </text>
+            `;
+        });
+        
+        // 绘制桌位
         this.tableLayout.forEach(table => {
-            const tableEl = this.createTableElement(table);
-            canvas.appendChild(tableEl);
-        });
-    }
-    
-    createTableElement(table) {
-        const tableEl = document.createElement('div');
-        tableEl.className = `canvas-table ${table.type.split('-')[0]}`;
-        tableEl.setAttribute('data-table-id', table.id);
-        
-        const size = this.getTableSize(table.type);
-        tableEl.style.cssText = `
-            left: ${table.x}px;
-            top: ${table.y}px;
-            width: ${size.width}px;
-            height: ${size.height}px;
-        `;
-        
-        tableEl.textContent = table.capacity;
-        
-        // 添加事件监听器
-        tableEl.addEventListener('click', () => this.selectTable(table.id));
-        tableEl.addEventListener('mousedown', (e) => this.startDrag(e, table.id));
-        
-        return tableEl;
-    }
-    
-    getTableSize(type) {
-        const sizes = {
-            'round-2': { width: 60, height: 60 },
-            'round-4': { width: 80, height: 80 },
-            'square-4': { width: 80, height: 80 },
-            'rect-6': { width: 120, height: 80 },
-            'rect-8': { width: 160, height: 80 }
-        };
-        return sizes[type] || { width: 80, height: 80 };
-    }
-    
-    selectTable(tableId) {
-        // 移除之前的选中状态
-        document.querySelectorAll('.canvas-table').forEach(el => {
-            el.classList.remove('selected');
+            const statusColor = this.getTableColor(table.status);
+            const size = this.getTableSize(table.capacity);
+            
+            svgContent += `
+                <g class="table-item" onclick="selectTable('${table.id}')">
+                    <rect x="${table.position.x}" y="${table.position.y}" 
+                          width="${size}" height="${size}" 
+                          fill="${statusColor}" stroke="#333" stroke-width="2" rx="5"
+                          style="cursor: pointer; transition: all 0.3s ease;"/>
+                    <text x="${table.position.x + size/2}" y="${table.position.y + size/2 - 5}" 
+                          text-anchor="middle" font-size="10" font-weight="bold" fill="#333">
+                        ${table.id}
+                    </text>
+                    <text x="${table.position.x + size/2}" y="${table.position.y + size/2 + 8}" 
+                          text-anchor="middle" font-size="8" fill="#666">
+                        ${table.capacity}人
+                    </text>
+                </g>
+            `;
         });
         
-        // 选中当前桌子
-        const tableEl = document.querySelector(`[data-table-id="${tableId}"]`);
-        if (tableEl) {
-            tableEl.classList.add('selected');
-            this.selectedTable = tableId;
-            this.updateTableInfo(tableId);
+        svgContent += '</svg>';
+        
+        container.innerHTML = svgContent;
+    }
+    
+    renderAIRecommendations() {
+        const container = document.getElementById('aiRecommendations');
+        if (!container) return;
+        
+        // 生成AI分配效果演示数据
+        const aiDemoData = this.generateAIAssignmentDemo();
+        const allAssignments = [...this.aiAssignments, ...aiDemoData];
+        
+        if (allAssignments.length === 0) {
+            container.innerHTML = `
+                <div class="ai-empty-state">
+                    <i class="fas fa-robot"></i>
+                    <h4>AI智能分配系统</h4>
+                    <p class="ai-description">🤖 AI系统正在实时监控桌位状态和客户需求</p>
+                    <div class="ai-features">
+                        <div class="ai-feature">
+                            <i class="fas fa-chart-line"></i>
+                            <span>智能优化分配</span>
+                        </div>
+                        <div class="ai-feature">
+                            <i class="fas fa-users"></i>
+                            <span>客户偏好匹配</span>
+                        </div>
+                        <div class="ai-feature">
+                            <i class="fas fa-clock"></i>
+                            <span>实时动态调整</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
         }
-    }
-    
-    updateTableInfo(tableId) {
-        const table = this.tableLayout.find(t => t.id === tableId);
-        if (!table) return;
         
-        const infoPanel = document.getElementById('selectedTableInfo');
-        infoPanel.innerHTML = `
-            <div class="table-info-content">
-                <h4>${table.name}</h4>
-                <p>${this.currentLanguage === 'fr' ? 'Capacité' : 'Capacity'}: ${table.capacity} ${this.currentLanguage === 'fr' ? 'personnes' : 'people'}</p>
-                <p>${this.currentLanguage === 'fr' ? 'Type' : 'Type'}: ${table.type}</p>
-                <p>${this.currentLanguage === 'fr' ? 'Position' : 'Position'}: (${table.x}, ${table.y})</p>
-                <div class="table-info-actions">
-                    <button class="btn btn-sm btn-secondary" onclick="deleteTable('${tableId}')">
-                        <i class="fas fa-trash"></i>
-                        ${this.currentLanguage === 'fr' ? 'Supprimer' : 'Delete'}
-                    </button>
+        // 显示AI分配统计
+        const totalScore = allAssignments.reduce((sum, a) => sum + a.aiScore, 0);
+        const avgScore = Math.round(totalScore / allAssignments.length);
+        
+        const aiHTML = `
+            <div class="ai-overview">
+                <div class="ai-stats">
+                    <div class="ai-stat">
+                        <span class="stat-value">${allAssignments.length}</span>
+                        <span class="stat-label">AI分配</span>
+                    </div>
+                    <div class="ai-stat">
+                        <span class="stat-value">${avgScore}</span>
+                        <span class="stat-label">平均分数</span>
+                    </div>
+                    <div class="ai-stat">
+                        <span class="stat-value">${this.calculateEfficiencyRate()}%</span>
+                        <span class="stat-label">效率提升</span>
+                    </div>
+                </div>
+                <div class="ai-status-indicator">
+                    <div class="ai-pulse"></div>
+                    <span>AI系统运行中</span>
+                </div>
+            </div>
+            
+            <div class="ai-assignments-list">
+                ${allAssignments.slice(0, 8).map(assignment => `
+                    <div class="ai-assignment-item ${assignment.isDemo ? 'demo' : 'real'}">
+                        <div class="ai-header">
+                            <div class="ai-score ${this.getScoreClass(assignment.aiScore)}">
+                                <i class="fas fa-brain"></i>
+                                <span class="score-value">${assignment.aiScore}</span>
+                            </div>
+                            <div class="assignment-info">
+                                <h5>${assignment.customerInfo} ${assignment.isDemo ? '(演示)' : ''}</h5>
+                                <p>${assignment.partySize}人 | ${assignment.time} | 桌位${assignment.tableId}</p>
+                            </div>
+                            <div class="assignment-actions">
+                                <button class="ai-detail-btn" onclick="showAIDetails('${assignment.reservationId}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ai-reasoning">
+                            <h6>🤖 AI分析:</h6>
+                            <ul>
+                                ${assignment.reasoning.map(reason => `<li>${reason}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="assignment-footer">
+                            <span class="type-badge ${assignment.type}">${this.getAssignmentTypeText(assignment.type)}</span>
+                            <span class="ai-confidence">置信度: ${assignment.confidence || '95%'}</span>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="ai-insights">
+                <h6>💡 AI洞察:</h6>
+                <div class="insights-grid">
+                    <div class="insight-item">
+                        <i class="fas fa-trending-up"></i>
+                        <span>窗边桌位需求量高，建议优先分配VIP客户</span>
+                    </div>
+                    <div class="insight-item">
+                        <i class="fas fa-clock"></i>
+                        <span>19:00-20:00时段最繁忙，建议预留灵活桌位</span>
+                    </div>
+                    <div class="insight-item">
+                        <i class="fas fa-users"></i>
+                        <span>4人桌位使用率最高，可考虑增加此类桌位</span>
+                    </div>
                 </div>
             </div>
         `;
-    }
-    
-    addTable(type) {
-        const newTable = {
-            id: 't' + (this.tableLayout.length + 1),
-            type: type,
-            x: 150 + Math.random() * 200,
-            y: 150 + Math.random() * 200,
-            capacity: parseInt(type.split('-')[1]),
-            name: `Table ${this.tableLayout.length + 1}`
-        };
         
-        this.tableLayout.push(newTable);
-        this.renderTableLayout();
-        this.selectTable(newTable.id);
+        container.innerHTML = aiHTML;
     }
     
-    deleteTable(tableId) {
-        this.tableLayout = this.tableLayout.filter(t => t.id !== tableId);
-        this.renderTableLayout();
-        this.selectedTable = null;
-        
-        const infoPanel = document.getElementById('selectedTableInfo');
-        infoPanel.innerHTML = `<p>${this.currentLanguage === 'fr' ? 'Sélectionnez une table pour modifier' : 'Select a table to edit'}</p>`;
-    }
-    
-    saveLayout() {
-        localStorage.setItem('merchantTableLayout', JSON.stringify(this.tableLayout));
-        this.showNotification(
-            this.currentLanguage === 'fr' ? 'Aménagement sauvegardé avec succès' : 'Layout saved successfully',
-            'success'
-        );
-    }
-    
-    resetLayout() {
-        if (confirm(this.currentLanguage === 'fr' ? 'Réinitialiser l\'aménagement?' : 'Reset layout?')) {
-            this.createInitialLayout();
-            this.renderTableLayout();
-            this.showNotification(
-                this.currentLanguage === 'fr' ? 'Aménagement réinitialisé' : 'Layout reset',
-                'info'
-            );
-        }
-    }
-    
-    // 拖拽功能
-    startDrag(e, tableId) {
-        e.preventDefault();
-        const table = this.tableLayout.find(t => t.id === tableId);
-        if (!table) return;
-        
-        const tableEl = document.querySelector(`[data-table-id="${tableId}"]`);
-        const canvas = document.getElementById('tableCanvas');
-        const canvasRect = canvas.getBoundingClientRect();
-        
-        const startX = e.clientX - canvasRect.left - table.x;
-        const startY = e.clientY - canvasRect.top - table.y;
-        
-        const onMouseMove = (e) => {
-            const newX = e.clientX - canvasRect.left - startX;
-            const newY = e.clientY - canvasRect.top - startY;
-            
-            // 边界检查
-            const maxX = canvas.offsetWidth - tableEl.offsetWidth;
-            const maxY = canvas.offsetHeight - tableEl.offsetHeight;
-            
-            table.x = Math.max(0, Math.min(newX, maxX));
-            table.y = Math.max(0, Math.min(newY, maxY));
-            
-            tableEl.style.left = table.x + 'px';
-            tableEl.style.top = table.y + 'px';
-            
-            if (this.selectedTable === tableId) {
-                this.updateTableInfo(tableId);
-            }
-        };
-        
-        const onMouseUp = () => {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-        };
-        
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-    }
-    
-    // 画布工具
-    toggleGrid() {
-        this.gridVisible = !this.gridVisible;
-        const grid = document.getElementById('canvasGrid');
-        grid.style.display = this.gridVisible ? 'block' : 'none';
-    }
-    
-    zoomIn() {
-        this.zoomLevel = Math.min(200, this.zoomLevel + 25);
-        this.updateZoom();
-    }
-    
-    zoomOut() {
-        this.zoomLevel = Math.max(50, this.zoomLevel - 25);
-        this.updateZoom();
-    }
-    
-    updateZoom() {
-        const canvas = document.getElementById('tableCanvas');
-        canvas.style.transform = `scale(${this.zoomLevel / 100})`;
-        canvas.style.transformOrigin = 'top left';
-        
-        document.querySelector('.zoom-level').textContent = this.zoomLevel + '%';
-    }
-    
-    // 通用功能
-    toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const main = document.querySelector('.dashboard-main');
-        
-        if (window.innerWidth <= 768) {
-            sidebar.classList.toggle('show');
-        } else {
-            sidebar.classList.toggle('collapsed');
-            main.classList.toggle('expanded');
-        }
-    }
-    
-    toggleNotifications() {
-        const panel = document.getElementById('notificationPanel');
-        panel.classList.toggle('show');
-        
-        if (panel.classList.contains('show')) {
-            this.loadNotifications();
-        }
-    }
-    
-    loadNotifications() {
-        const notifications = [
+    generateAIAssignmentDemo() {
+        // 生成演示AI分配数据，让用户看到AI系统的效果
+        const demoData = [
             {
-                title: 'New Booking Request',
-                titleF: 'Nouvelle Demande de Réservation',
-                message: 'Sarah Johnson wants to book for 4 people',
-                messageF: 'Sarah Johnson veut réserver pour 4 personnes',
-                time: '2 minutes ago',
-                timeF: 'Il y a 2 minutes'
+                reservationId: 'DEMO001',
+                tableId: 'T1',
+                aiScore: 94,
+                reasoning: [
+                    '客户偏好窗边座位，T1为最佳窗边位置',
+                    '2人桌位完美匹配party size',
+                    '时间段内该桌位空闲，无冲突'
+                ],
+                type: 'single',
+                customerInfo: '张女士',
+                partySize: 2,
+                time: '18:30',
+                preferences: ['window-seat'],
+                confidence: '96%',
+                isDemo: true
             },
             {
-                title: 'Payment Received',
-                titleF: 'Paiement Reçu',
-                message: '$89.50 payment confirmed for table 7',
-                messageF: 'Paiement de 89,50$ confirmé pour la table 7',
-                time: '15 minutes ago',
-                timeF: 'Il y a 15 minutes'
+                reservationId: 'DEMO002', 
+                tableId: 'T5+T6',
+                aiScore: 88,
+                reasoning: [
+                    '大型聚会需要，AI建议组合桌位',
+                    'T5+T6组合可容纳8人，满足需求',
+                    'VIP客户识别，自动升级到私人区域'
+                ],
+                type: 'combination',
+                customerInfo: 'Smith先生',
+                partySize: 8,
+                time: '19:00',
+                preferences: ['private-dining'],
+                confidence: '92%',
+                isDemo: true
             },
             {
-                title: 'New Review',
-                titleF: 'Nouvel Avis',
-                message: '5-star review from David Wong',
-                messageF: 'Avis 5 étoiles de David Wong',
-                time: '1 hour ago',
-                timeF: 'Il y a 1 heure'
+                reservationId: 'DEMO003',
+                tableId: 'T3',
+                aiScore: 91,
+                reasoning: [
+                    '商务用餐检测，分配安静区域桌位',
+                    '4人标准桌位，适合商务讨论',
+                    'AI预测用餐时长2小时，时间规划优化'
+                ],
+                type: 'business',
+                customerInfo: '李总',
+                partySize: 4,
+                time: '12:00',
+                preferences: ['quiet-area'],
+                confidence: '94%',
+                isDemo: true
             }
         ];
         
-        const notificationList = document.getElementById('notificationList');
-        notificationList.innerHTML = '';
+        return demoData;
+    }
+    
+    calculateEfficiencyRate() {
+        // 计算AI系统带来的效率提升
+        const baseEfficiency = 75; // 人工分配基准效率
+        const aiBoost = Math.min(25, Math.floor(this.aiAssignments.length * 2)); // AI提升
+        return Math.min(99, baseEfficiency + aiBoost);
+    }
+    
+    getScoreClass(score) {
+        if (score >= 90) return 'excellent';
+        if (score >= 80) return 'good'; 
+        if (score >= 70) return 'average';
+        return 'poor';
+    }
+    
+    renderTablesGrid() {
+        const container = document.getElementById('tablesGrid');
+        if (!container) return;
         
-        notifications.forEach(notification => {
-            const item = document.createElement('div');
-            item.className = 'notification-item';
+        const tablesHTML = this.tableLayout.map(table => {
+            const statusClass = table.status;
+            const statusIcon = this.getTableStatusIcon(table.status);
+            const reservationInfo = table.currentReservation ? 
+                `<div class="table-reservation">
+                    <p>${table.currentReservation.customerInfo.firstName} ${table.currentReservation.customerInfo.lastName}</p>
+                    <p>${table.currentReservation.time}</p>
+                </div>` : '';
             
-            const title = this.currentLanguage === 'fr' ? notification.titleF : notification.title;
-            const message = this.currentLanguage === 'fr' ? notification.messageF : notification.message;
-            const time = this.currentLanguage === 'fr' ? notification.timeF : notification.time;
-            
-            item.innerHTML = `
-                <h4>${title}</h4>
-                <p>${message}</p>
-                <div class="notification-time">${time}</div>
+            return `
+                <div class="table-card ${statusClass}" onclick="manageTable('${table.id}')">
+                    <div class="table-header">
+                        <h4>${table.id}</h4>
+                        <div class="table-status">
+                            <i class="${statusIcon}"></i>
+                            <span>${this.getTableStatusText(table.status)}</span>
+                        </div>
+                    </div>
+                    <div class="table-info">
+                        <div class="capacity">
+                            <i class="fas fa-users"></i>
+                            <span>${table.capacity} 人桌</span>
+                        </div>
+                        <div class="table-type">
+                            <i class="fas fa-tag"></i>
+                            <span>${this.getTableTypeText(table.type)}</span>
+                        </div>
+                        <div class="table-zone">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${table.zone}</span>
+                        </div>
+                    </div>
+                    ${reservationInfo}
+                </div>
             `;
-            
-            notificationList.appendChild(item);
-        });
-    }
-    
-    toggleUserMenu() {
-        const dropdown = document.getElementById('userDropdown');
-        dropdown.classList.toggle('show');
-    }
-    
-    updateDateDisplay() {
-        const today = new Date();
-        const options = { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            weekday: 'long'
-        };
+        }).join('');
         
-        const formattedDate = today.toLocaleDateString(
-            this.currentLanguage === 'fr' ? 'fr-CA' : 'en-CA',
-            options
+        container.innerHTML = tablesHTML;
+    }
+    
+    startRealTimeUpdates() {
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+        }
+        
+        // 每30秒刷新一次数据
+        this.refreshInterval = setInterval(() => {
+            if (this.isLive) {
+                this.refreshData();
+            }
+        }, 30000);
+        
+        console.log('🔄 已启动实时数据更新');
+    }
+    
+    setupAISyncListeners() {
+        // Listen for booking synchronization events
+        window.addEventListener('bookingSync', (event) => {
+            console.log('🔄 Received booking sync event:', event.detail);
+            this.handleBookingSyncUpdate(event.detail.bookings);
+        });
+        
+        // Force initial sync if sync bridge is available
+        if (window.aiTableSyncBridge) {
+            setTimeout(() => {
+                console.log('🔄 Forcing initial AI sync...');
+                window.aiTableSyncBridge.forceSyncNow();
+            }, 1000);
+        }
+        
+        console.log('🧠 AI sync listeners configured');
+    }
+    
+    handleBookingSyncUpdate(bookings) {
+        console.log('📥 Processing booking sync update:', bookings.length, 'bookings');
+        
+        // Filter bookings for this restaurant
+        const restaurantBookings = bookings.filter(booking => 
+            booking.restaurantId === this.restaurantData.id
         );
         
-        document.getElementById('todayDate').textContent = formattedDate;
-    }
-    
-    // 语言切换
-    toggleLanguage() {
-        this.currentLanguage = this.currentLanguage === 'en' ? 'fr' : 'en';
-        document.getElementById('currentLang').textContent = this.currentLanguage.toUpperCase();
-        localStorage.setItem('mapleTableLanguage', this.currentLanguage);
-        this.updateTranslations();
-        this.updateDateDisplay();
-        
-        // 重新渲染当前页面数据
-        this.showSection(this.currentSection);
-    }
-    
-    loadLanguageFromStorage() {
-        const savedLanguage = localStorage.getItem('mapleTableLanguage');
-        if (savedLanguage && savedLanguage !== this.currentLanguage) {
-            this.currentLanguage = savedLanguage;
-            document.getElementById('currentLang').textContent = this.currentLanguage.toUpperCase();
-            this.updateTranslations();
+        if (restaurantBookings.length > 0) {
+            console.log('🏪 Found', restaurantBookings.length, 'bookings for this restaurant');
+            
+            // Update real-time reservations
+            this.realTimeReservations = restaurantBookings;
+            
+            // Refresh dashboard display
+            this.updateTableStatusFromReservations();
+            this.loadAIAssignments();
+            this.renderReservations();
+            this.renderAIRecommendations();
+            this.renderStatistics();
         }
     }
     
-    updateTranslations() {
-        document.querySelectorAll('[data-en]').forEach(element => {
-            const enText = element.getAttribute('data-en');
-            const frText = element.getAttribute('data-fr');
-            if (this.currentLanguage === 'fr' && frText) {
-                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                    element.placeholder = frText;
-                } else {
-                    element.textContent = frText;
-                }
-            } else if (enText) {
-                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                    element.placeholder = enText;
-                } else {
-                    element.textContent = enText;
-                }
-            }
-        });
-        
-        // 更新页面标题
-        document.title = this.currentLanguage === 'fr' ? 
-            'Tableau de Bord Restaurant - MapleTable' : 
-            'Restaurant Dashboard - MapleTable';
+    async refreshData() {
+        console.log('🔄 刷新数据...');
+        await this.loadReservationsData();
+        this.updateTableStatusFromReservations();
+        this.loadAIAssignments();
+        this.renderDashboardContent();
     }
     
-    showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.style.cssText = `
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: ${type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#17a2b8'};
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            z-index: 5000;
-            font-weight: 600;
-            animation: slideInDown 0.3s ease;
-            max-width: 90%;
-            text-align: center;
-        `;
-        notification.textContent = message;
+    // 工具方法
+    getReservationStatusClass(reservation) {
+        const now = new Date();
+        const reservationDateTime = new Date(`${reservation.date}T${reservation.time}:00`);
+        const diffMinutes = (reservationDateTime - now) / (1000 * 60);
         
-        document.body.appendChild(notification);
+        if (diffMinutes < -30) return 'completed';
+        if (diffMinutes < 0) return 'ongoing';
+        if (diffMinutes < 60) return 'arriving';
+        return 'upcoming';
+    }
+    
+    getStatusText(reservation) {
+        const statusClass = this.getReservationStatusClass(reservation);
+        const statusTexts = {
+            'completed': '已完成',
+            'ongoing': '进行中',
+            'arriving': '即将到达',
+            'upcoming': '待到达'
+        };
+        return statusTexts[statusClass] || '未知';
+    }
+    
+    getTableColor(status) {
+        const colors = {
+            'available': '#4caf50',
+            'occupied': '#f44336',
+            'reserved': '#ff9800',
+            'maintenance': '#757575'
+        };
+        return colors[status] || '#ddd';
+    }
+    
+    getTableSize(capacity) {
+        if (capacity <= 2) return 40;
+        if (capacity <= 4) return 50;
+        if (capacity <= 6) return 60;
+        return 70;
+    }
+    
+    getTableStatusIcon(status) {
+        const icons = {
+            'available': 'fas fa-check-circle',
+            'occupied': 'fas fa-user-friends',
+            'reserved': 'fas fa-clock',
+            'maintenance': 'fas fa-tools'
+        };
+        return icons[status] || 'fas fa-question';
+    }
+    
+    getTableStatusText(status) {
+        const texts = {
+            'available': '空闲',
+            'occupied': '使用中',
+            'reserved': '已预订',
+            'maintenance': '维护中'
+        };
+        return texts[status] || '未知';
+    }
+    
+    getTableTypeText(type) {
+        const types = {
+            'window': '窗边桌',
+            'standard': '标准桌',
+            'private': '包间',
+            'bar': '吧台'
+        };
+        return types[type] || type;
+    }
+    
+    getAssignmentTypeText(type) {
+        const types = {
+            'single': '单桌分配',
+            'combination': '组合桌位',
+            'split': '拆分安排',
+            'upgrade': 'VIP升级'
+        };
+        return types[type] || type;
+    }
+    
+    formatDate(dateStr) {
+        const date = new Date(dateStr);
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
         
-        setTimeout(() => {
-            notification.style.animation = 'slideOutUp 0.3s ease forwards';
-            setTimeout(() => notification.remove(), 300);
-        }, 4000);
+        if (date.toDateString() === today.toDateString()) {
+            return '今天';
+        } else if (date.toDateString() === tomorrow.toDateString()) {
+            return '明天';
+        } else {
+            return date.toLocaleDateString('zh-CN', { 
+                month: 'short', 
+                day: 'numeric',
+                weekday: 'short'
+            });
+        }
     }
 }
 
-// 全局函数
-function showSection(section) {
-    dashboard.showSection(section);
+// 全局函数供HTML调用
+function goBack() {
+    window.history.back();
 }
 
-function toggleSidebar() {
-    dashboard.toggleSidebar();
+function showSettings() {
+    alert('设置功能开发中...');
 }
 
-function toggleNotifications() {
-    dashboard.toggleNotifications();
-}
-
-function toggleUserMenu() {
-    dashboard.toggleUserMenu();
-}
-
-function toggleLanguage() {
-    dashboard.toggleLanguage();
-}
-
-function addTable(type) {
-    dashboard.addTable(type);
-}
-
-function deleteTable(tableId) {
-    dashboard.deleteTable(tableId);
-}
-
-function saveLayout() {
-    dashboard.saveLayout();
-}
-
-function resetLayout() {
-    dashboard.resetLayout();
-}
-
-function toggleGrid() {
-    dashboard.toggleGrid();
-}
-
-function zoomIn() {
-    dashboard.zoomIn();
-}
-
-function zoomOut() {
-    dashboard.zoomOut();
-}
-
-function filterBookings(filter) {
-    // 筛选预订
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    if (filter) {
-        document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+function refreshReservations() {
+    if (window.merchantDashboard) {
+        window.merchantDashboard.refreshData();
     }
 }
 
-function searchBookings(query) {
-    // 搜索预订
-    console.log('Searching bookings:', query);
+function showReservationFilters() {
+    alert('筛选功能开发中...');
 }
 
-function viewBooking(bookingId) {
-    console.log('View booking:', bookingId);
+function addNewTable() {
+    alert('添加桌位功能开发中...');
 }
 
-function confirmBooking(bookingId) {
-    console.log('Confirm booking:', bookingId);
+function updateAnalytics(timeRange) {
+    console.log('更新分析数据:', timeRange);
 }
 
-function editBooking(bookingId) {
-    console.log('Edit booking:', bookingId);
+function editReservation(reservationId) {
+    console.log('编辑预订:', reservationId);
+    alert(`编辑预订 ${reservationId} 功能开发中...`);
 }
 
-function cancelBooking(bookingId) {
-    console.log('Cancel booking:', bookingId);
+function confirmArrival(reservationId) {
+    console.log('确认到店:', reservationId);
+    alert(`客户 ${reservationId} 已确认到店!`);
 }
 
-function exportReport() {
-    console.log('Export report');
-}
-
-function exportBookings() {
-    console.log('Export bookings');
-}
-
-function showQuickBooking() {
-    console.log('Show quick booking modal');
-}
-
-function showUpgradeModal() {
-    document.getElementById('upgradeModal').classList.add('show');
-}
-
-function closeModal() {
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.classList.remove('show');
-    });
-}
-
-function startTrial() {
-    alert('Free trial started! Redirecting to upgrade page...');
-    closeModal();
-}
-
-function logout() {
-    if (confirm('Are you sure you want to sign out?')) {
-        localStorage.removeItem('mapleTableMerchantSession');
-        sessionStorage.removeItem('mapleTableMerchantSession');
-        window.location.href = 'merchant-auth.html';
+function cancelReservation(reservationId) {
+    if (confirm('确定要取消这个预订吗？')) {
+        console.log('取消预订:', reservationId);
+        alert(`预订 ${reservationId} 已取消`);
     }
 }
 
-// 初始化仪表板
-let dashboard;
-document.addEventListener('DOMContentLoaded', () => {
-    dashboard = new MerchantDashboard();
+function selectTable(tableId) {
+    console.log('选择桌位:', tableId);
+    alert(`已选择桌位 ${tableId}`);
+}
+
+function manageTable(tableId) {
+    console.log('管理桌位:', tableId);
+    alert(`管理桌位 ${tableId} 功能开发中...`);
+}
+
+function showAIDetails(assignmentId) {
+    console.log('显示AI分配详情:', assignmentId);
+    
+    if (assignmentId.startsWith('DEMO')) {
+        // 显示AI演示详情
+        const demoDetails = {
+            'DEMO001': {
+                title: 'AI窗边座位优化分配',
+                description: '基于客户历史偏好和实时桌位状态，AI系统选择了最佳窗边位置',
+                factors: [
+                    '客户偏好权重: 40%',
+                    '桌位可用性: 30%', 
+                    '位置优势: 20%',
+                    '时间匹配度: 10%'
+                ]
+            },
+            'DEMO002': {
+                title: 'AI智能桌位组合',
+                description: 'AI检测到大型聚会需求，自动建议最优桌位组合方案',
+                factors: [
+                    '人数匹配度: 50%',
+                    '空间布局: 25%',
+                    'VIP服务: 15%',
+                    '私密性: 10%'
+                ]
+            },
+            'DEMO003': {
+                title: 'AI商务场景识别',
+                description: 'AI通过关键词分析识别商务用餐，智能分配安静区域',
+                factors: [
+                    '场景识别: 45%',
+                    '环境安静度: 30%',
+                    '服务便利性: 15%',
+                    '用餐时长预测: 10%'
+                ]
+            }
+        };
+        
+        const detail = demoDetails[assignmentId];
+        if (detail) {
+            const modal = `
+                <div class="ai-detail-modal" onclick="closeAIDetailModal()">
+                    <div class="ai-detail-content" onclick="event.stopPropagation()">
+                        <div class="ai-modal-header">
+                            <h3>🤖 ${detail.title}</h3>
+                            <button class="close-btn" onclick="closeAIDetailModal()">&times;</button>
+                        </div>
+                        <div class="ai-modal-body">
+                            <p class="ai-description">${detail.description}</p>
+                            <div class="ai-factors">
+                                <h4>分配权重因子:</h4>
+                                <ul>
+                                    ${detail.factors.map(factor => `<li>${factor}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="ai-timeline">
+                                <h4>AI处理流程:</h4>
+                                <div class="timeline-steps">
+                                    <div class="step completed">
+                                        <span class="step-number">1</span>
+                                        <span class="step-text">接收预订请求</span>
+                                    </div>
+                                    <div class="step completed">
+                                        <span class="step-number">2</span>
+                                        <span class="step-text">分析客户偏好</span>
+                                    </div>
+                                    <div class="step completed">
+                                        <span class="step-number">3</span>
+                                        <span class="step-text">评估桌位状态</span>
+                                    </div>
+                                    <div class="step completed">
+                                        <span class="step-number">4</span>
+                                        <span class="step-text">生成最优方案</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modal);
+        }
+    } else {
+        alert(`AI分配详情 ${assignmentId} 功能开发中...`);
+    }
+}
+
+function closeAIDetailModal() {
+    const modal = document.querySelector('.ai-detail-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// 初始化商家管理后台
+window.addEventListener('DOMContentLoaded', () => {
+    window.merchantDashboard = new MerchantDashboard();
 });
 
-// 添加CSS动画
-const dashboardStyles = document.createElement('style');
-dashboardStyles.textContent = `
-    @keyframes slideInDown {
-        from { transform: translate(-50%, -100%); opacity: 0; }
-        to { transform: translate(-50%, 0); opacity: 1; }
+// 页面卸载时清理
+window.addEventListener('beforeunload', () => {
+    if (window.merchantDashboard && window.merchantDashboard.refreshInterval) {
+        clearInterval(window.merchantDashboard.refreshInterval);
     }
-    
-    @keyframes slideOutUp {
-        to { transform: translate(-50%, -100%); opacity: 0; }
-    }
-    
-    .btn {
-        padding: var(--spacing-sm) var(--spacing-md);
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: var(--spacing-xs);
-        border: none;
-        text-decoration: none;
-    }
-    
-    .btn-primary {
-        background: var(--canadian-red);
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        background: #CC0000;
-        transform: translateY(-1px);
-    }
-    
-    .btn-secondary {
-        background: var(--background);
-        color: var(--dark-text);
-        border: 2px solid var(--border-color);
-    }
-    
-    .btn-secondary:hover {
-        border-color: var(--canadian-red);
-        color: var(--canadian-red);
-    }
-    
-    .btn-sm {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: var(--font-sm);
-    }
-    
-    .date-filter input[type="date"] {
-        padding: var(--spacing-sm) var(--spacing-md);
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        background: var(--card-background);
-        color: var(--dark-text);
-        transition: all 0.3s ease;
-    }
-    
-    .date-filter input[type="date"]:focus {
-        outline: none;
-        border-color: var(--canadian-red);
-        box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
-    }
-`;
-document.head.appendChild(dashboardStyles);
+});

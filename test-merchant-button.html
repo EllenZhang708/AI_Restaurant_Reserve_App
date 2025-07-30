@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Merchant Button UI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="button-fix.css">
+    <link rel="stylesheet" href="toolbar-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, sans-serif;
+            background: #f8f9fa;
+        }
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #2d3748;
+        }
+        .toolbar-demo {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px 24px;
+            margin: 20px 0;
+        }
+        .button-demo {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .status {
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .success {
+            background: #d4fdf0;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        .error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-section">
+            <h1>🏪 Merchant Button UI Test</h1>
+            <p>Testing the "For Business" button display and functionality.</p>
+            
+            <h2>1. Toolbar Demo (Simulated)</h2>
+            <div class="toolbar-demo">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <span>🍁 MapleTable</span>
+                        <span style="font-size: 14px; color: #64748b;">📍 Toronto, ON</span>
+                    </div>
+                    
+                    <div style="flex: 1; max-width: 400px; margin: 0 20px;">
+                        <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 25px; padding: 8px 15px;">
+                            🔍 Search restaurants...
+                        </div>
+                    </div>
+                    
+                    <div class="button-demo">
+                        <button class="action-btn notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        
+                        <button class="action-btn customer-login-btn main-login">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Sign In</span>
+                        </button>
+                        
+                        <div style="width: 1px; height: 30px; background: #e2e8f0; margin: 0 8px;"></div>
+                        
+                        <button class="action-btn merchant-btn" onclick="testMerchantClick()">
+                            <i class="fas fa-store"></i>
+                            <span>For Business</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>2. Individual Button Tests</h2>
+            <div class="button-demo">
+                <button class="action-btn">
+                    <i class="fas fa-bell"></i>
+                    <span>Regular Button</span>
+                </button>
+                
+                <button class="action-btn merchant-btn">
+                    <i class="fas fa-store"></i>
+                    <span>Merchant Button</span>
+                </button>
+                
+                <a href="#" class="action-btn merchant-btn">
+                    <i class="fas fa-store"></i>
+                    <span>Merchant Link</span>
+                </a>
+            </div>
+            
+            <h2>3. CSS Loading Status</h2>
+            <div id="cssStatus"></div>
+            
+            <h2>4. Quick Actions</h2>
+            <div class="button-demo">
+                <a href="index.html" class="action-btn" style="background: #667eea; color: white;">
+                    <i class="fas fa-home"></i>
+                    <span>Go to Main Page</span>
+                </a>
+                
+                <button class="action-btn" onclick="checkMainPageButton()" style="background: #48bb78; color: white;">
+                    <i class="fas fa-search"></i>
+                    <span>Check Main Page Button</span>
+                </button>
+                
+                <button class="action-btn" onclick="setupMerchantAccess()" style="background: #f59e0b; color: white;">
+                    <i class="fas fa-key"></i>
+                    <span>Setup Merchant Access</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testMerchantClick() {
+            alert('✅ Merchant button clicked! This should redirect to merchant login.');
+            console.log('🏪 Merchant button is working correctly');
+        }
+
+        function checkMainPageButton() {
+            const status = document.getElementById('cssStatus');
+            status.innerHTML = '<div class="status success">✅ Checking main page button...</div>';
+            
+            setTimeout(() => {
+                window.open('index.html', '_blank');
+                status.innerHTML += '<div class="status success">✅ Main page opened. Check the top-right corner for the "For Business" button.</div>';
+            }, 500);
+        }
+
+        function setupMerchantAccess() {
+            // Setup merchant login data for testing
+            const merchantData = {
+                id: 'merchant_001',
+                restaurantName: 'The Maple Leaf Restaurant',
+                restaurant: {
+                    id: 'rest_001',
+                    name: 'The Maple Leaf Restaurant'
+                }
+            };
+            
+            localStorage.setItem('merchantLogin', JSON.stringify(merchantData));
+            localStorage.setItem('merchantLoginData', JSON.stringify(merchantData));
+            
+            const status = document.getElementById('cssStatus');
+            status.innerHTML = '<div class="status success">✅ Merchant access setup complete! You can now access the merchant dashboard.</div>';
+        }
+
+        // Check CSS loading
+        function checkCSSLoading() {
+            const status = document.getElementById('cssStatus');
+            const styles = [];
+            
+            // Check if merchant button styles are applied
+            const testBtn = document.querySelector('.merchant-btn');
+            if (testBtn) {
+                const computedStyle = window.getComputedStyle(testBtn);
+                const background = computedStyle.background || computedStyle.backgroundColor;
+                
+                if (background.includes('gradient') || background.includes('rgb(102, 126, 234)')) {
+                    styles.push('<div class="status success">✅ Merchant button styles: Loaded correctly</div>');
+                } else {
+                    styles.push('<div class="status error">❌ Merchant button styles: Not loaded</div>');
+                }
+                
+                const display = computedStyle.display;
+                if (display === 'flex') {
+                    styles.push('<div class="status success">✅ Button layout: Flex display working</div>');
+                } else {
+                    styles.push('<div class="status error">❌ Button layout: Flex display not working</div>');
+                }
+            } else {
+                styles.push('<div class="status error">❌ Merchant button: Not found in DOM</div>');
+            }
+            
+            // Check CSS files
+            const cssFiles = ['styles.css', 'toolbar-styles.css', 'button-fix.css'];
+            cssFiles.forEach(file => {
+                const link = document.querySelector(`link[href*="${file}"]`);
+                if (link) {
+                    styles.push(`<div class="status success">✅ ${file}: Referenced in HTML</div>`);
+                } else {
+                    styles.push(`<div class="status error">❌ ${file}: Not found in HTML</div>`);
+                }
+            });
+            
+            status.innerHTML = styles.join('');
+        }
+        
+        // Run checks on load
+        setTimeout(checkCSSLoading, 1000);
+    </script>
+</body>
+</html>

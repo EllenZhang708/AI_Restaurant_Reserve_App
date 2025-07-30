@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title data-en="Profile - MapleTable" data-fr="Profil - MapleTable">Profile - MapleTable</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="toolbar-styles.css">
+    <link rel="stylesheet" href="profile.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#FF0000">
+</head>
+<body>
+    <div class="profile-app">
+        <!-- 头部导航 -->
+        <header class="profile-header">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 data-en="My Profile" data-fr="Mon Profil">My Profile</h1>
+                <div class="header-actions">
+                    <button class="edit-btn" onclick="toggleEditMode()">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="settings-btn" onclick="showSettings()">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 用户信息卡片 -->
+        <section class="profile-card">
+            <div class="profile-background">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" 
+                             alt="Profile Picture" id="profileImage">
+                        <button class="avatar-edit-btn" onclick="changeProfilePicture()">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="profileName">John Maple</h2>
+                        <p id="profileEmail">john.maple@email.com</p>
+                        <div class="user-badges">
+                            <span class="badge gold">
+                                <i class="fas fa-crown"></i>
+                                Gold Member
+                            </span>
+                            <span class="badge verified">
+                                <i class="fas fa-check-circle"></i>
+                                Verified
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 统计概览 -->
+        <section class="stats-overview">
+            <div class="stat-item">
+                <div class="stat-number">24</div>
+                <div class="stat-label" data-en="Bookings" data-fr="Réservations">Bookings</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1,240</div>
+                <div class="stat-label" data-en="Points" data-fr="Points">Points</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4.8</div>
+                <div class="stat-label" data-en="Avg Rating" data-fr="Note Moy.">Avg Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">12</div>
+                <div class="stat-label" data-en="Favorites" data-fr="Favoris">Favorites</div>
+            </div>
+        </section>
+
+        <!-- 菜单选项 -->
+        <section class="profile-menu">
+            <!-- 账户管理 -->
+            <div class="menu-section">
+                <h3 class="section-title" data-en="Account" data-fr="Compte">Account</h3>
+                <div class="menu-items">
+                    <a href="#" class="menu-item" onclick="editPersonalInfo()">
+                        <div class="menu-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Personal Information" data-fr="Informations Personnelles">Personal Information</strong>
+                            <small data-en="Name, email, phone number" data-fr="Nom, email, téléphone">Name, email, phone number</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="managePreferences()">
+                        <div class="menu-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Dining Preferences" data-fr="Préférences Culinaires">Dining Preferences</strong>
+                            <small data-en="Cuisine types, dietary restrictions" data-fr="Types de cuisine, restrictions alimentaires">Cuisine types, dietary restrictions</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="showAddresses()">
+                        <div class="menu-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Saved Addresses" data-fr="Adresses Sauvegardées">Saved Addresses</strong>
+                            <small data-en="Home, work, and favorite locations" data-fr="Domicile, travail et lieux favoris">Home, work, and favorite locations</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 预订历史 -->
+            <div class="menu-section">
+                <h3 class="section-title" data-en="Dining History" data-fr="Historique">Dining History</h3>
+                <div class="menu-items">
+                    <a href="bookings.html" class="menu-item">
+                        <div class="menu-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="My Bookings" data-fr="Mes Réservations">My Bookings</strong>
+                            <small data-en="View and manage reservations" data-fr="Voir et gérer les réservations">View and manage reservations</small>
+                        </div>
+                        <div class="menu-badge">3</div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="showFavorites()">
+                        <div class="menu-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Favorite Restaurants" data-fr="Restaurants Favoris">Favorite Restaurants</strong>
+                            <small data-en="Your saved restaurants" data-fr="Vos restaurants sauvegardés">Your saved restaurants</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="showReviews()">
+                        <div class="menu-icon">
+                            <i class="fas fa-comment-alt"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="My Reviews" data-fr="Mes Avis">My Reviews</strong>
+                            <small data-en="Reviews and ratings you've given" data-fr="Avis et notes que vous avez donnés">Reviews and ratings you've given</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 奖励积分 -->
+            <div class="menu-section">
+                <h3 class="section-title" data-en="Rewards & Benefits" data-fr="Récompenses">Rewards & Benefits</h3>
+                <div class="menu-items">
+                    <a href="#" class="menu-item" onclick="showPoints()">
+                        <div class="menu-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="MaplePoints" data-fr="Points Maple">MaplePoints</strong>
+                            <small data-en="1,240 points available" data-fr="1 240 points disponibles">1,240 points available</small>
+                        </div>
+                        <div class="menu-badge gold">1,240</div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="showMembership()">
+                        <div class="menu-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Membership Status" data-fr="Statut de Membre">Membership Status</strong>
+                            <small data-en="Gold Member - expires Dec 2024" data-fr="Membre Or - expire déc 2024">Gold Member - expires Dec 2024</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="showOffers()">
+                        <div class="menu-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Special Offers" data-fr="Offres Spéciales">Special Offers</strong>
+                            <small data-en="Exclusive deals and promotions" data-fr="Offres exclusives et promotions">Exclusive deals and promotions</small>
+                        </div>
+                        <div class="menu-badge">2</div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 应用设置 -->
+            <div class="menu-section">
+                <h3 class="section-title" data-en="App Settings" data-fr="Paramètres">App Settings</h3>
+                <div class="menu-items">
+                    <a href="#" class="menu-item" onclick="showNotificationSettings()">
+                        <div class="menu-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Notifications" data-fr="Notifications">Notifications</strong>
+                            <small data-en="Booking reminders, offers" data-fr="Rappels de réservation, offres">Booking reminders, offers</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="showLanguageSettings()">
+                        <div class="menu-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Language & Region" data-fr="Langue et Région">Language & Region</strong>
+                            <small data-en="English (Canada)" data-fr="Français (Canada)">English (Canada)</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="showPrivacySettings()">
+                        <div class="menu-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Privacy & Security" data-fr="Confidentialité">Privacy & Security</strong>
+                            <small data-en="Data sharing, security settings" data-fr="Partage de données, sécurité">Data sharing, security settings</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 帮助支持 -->
+            <div class="menu-section">
+                <h3 class="section-title" data-en="Help & Support" data-fr="Aide et Support">Help & Support</h3>
+                <div class="menu-items">
+                    <a href="#" class="menu-item" onclick="showHelp()">
+                        <div class="menu-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Help Center" data-fr="Centre d'Aide">Help Center</strong>
+                            <small data-en="FAQs and support articles" data-fr="FAQ et articles d'aide">FAQs and support articles</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="contactSupport()">
+                        <div class="menu-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Contact Support" data-fr="Contacter le Support">Contact Support</strong>
+                            <small data-en="Get help from our team" data-fr="Obtenir de l'aide de notre équipe">Get help from our team</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                    
+                    <a href="#" class="menu-item" onclick="showAbout()">
+                        <div class="menu-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="About MapleTable" data-fr="À Propos">About MapleTable</strong>
+                            <small data-en="Version 2.1.0" data-fr="Version 2.1.0">Version 2.1.0</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 注销 -->
+            <div class="menu-section">
+                <div class="menu-items">
+                    <a href="#" class="menu-item logout-item" onclick="confirmLogout()">
+                        <div class="menu-icon">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <div class="menu-content">
+                            <strong data-en="Sign Out" data-fr="Se Déconnecter">Sign Out</strong>
+                            <small data-en="Sign out of your account" data-fr="Se déconnecter de votre compte">Sign out of your account</small>
+                        </div>
+                        <i class="fas fa-chevron-right menu-arrow"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <button class="nav-item" data-page="home" onclick="switchTab('home')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-home"></i>
+                </div>
+                <span class="nav-label" data-en="Home" data-fr="Accueil">Home</span>
+            </button>
+            
+            <button class="nav-item" data-page="explore" onclick="switchTab('explore')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <span class="nav-label" data-en="Explore" data-fr="Explorer">Explore</span>
+            </button>
+            
+            <button class="nav-item book-center" onclick="quickBook()">
+                <div class="book-icon-wrapper">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <span class="nav-label" data-en="Book" data-fr="Réserver">Book</span>
+            </button>
+            
+            <button class="nav-item" data-page="bookings" onclick="switchTab('bookings')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="nav-notification-dot" id="bookingsDot">3</span>
+                </div>
+                <span class="nav-label" data-en="Bookings" data-fr="Réservations">Bookings</span>
+            </button>
+            
+            <button class="nav-item active" data-page="profile" onclick="switchTab('profile')">
+                <div class="nav-icon-wrapper">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <span class="nav-label" data-en="Profile" data-fr="Profil">Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>

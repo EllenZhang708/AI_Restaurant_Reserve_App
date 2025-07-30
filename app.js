@@ -332,6 +332,31 @@ class MapleTableApp {
                 phone: '(416) 461-3472',
                 winterFeatures: ['Spicy Warmth', 'Hot Curries', 'Comfort Spices'],
                 winterFeaturesF: ['Chaleur Épicée', 'Currys Chauds', 'Épices Réconfortantes']
+            },
+            
+            // MapleTable Restaurant - Main Test Restaurant
+            {
+                id: 'rest_001',
+                name: 'The Maple Leaf Restaurant',
+                nameF: 'Restaurant Feuille d\'Érable',
+                cuisine: 'Canadian Fine Dining',
+                cuisineF: 'Grande Cuisine Canadienne',
+                city: 'toronto',
+                rating: 4.9,
+                reviewCount: 1847,
+                priceRange: 'CAD $60-95',
+                image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop',
+                features: ['AI Table Allocation', 'Seasonal Menu', 'Wine Pairing', 'Private Events'],
+                featuresF: ['Allocation de Table IA', 'Menu Saisonnier', 'Accord Mets-Vins', 'Événements Privés'],
+                badges: ['AI-Powered', 'Locally Sourced', 'Award Winning'],
+                badgesF: ['Alimenté par IA', 'Sources Locales', 'Primé'],
+                cuisine_type: 'canadian-classics',
+                description: 'Experience the future of dining with our AI-powered table allocation system. Enjoy premium Canadian cuisine featuring locally sourced ingredients and expertly crafted seasonal menus.',
+                descriptionF: 'Découvrez l\'avenir de la restauration avec notre système d\'allocation de tables alimenté par IA. Savourez une cuisine canadienne haut de gamme mettant en vedette des ingrédients d\'origine locale et des menus saisonniers expertement conçus.',
+                address: '123 Maple Street, Toronto, ON M5V 3A8',
+                phone: '(416) 555-MAPLE',
+                winterFeatures: ['Cozy Fireplace', 'Winter Tasting Menu', 'Hot Maple Toddy', 'AI Smart Seating'],
+                winterFeaturesF: ['Foyer Chaleureux', 'Menu Dégustation d\'Hiver', 'Grog à l\'Érable Chaud', 'Places Intelligentes IA']
             }
         ];
     }
@@ -522,9 +547,9 @@ class MapleTableApp {
                     <button class="btn btn-secondary" onclick="event.stopPropagation(); app.callRestaurant('${restaurant.phone}')">
                         <i class="fas fa-phone"></i> ${this.currentLanguage === 'fr' ? 'Appeler' : 'Call'}
                     </button>
-                    <button class="btn btn-primary" onclick="event.stopPropagation(); app.bookRestaurant(${restaurant.id})">
+                    <a href="booking.html?restaurant=${restaurant.id}" class="btn btn-primary" onclick="event.stopPropagation(); localStorage.setItem('selectedRestaurant', JSON.stringify({id: '${restaurant.id}', name: '${restaurant.name}', nameF: '${restaurant.nameF || restaurant.name}', cuisine: '${restaurant.cuisine}', cuisineF: '${restaurant.cuisineF || restaurant.cuisine}', rating: ${restaurant.rating}, reviewCount: ${restaurant.reviewCount}, image: '${restaurant.image}', phone: '${restaurant.phone || ''}', address: '${restaurant.address || ''}', features: ${JSON.stringify(restaurant.features || [])}, winterFeatures: ${JSON.stringify(restaurant.winterFeatures || [])}}));console.log('🍁 Stored restaurant data for booking:', JSON.parse(localStorage.getItem('selectedRestaurant')));">
                         <i class="fas fa-calendar-plus"></i> ${this.currentLanguage === 'fr' ? 'Réserver' : 'Book'}
-                    </button>
+                    </a>
                 </div>
             </div>
         `;
@@ -591,9 +616,9 @@ class MapleTableApp {
                     <button class="btn btn-secondary" onclick="app.callRestaurant('${restaurant.phone}')">
                         <i class="fas fa-phone"></i> ${this.currentLanguage === 'fr' ? 'Appeler' : 'Call'}
                     </button>
-                    <button class="btn btn-primary" onclick="app.bookRestaurant(${restaurant.id})">
+                    <a href="booking.html?restaurant=${restaurant.id}" class="btn btn-primary" onclick="localStorage.setItem('selectedRestaurant', JSON.stringify({id: '${restaurant.id}', name: '${restaurant.name}', nameF: '${restaurant.nameF || restaurant.name}', cuisine: '${restaurant.cuisine}', cuisineF: '${restaurant.cuisineF || restaurant.cuisine}', rating: ${restaurant.rating}, reviewCount: ${restaurant.reviewCount}, image: '${restaurant.image}', phone: '${restaurant.phone || ''}', address: '${restaurant.address || ''}', features: ${JSON.stringify(restaurant.features || [])}, winterFeatures: ${JSON.stringify(restaurant.winterFeatures || [])}}));console.log('🍁 Stored restaurant data for booking:', JSON.parse(localStorage.getItem('selectedRestaurant')));">
                         <i class="fas fa-calendar-plus"></i> ${this.currentLanguage === 'fr' ? 'Réserver' : 'Book Now'}
-                    </button>
+                    </a>
                 </div>
             </div>
         `;
@@ -635,29 +660,38 @@ class MapleTableApp {
     
     // 预订餐厅
     bookRestaurant(restaurantId) {
-        const restaurant = this.restaurants.find(r => r.id === restaurantId);
-        if (!restaurant) return;
+        console.log('🔄 bookRestaurant 被调用, ID:', restaurantId, '类型:', typeof restaurantId);
+        console.log('📊 当前餐厅数据:', this.restaurants.map(r => ({ id: r.id, name: r.name })));
         
-        const message = this.currentLanguage === 'fr' ? 
-            `Réserver une table chez ${restaurant.nameF || restaurant.name}?` :
-            `Book a table at ${restaurant.name}?`;
-            
-        if (confirm(message)) {
-            this.showNotification(
-                this.currentLanguage === 'fr' ? 
-                'Redirection vers la réservation...' : 
-                'Redirecting to booking...'
-            );
-            
-            // 在真实应用中，这里会跳转到预订页面
-            setTimeout(() => {
-                this.showNotification(
-                    this.currentLanguage === 'fr' ? 
-                    'Fonction de réservation bientôt disponible!' : 
-                    'Booking feature coming soon!'
-                );
-            }, 1500);
+        const restaurant = this.restaurants.find(r => r.id == restaurantId); // 使用 == 而不是 ===
+        if (!restaurant) {
+            console.error('❗ Restaurant not found:', restaurantId);
+            console.error('可用的餐厅 IDs:', this.restaurants.map(r => r.id));
+            alert('餐厅不存在，ID: ' + restaurantId);
+            return;
         }
+        
+        console.log('✅ 找到餐厅:', restaurant.name);
+        console.log('📝 跳转到预订页面:', restaurant.name);
+        
+        // 存储选中的餐厅信息到localStorage
+        localStorage.setItem('selectedRestaurant', JSON.stringify({
+            id: restaurant.id,
+            name: restaurant.name,
+            nameF: restaurant.nameF,
+            cuisine: restaurant.cuisine,
+            cuisineF: restaurant.cuisineF,
+            rating: restaurant.rating,
+            reviewCount: restaurant.reviewCount,
+            image: restaurant.image,
+            phone: restaurant.phone,
+            address: restaurant.address,
+            winterFeatures: restaurant.winterFeatures,
+            winterFeaturesF: restaurant.winterFeaturesF
+        }));
+        
+        // 直接跳转到预订页面
+        window.location.href = `booking.html?restaurant=${restaurantId}`;
     }
     
     // 拨打电话
@@ -824,7 +858,7 @@ function toggleLanguage() {
 
 // 商家认证和广告相关函数
 function goToMerchantAuth() {
-    window.location.href = 'merchant-auth.html';
+    window.location.href = 'merchant-login.html';
 }
 
 function viewPromotedRestaurant(promotionId) {
@@ -910,13 +944,912 @@ function closeFilters() {
 function switchTab(tab) {
     // 底部导航切换逻辑
     console.log(`Switching to ${tab} tab`);
+    
+    switch(tab) {
+        case 'home':
+            window.location.href = 'index.html';
+            break;
+        case 'explore':
+            window.location.href = 'explore.html';
+            break;
+        case 'bookings':
+        case 'reservations':
+            window.location.href = 'bookings.html';
+            break;
+        case 'profile':
+            window.location.href = 'profile.html';
+            break;
+        default:
+            console.log(`Unknown tab: ${tab}`);
+    }
+}
+
+// 全局函数用于HTML onclick调用
+function quickBook(restaurantId) {
+    if (window.app) {
+        app.bookRestaurant(restaurantId);
+    } else {
+        console.error('App not initialized yet');
+    }
+}
+
+function goToMerchantAuth(action = 'login') {
+    if (action === 'login') {
+        window.location.href = 'merchant-login.html';
+    } else if (action === 'register') {
+        window.location.href = 'merchant-register.html';
+    } else if (action === 'demo') {
+        alert('商家演示功能开发中...');
+    } else {
+        window.location.href = 'merchant-login.html';
+    }
+}
+
+function showMerchantOptions() {
+    const dropdown = document.getElementById('merchantOptionsDropdown');
+    const isVisible = dropdown.classList.contains('show');
+    
+    // 关闭所有下拉菜单
+    closeAllDropdowns();
+    
+    if (!isVisible) {
+        dropdown.classList.add('show');
+    }
+}
+
+function showUserMenu() {
+    console.log('Show user menu');
+    // TODO: 实现用户菜单显示
+}
+
+function showNotifications() {
+    console.log('Show notifications');
+    // TODO: 实现通知面板显示
+}
+
+function showPricingInfo() {
+    alert('商家定价信息：\n\n基础版: $49/月\n专业版: $99/月\n企业版: $199/月\n\n联系我们获取详细信息!');
+}
+
+function showMerchantSupport() {
+    alert('商家支持：\n\n电话: 1-800-MAPLE-TABLE\n邮箱: merchants@mapletable.ca\n在线客服: 24/7 可用');
+}
+
+// 新的UI交互函数
+function goToCustomerLogin() {
+    console.log('🔄 正在跳转到顾客登录页面...');
+    window.location.href = 'customer-login.html';
+}
+
+function goToMerchantLogin() {
+    console.log('🔄 正在跳转到商家登录页面...');
+    window.location.href = 'merchant-login.html';
+}
+
+function showCustomerLogin() {
+    const dropdown = document.getElementById('customerLoginDropdown');
+    const isVisible = dropdown.classList.contains('show');
+    
+    // 关闭所有下拉菜单
+    closeAllDropdowns();
+    
+    if (!isVisible) {
+        dropdown.classList.add('show');
+    }
+}
+
+function showUserMenu() {
+    const dropdown = document.getElementById('userMenuDropdown');
+    const isVisible = dropdown.classList.contains('show');
+    
+    // 关闭所有下拉菜单
+    closeAllDropdowns();
+    
+    if (!isVisible) {
+        dropdown.classList.add('show');
+    }
+}
+
+function showLocationSelector() {
+    // 创建位置选择器模态框
+    const modal = document.createElement('div');
+    modal.className = 'location-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        backdrop-filter: blur(10px);
+    `;
+    
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        max-width: 400px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+    `;
+    
+    content.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0; color: var(--dark-text);">选择位置 / Choose Location</h3>
+            <button onclick="closeLocationModal()" style="background: #f1f5f9; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <button onclick="getCurrentLocation()" style="
+            width: 100%;
+            background: linear-gradient(45deg, var(--canadian-red), #dc2626);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        ">
+            <i class="fas fa-location-arrow"></i>
+            使用当前位置 / Use Current Location
+        </button>
+        
+        <div style="margin-bottom: 16px;">
+            <h4 style="margin: 0 0 12px 0; color: var(--medium-text); font-size: 0.9rem;">热门城市 / Popular Cities</h4>
+            <div class="cities-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                ${getCitiesHTML()}
+            </div>
+        </div>
+    `;
+    
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+    
+    // 点击背景关闭
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeLocationModal();
+        }
+    });
+}
+
+function getCitiesHTML() {
+    const cities = [
+        { value: 'toronto', name: 'Toronto, ON', nameF: 'Toronto, ON' },
+        { value: 'vancouver', name: 'Vancouver, BC', nameF: 'Vancouver, BC' },
+        { value: 'montreal', name: 'Montréal, QC', nameF: 'Montréal, QC' },
+        { value: 'calgary', name: 'Calgary, AB', nameF: 'Calgary, AB' },
+        { value: 'ottawa', name: 'Ottawa, ON', nameF: 'Ottawa, ON' },
+        { value: 'edmonton', name: 'Edmonton, AB', nameF: 'Edmonton, AB' },
+        { value: 'winnipeg', name: 'Winnipeg, MB', nameF: 'Winnipeg, MB' },
+        { value: 'quebec', name: 'Québec City, QC', nameF: 'Ville de Québec, QC' },
+        { value: 'halifax', name: 'Halifax, NS', nameF: 'Halifax, NS' }
+    ];
+    
+    return cities.map(city => `
+        <button onclick="selectCity('${city.value}', '${city.name}')" style="
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        " onmouseover="this.style.borderColor='var(--canadian-red)'; this.style.background='rgba(255,0,0,0.05)'" 
+           onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='white'">
+            ${city.name}
+        </button>
+    `).join('');
+}
+
+// 地理定位功能
+function getCurrentLocation() {
+    if (!navigator.geolocation) {
+        alert('您的浏览器不支持地理定位功能 / Geolocation is not supported by your browser');
+        return;
+    }
+    
+    // 显示加载状态
+    const button = event.target;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在定位... / Locating...';
+    button.disabled = true;
+    
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log('用户位置:', latitude, longitude);
+            
+            try {
+                // 使用反向地理编码获取城市信息
+                const cityName = await reverseGeocode(latitude, longitude);
+                document.getElementById('currentLocation').textContent = cityName;
+                
+                if (app) {
+                    app.currentCity = cityName.toLowerCase().split(',')[0];
+                    app.loadRestaurants();
+                }
+                
+                closeLocationModal();
+                showNotification(`位置已更新为: ${cityName} / Location updated to: ${cityName}`);
+                
+            } catch (error) {
+                console.error('反向地理编码失败:', error);
+                alert('无法获取位置信息，请手动选择城市 / Unable to get location info, please select city manually');
+            }
+            
+            button.innerHTML = '<i class="fas fa-location-arrow"></i> 使用当前位置 / Use Current Location';
+            button.disabled = false;
+        },
+        (error) => {
+            console.error('地理定位失败:', error);
+            let message = '定位失败 / Location failed: ';
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message += '用户拒绝了定位请求 / User denied location request';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message += '位置信息不可用 / Location unavailable';
+                    break;
+                case error.TIMEOUT:
+                    message += '定位请求超时 / Location request timeout';
+                    break;
+                default:
+                    message += '未知错误 / Unknown error';
+                    break;
+            }
+            
+            alert(message);
+            button.innerHTML = '<i class="fas fa-location-arrow"></i> 使用当前位置 / Use Current Location';
+            button.disabled = false;
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+        }
+    );
+}
+
+// 反向地理编码 - 将坐标转换为城市名称
+async function reverseGeocode(latitude, longitude) {
+    // 使用加拿大城市数据库进行匹配
+    const canadianCities = [
+        { name: 'Toronto, ON', lat: 43.6532, lon: -79.3832, radius: 50 },
+        { name: 'Vancouver, BC', lat: 49.2827, lon: -123.1207, radius: 50 },
+        { name: 'Montréal, QC', lat: 45.5017, lon: -73.5673, radius: 50 },
+        { name: 'Calgary, AB', lat: 51.0447, lon: -114.0719, radius: 50 },
+        { name: 'Ottawa, ON', lat: 45.4215, lon: -75.6972, radius: 50 },
+        { name: 'Edmonton, AB', lat: 53.5461, lon: -113.4938, radius: 50 },
+        { name: 'Winnipeg, MB', lat: 49.8951, lon: -97.1384, radius: 50 },
+        { name: 'Québec City, QC', lat: 46.8139, lon: -71.2080, radius: 50 },
+        { name: 'Halifax, NS', lat: 44.6488, lon: -63.5752, radius: 50 }
+    ];
+    
+    // 计算距离并找到最近的城市
+    let nearestCity = null;
+    let minDistance = Infinity;
+    
+    canadianCities.forEach(city => {
+        const distance = calculateDistance(latitude, longitude, city.lat, city.lon);
+        if (distance < city.radius && distance < minDistance) {
+            minDistance = distance;
+            nearestCity = city;
+        }
+    });
+    
+    return nearestCity ? nearestCity.name : 'Toronto, ON'; // 默认Toronto
+}
+
+// 计算两点间距离（公里）
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // 地球半径（公里）
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+// 选择城市
+function selectCity(cityValue, cityName) {
+    document.getElementById('currentLocation').textContent = cityName;
+    if (app) {
+        app.changeCity(cityValue);
+    }
+    closeLocationModal();
+    showNotification(`城市已切换到: ${cityName} / City switched to: ${cityName}`);
+}
+
+// 关闭位置选择模态框
+function closeLocationModal() {
+    const modal = document.querySelector('.location-modal');
+    if (modal) {
+        document.body.removeChild(modal);
+    }
+}
+
+// 显示通知
+function showNotification(message) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--canadian-red);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        z-index: 10001;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    `;
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    // 显示动画
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+
+    // 自动隐藏
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+function showCustomerAuth(type) {
+    closeAllDropdowns();
+    
+    if (type === 'login') {
+        window.location.href = 'customer-login.html';
+    } else if (type === 'register') {
+        window.location.href = 'customer-register.html';
+    }
+}
+
+function continueAsGuest() {
+    closeAllDropdowns();
+    alert('继续作为访客浏览 MapleTable');
+}
+
+function loginWithGoogle() {
+    closeAllDropdowns();
+    alert('Google 登录功能开发中...');
+}
+
+function loginWithFacebook() {
+    closeAllDropdowns();
+    alert('Facebook 登录功能开发中...');
+}
+
+function loginUser(userData) {
+    // 更新UI以显示已登录状态
+    document.getElementById('customerLoginBtn').style.display = 'none';
+    document.getElementById('userProfileSection').style.display = 'block';
+    document.getElementById('userName').textContent = userData.name.split(' ')[0] + ' ' + userData.name.split(' ')[1][0] + '.';
+    document.getElementById('userDisplayName').textContent = userData.name;
+    document.getElementById('userEmail').textContent = userData.email;
+    
+    // 更新头像
+    const avatars = document.querySelectorAll('.user-avatar, .user-avatar-large');
+    avatars.forEach(avatar => {
+        avatar.src = userData.avatar;
+    });
+    
+    console.log('用户已登录:', userData);
+}
+
+function logout() {
+    closeAllDropdowns();
+    
+    // 恢复未登录状态
+    document.getElementById('customerLoginBtn').style.display = 'flex';
+    document.getElementById('userProfileSection').style.display = 'none';
+    
+    alert('您已成功登出');
+}
+
+function showFavorites() {
+    closeAllDropdowns();
+    window.location.href = '#favorites';
+    console.log('显示收藏夹');
+}
+
+function showReviews() {
+    closeAllDropdowns();
+    alert('我的评价功能开发中...');
+}
+
+function showLoyaltyProgram() {
+    closeAllDropdowns();
+    alert('会员奖励计划：\n\n当前积分: 1,250\n会员等级: 黄金\n\n可兑换奖励:\n- 免费甜点 (500积分)\n- 10%折扣 (1000积分)\n- 免费主菜 (2000积分)');
+}
+
+function showUserSettings() {
+    closeAllDropdowns();
+    alert('账户设置功能开发中...');
+}
+
+function showHelp() {
+    closeAllDropdowns();
+    alert('帮助与支持：\n\n客服电话: 1-800-MAPLE-TABLE\n邮箱: support@mapletable.ca\n在线客服: 24/7 可用\n\n常见问题解答请访问我们的网站');
+}
+
+function quickBook() {
+    window.location.href = 'booking.html';
+}
+
+function closeAllDropdowns() {
+    document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+        dropdown.classList.remove('show');
+    });
+}
+
+// 点击外部关闭下拉菜单
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.dropdown-menu') && 
+        !event.target.closest('.action-btn') && 
+        !event.target.closest('.user-profile-btn') &&
+        !event.target.closest('.location-indicator')) {
+        closeAllDropdowns();
+    }
+});
+
+// 🚀 发散性思维创新功能集合
+class InnovativeFeatures {
+    constructor() {
+        this.features = {
+            aiWeatherDining: true,
+            socialDining: true,
+            voiceBooking: true,
+            moodBasedRecommendation: true,
+            realTimeGroupBooking: true,
+            culturalFoodJourney: true,
+            sustainableDining: true,
+            vipConciergeAI: true
+        };
+        this.init();
+    }
+
+    init() {
+        console.log('🎨 发散性思维创新功能已激活');
+        this.initWeatherBasedDining();
+        this.initSocialDiningFeatures();
+        this.initVoiceBookingSystem();
+        this.initMoodRecommendations();
+        this.initGroupBookingSystem();
+        this.initCulturalJourney();
+        this.initSustainableDining();
+        this.initVIPConcierge();
+    }
+
+    // 1. AI天气智能用餐推荐
+    initWeatherBasedDining() {
+        const weatherDiningBtn = document.createElement('button');
+        weatherDiningBtn.className = 'innovative-feature-btn weather-dining';
+        weatherDiningBtn.innerHTML = `
+            <i class="fas fa-cloud-sun"></i>
+            <span>天气推荐</span>
+        `;
+        weatherDiningBtn.onclick = () => this.showWeatherBasedRecommendations();
+        
+        // 添加到主界面
+        this.addFeatureButton(weatherDiningBtn);
+    }
+
+    // 2. 社交用餐功能
+    initSocialDiningFeatures() {
+        const socialBtn = document.createElement('button');
+        socialBtn.className = 'innovative-feature-btn social-dining';
+        socialBtn.innerHTML = `
+            <i class="fas fa-users"></i>
+            <span>社交用餐</span>
+        `;
+        socialBtn.onclick = () => this.showSocialDiningOptions();
+        
+        this.addFeatureButton(socialBtn);
+    }
+
+    // 3. 语音预订系统
+    initVoiceBookingSystem() {
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const voiceBtn = document.createElement('button');
+            voiceBtn.className = 'innovative-feature-btn voice-booking';
+            voiceBtn.innerHTML = `
+                <i class="fas fa-microphone"></i>
+                <span>语音预订</span>
+            `;
+            voiceBtn.onclick = () => this.startVoiceBooking();
+            
+            this.addFeatureButton(voiceBtn);
+        }
+    }
+
+    // 4. 情绪化推荐系统
+    initMoodRecommendations() {
+        const moodBtn = document.createElement('button');
+        moodBtn.className = 'innovative-feature-btn mood-recommend';
+        moodBtn.innerHTML = `
+            <i class="fas fa-heart"></i>
+            <span>心情推荐</span>
+        `;
+        moodBtn.onclick = () => this.showMoodBasedRecommendations();
+        
+        this.addFeatureButton(moodBtn);
+    }
+
+    // 5. 实时群组预订
+    initGroupBookingSystem() {
+        const groupBtn = document.createElement('button');
+        groupBtn.className = 'innovative-feature-btn group-booking';
+        groupBtn.innerHTML = `
+            <i class="fas fa-user-friends"></i>
+            <span>群组预订</span>
+        `;
+        groupBtn.onclick = () => this.showGroupBookingSystem();
+        
+        this.addFeatureButton(groupBtn);
+    }
+
+    // 6. 文化美食之旅
+    initCulturalJourney() {
+        const cultureBtn = document.createElement('button');
+        cultureBtn.className = 'innovative-feature-btn cultural-journey';
+        cultureBtn.innerHTML = `
+            <i class="fas fa-globe-americas"></i>
+            <span>文化之旅</span>
+        `;
+        cultureBtn.onclick = () => this.showCulturalFoodJourney();
+        
+        this.addFeatureButton(cultureBtn);
+    }
+
+    // 7. 可持续用餐
+    initSustainableDining() {
+        const sustainableBtn = document.createElement('button');
+        sustainableBtn.className = 'innovative-feature-btn sustainable-dining';
+        sustainableBtn.innerHTML = `
+            <i class="fas fa-leaf"></i>
+            <span>绿色用餐</span>
+        `;
+        sustainableBtn.onclick = () => this.showSustainableDining();
+        
+        this.addFeatureButton(sustainableBtn);
+    }
+
+    // 8. VIP AI礼宾服务
+    initVIPConcierge() {
+        const vipBtn = document.createElement('button');
+        vipBtn.className = 'innovative-feature-btn vip-concierge';
+        vipBtn.innerHTML = `
+            <i class="fas fa-crown"></i>
+            <span>AI礼宾</span>
+        `;
+        vipBtn.onclick = () => this.showVIPConciergeService();
+        
+        this.addFeatureButton(vipBtn);
+    }
+
+    // 添加功能按钮到界面
+    addFeatureButton(button) {
+        let container = document.getElementById('innovativeFeatures');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'innovativeFeatures';
+            container.className = 'innovative-features-container';
+            container.style.cssText = `
+                position: fixed;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                z-index: 999;
+            `;
+            document.body.appendChild(container);
+        }
+        
+        // 设置按钮样式
+        button.style.cssText = `
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(45deg, var(--canadian-red), #dc2626);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        `;
+        
+        button.addEventListener('mouseenter', () => {
+            button.style.transform = 'scale(1.1)';
+            button.style.boxShadow = '0 6px 20px rgba(255, 0, 0, 0.4)';
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            button.style.transform = 'scale(1)';
+            button.style.boxShadow = '0 4px 12px rgba(255, 0, 0, 0.3)';
+        });
+        
+        container.appendChild(button);
+    }
+
+    // 功能实现方法
+    showWeatherBasedRecommendations() {
+        const weatherRecommendations = {
+            cold: ['热汤面', '火锅', '烤肉', '暖身汤品', '热饮咖啡厅'],
+            warm: ['清爽沙拉', '海鲜', '日料', '意式轻食', '露台餐厅'],
+            rainy: ['室内舒适餐厅', '咖啡厅', '书店餐厅', '温馨小馆', '下午茶'],
+            snowy: ['枫糖小屋', '温暖壁炉餐厅', '加拿大传统菜', '热巧克力屋', '冬季特色菜']
+        };
+
+        const currentWeather = 'snowy'; // 模拟当前天气
+        const recommendations = weatherRecommendations[currentWeather];
+        
+        alert(`🌨️ 根据当前雪天天气，AI为您推荐：\n\n${recommendations.map(r => '• ' + r).join('\n')}\n\n这些餐厅将为您提供温暖舒适的用餐体验！`);
+    }
+
+    showSocialDiningOptions() {
+        alert(`👥 社交用餐功能：\n\n• 寻找用餐伙伴\n• 加入社区餐桌\n• 分享用餐体验\n• 餐厅社交活动\n• 美食爱好者聚会\n\n让用餐成为社交的桥梁！`);
+    }
+
+    startVoiceBooking() {
+        alert(`🎤 语音预订系统：\n\n请说："我想预订今晚7点，4个人的桌子"\n\n系统将智能识别您的需求并为您推荐最合适的餐厅和时间！\n\n（此功能需要麦克风权限）`);
+    }
+
+    showMoodBasedRecommendations() {
+        const moods = {
+            '浪漫': ['烛光晚餐', '景观餐厅', '私密包间', '法式料理', '酒庄餐厅'],
+            '庆祝': ['高档餐厅', '香槟酒吧', '特色甜品', '团体包间', '节日特色菜'],
+            '放松': ['咖啡厅', '花园餐厅', '素食餐厅', '茶室', '静谧小馆'],
+            '商务': ['安静环境', 'WiFi畅通', '商务套餐', '快速服务', '会议包间']
+        };
+
+        const selectedMood = prompt('请选择您的心情：\n\n1. 浪漫\n2. 庆祝\n3. 放松\n4. 商务\n\n请输入数字：');
+        const moodNames = ['浪漫', '庆祝', '放松', '商务'];
+        
+        if (selectedMood && selectedMood >= 1 && selectedMood <= 4) {
+            const mood = moodNames[selectedMood - 1];
+            const recommendations = moods[mood];
+            alert(`❤️ 基于您的"${mood}"心情，推荐：\n\n${recommendations.map(r => '• ' + r).join('\n')}\n\n愿您用餐愉快！`);
+        }
+    }
+
+    showGroupBookingSystem() {
+        alert(`👨‍👩‍👧‍👦 实时群组预订：\n\n• 创建群组预订\n• 邀请朋友加入\n• 实时投票选餐厅\n• AA制自动分账\n• 群组专属优惠\n• 统一时间协调\n\n让聚餐组织更简单！`);
+    }
+
+    showCulturalFoodJourney() {
+        const culturalJourneys = [
+            '🇨🇦 加拿大传统美食之旅',
+            '🇫🇷 魁北克法式料理',
+            '🦞 海洋三省海鲜盛宴',
+            '🥞 枫糖浆美食体验',
+            '🏔️ 洛基山脉野味料理',
+            '🌾 草原省农场菜品',
+            '🐟 原住民传统食物',
+            '🍺 加拿大精酿啤酒配餐'
+        ];
+
+        alert(`🌍 加拿大文化美食之旅：\n\n${culturalJourneys.join('\n')}\n\n每个主题都有专门的餐厅推荐和文化背景介绍，带您深度体验加拿大多元饮食文化！`);
+    }
+
+    showSustainableDining() {
+        alert(`🌱 绿色可持续用餐：\n\n• 本地食材餐厅\n• 有机认证餐厅\n• 零浪费餐厅\n• 素食友好餐厅\n• 环保包装餐厅\n• 可持续海鲜\n• 农场直供餐桌\n\n为地球和健康做出美味选择！`);
+    }
+
+    showVIPConciergeService() {
+        alert(`👑 VIP AI礼宾服务：\n\n• 个人专属餐厅顾问\n• 24/7智能客服\n• 优先预订权限\n• 定制化用餐体验\n• 生日纪念日提醒\n• 专属优惠和折扣\n• 米其林餐厅绿色通道\n• 私人厨师推荐\n\n让每一次用餐都成为专属体验！`);
+    }
 }
 
 // 初始化应用
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new MapleTableApp();
+    window.app = app; // 使 app 在全局可用
+    console.log('🍁 MapleTable App loaded and ready!');
+    
+    // 初始化创新功能
+    setTimeout(() => {
+        const innovativeFeatures = new InnovativeFeatures();
+        window.innovativeFeatures = innovativeFeatures;
+    }, 2000); // 延迟2秒确保页面完全加载
+    
+    // 检查登录状态
+    checkAndUpdateLoginStatus();
 });
+
+// 检查并更新登录状态
+function checkAndUpdateLoginStatus() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const userType = localStorage.getItem('userType');
+    const currentUser = localStorage.getItem('currentUser');
+    const currentMerchant = localStorage.getItem('currentMerchant');
+    
+    if (isLoggedIn === 'true') {
+        if (userType === 'customer' && currentUser) {
+            const userData = JSON.parse(currentUser);
+            loginUser(userData);
+        } else if (userType === 'merchant' && currentMerchant) {
+            const merchantData = JSON.parse(currentMerchant);
+            loginMerchant(merchantData);
+        }
+    }
+}
+
+// 商家登录状态更新
+function loginMerchant(merchantData) {
+    // 隐藏顾客登录按钮
+    const customerLoginBtn = document.getElementById('customerLoginBtn');
+    if (customerLoginBtn) {
+        customerLoginBtn.style.display = 'none';
+    }
+    
+    // 更新商家按钮为已登录状态
+    const merchantBtn = document.querySelector('.merchant-btn');
+    if (merchantBtn) {
+        merchantBtn.innerHTML = `
+            <i class="fas fa-store"></i>
+            <span data-en="My Restaurant" data-fr="Mon Restaurant">My Restaurant</span>
+        `;
+        merchantBtn.onclick = () => goToMerchantDashboard();
+        merchantBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #047857 100%)';
+        merchantBtn.title = 'Access your restaurant dashboard';
+    }
+    
+    // 在顶部工具栏添加商家管理快捷入口
+    addMerchantQuickAccess(merchantData);
+    
+    console.log('商家已登录:', merchantData);
+}
+
+// 添加商家快捷管理入口 - 完全独立的区域
+function addMerchantQuickAccess(merchantData) {
+    // 检查是否已经有商家管理入口
+    if (document.getElementById('merchantQuickAccess')) {
+        return;
+    }
+
+    // 隐藏商家登录按钮，因为已经登录了
+    const merchantBtn = document.querySelector('.merchant-btn');
+    if (merchantBtn) {
+        merchantBtn.style.display = 'none';
+    }
+
+    // 创建商家管理横幅 - 在顶部工具栏下方
+    const merchantBanner = document.createElement('div');
+    merchantBanner.id = 'merchantQuickAccess';
+    merchantBanner.className = 'merchant-banner';
+    merchantBanner.innerHTML = `
+        <div class="merchant-banner-content">
+            <div class="merchant-info">
+                <div class="merchant-avatar">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="merchant-details">
+                    <h3>${merchantData.restaurantName || merchantData.restaurant?.name || '我的餐厅'}</h3>
+                    <p>餐厅ID: ${merchantData.restaurant?.id || 'rest_001'} • <span class="status-online">营业中</span></p>
+                </div>
+            </div>
+            <div class="merchant-actions">
+                <button class="merchant-dashboard-btn" onclick="goToMerchantDashboard()" title="商家管理后台">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>管理后台</span>
+                </button>
+                <button class="merchant-logout-btn" onclick="logoutMerchant()" title="退出登录">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>退出</span>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // 插入到主应用内容的最顶部
+    const mainApp = document.getElementById('mainApp');
+    const topToolbar = document.querySelector('.top-toolbar');
+    if (mainApp && topToolbar) {
+        mainApp.insertBefore(merchantBanner, topToolbar.nextSibling);
+    }
+}
+
+// 商家退出登录
+function logoutMerchant() {
+    if (confirm('确认退出商家登录吗？')) {
+        localStorage.removeItem('merchantLogin');
+        
+        // 显示商家登录按钮
+        const merchantBtn = document.querySelector('.merchant-btn');
+        if (merchantBtn) {
+            merchantBtn.style.display = 'flex';
+        }
+        
+        // 移除商家横幅
+        const merchantBanner = document.getElementById('merchantQuickAccess');
+        if (merchantBanner) {
+            merchantBanner.remove();
+        }
+        
+        alert('已退出商家登录');
+    }
+}
+
+// 商家管理页面跳转 - 检查登录状态
+function goToMerchantDashboard() {
+    // 检查商家是否已登录
+    const merchantLogin = localStorage.getItem('merchantLogin');
+    
+    if (!merchantLogin) {
+        // 未登录，提醒登录
+        alert('请先登录商家账户才能访问管理后台！\n\nPlease log in to your merchant account first!');
+        // 跳转到商家登录页面
+        window.location.href = 'merchant-login.html';
+        return;
+    }
+    
+    try {
+        const merchantData = JSON.parse(merchantLogin);
+        const restaurantId = merchantData.restaurant?.id || merchantData.restaurantId || 'default';
+        
+        // 跳转到专业的商家管理dashboard
+        const dashboardUrl = `merchant-dashboard.html?restaurant=${restaurantId}&merchant=${encodeURIComponent(merchantData.restaurant?.name || '我的餐厅')}`;
+        window.location.href = dashboardUrl;
+        
+    } catch (error) {
+        console.error('解析商家登录数据失败:', error);
+        alert('登录状态异常，请重新登录！');
+        localStorage.removeItem('merchantLogin');
+        window.location.href = 'merchant-login.html';
+    }
+}
+
+// 为商家按钮添加登录检查
+function goToMerchantLogin() {
+    // 检查是否已经登录
+    const merchantLogin = localStorage.getItem('merchantLogin');
+    
+    if (merchantLogin) {
+        // 已登录，直接跳转到管理后台
+        goToMerchantDashboard();
+    } else {
+        // 未登录，跳转到登录页面
+        window.location.href = 'merchant-login.html';
+    }
+}
+
 
 // PWA 支持
 if ('serviceWorker' in navigator) {

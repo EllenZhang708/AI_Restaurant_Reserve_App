@@ -1,17 +1,22 @@
-// Reservations Management - MapleTable Canadian Restaurant App
+// Reservations Management - MapleTable Customer App
 
 class ReservationsManager {
     constructor() {
         this.currentLanguage = 'en';
         this.currentFilter = 'all';
         this.reservations = [];
-        this.selectedReservation = null;
+        
+        // 检查URL参数，判断是商家管理模式还是顾客查看模式
+        this.urlParams = new URLSearchParams(window.location.search);
+        this.isMerchantMode = this.urlParams.has('restaurant');
+        this.restaurantId = this.urlParams.get('restaurant');
+        this.merchantName = decodeURIComponent(this.urlParams.get('merchant') || '商家管理后台');
         
         this.translations = {
             en: {
                 'My Reservations': 'My Reservations',
                 'All': 'All',
-                'Upcoming': 'Upcoming', 
+                'Upcoming': 'Upcoming',
                 'Past': 'Past',
                 'Cancelled': 'Cancelled',
                 'No Reservations Found': 'No Reservations Found',
@@ -21,22 +26,19 @@ class ReservationsManager {
                 'Reservation Details': 'Reservation Details',
                 'Cancel Reservation': 'Cancel Reservation',
                 'Modify Reservation': 'Modify Reservation',
-                'View Details': 'View Details',
-                'Modify': 'Modify',
-                'Cancel': 'Cancel',
-                'Call Restaurant': 'Call Restaurant',
                 'Confirmed': 'Confirmed',
-                'Upcoming': 'Upcoming',
-                'Completed': 'Completed',
                 'Cancelled': 'Cancelled',
-                'guests': 'guests',
-                'Winter dining ready': 'Winter dining ready'
+                'Completed': 'Completed',
+                'Table': 'Table',
+                'Party Size': 'Party Size',
+                'Special Requests': 'Special Requests',
+                'guests': 'guests'
             },
             fr: {
                 'My Reservations': 'Mes Réservations',
                 'All': 'Toutes',
                 'Upcoming': 'À Venir',
-                'Past': 'Passées', 
+                'Past': 'Passées',
                 'Cancelled': 'Annulées',
                 'No Reservations Found': 'Aucune Réservation Trouvée',
                 'You haven\'t made any reservations yet.': 'Vous n\'avez encore fait aucune réservation.',
@@ -45,16 +47,13 @@ class ReservationsManager {
                 'Reservation Details': 'Détails de la Réservation',
                 'Cancel Reservation': 'Annuler la Réservation',
                 'Modify Reservation': 'Modifier la Réservation',
-                'View Details': 'Voir les Détails',
-                'Modify': 'Modifier',
-                'Cancel': 'Annuler',
-                'Call Restaurant': 'Appeler le Restaurant',
                 'Confirmed': 'Confirmée',
-                'Upcoming': 'À Venir',
-                'Completed': 'Terminée',
                 'Cancelled': 'Annulée',
-                'guests': 'invités',
-                'Winter dining ready': 'Prêt pour le repas d\'hiver'
+                'Completed': 'Terminée',
+                'Table': 'Table',
+                'Party Size': 'Nombre de Personnes',
+                'Special Requests': 'Demandes Spéciales',
+                'guests': 'invités'
             }
         };
         
@@ -62,392 +61,340 @@ class ReservationsManager {
     }
     
     initialize() {
+        // 根据模式初始化不同的界面
+        if (this.isMerchantMode) {
+            this.initializeMerchantMode();
+        } else {
+            this.initializeCustomerMode();
+        }
+        
         this.loadReservations();
+        this.loadLanguageFromStorage();
         this.setupEventListeners();
         this.renderReservations();
         this.updateCounts();
-        this.loadLanguageFromStorage();
+    }
+    
+    // 初始化商家管理模式
+    initializeMerchantMode() {
+        // 更改页面标题
+        const pageTitle = document.getElementById('pageTitle');
+        const restaurantName = document.getElementById('restaurantName');
+        
+        if (pageTitle) {
+            pageTitle.textContent = `${this.merchantName} - 预订管理`;
+            pageTitle.setAttribute('data-en', `${this.merchantName} - Reservations Management`);
+            pageTitle.setAttribute('data-fr', `${this.merchantName} - Gestion des Réservations`);
+        }
+        
+        if (restaurantName) {
+            restaurantName.textContent = `餐厅ID: ${this.restaurantId}`;
+            restaurantName.style.display = 'block';
+        }
+        
+        // 更改页面标题标签
+        document.title = `${this.merchantName} - 预订管理 - MapleTable`;
+        
+        console.log(`🏪 商家管理模式已激活: ${this.merchantName} (${this.restaurantId})`);
+    }
+    
+    // 初始化顾客查看模式
+    initializeCustomerMode() {
+        console.log('👤 顾客查看模式');
     }
     
     loadReservations() {
-        // 加载本地存储的预订
-        const storedReservations = localStorage.getItem('mapleTableBookings');
-        if (storedReservations) {
-            this.reservations = JSON.parse(storedReservations);
-        } else {
-            // 创建示例预订数据用于演示
-            this.reservations = this.createSampleReservations();
-            localStorage.setItem('mapleTableBookings', JSON.stringify(this.reservations));
-        }
-    }
-    
-    createSampleReservations() {
-        const now = new Date();
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const nextWeek = new Date(now);
-        nextWeek.setDate(nextWeek.getDate() + 7);
-        const lastWeek = new Date(now);
-        lastWeek.setDate(lastWeek.getDate() - 7);
+        let allReservations = JSON.parse(localStorage.getItem('mapleTableBookings') || '[]');
         
-        return [
-            {
-                confirmationNumber: 'MT250125001',
-                restaurant: {
-                    id: 1,
-                    name: 'The CN Tower Restaurant',
-                    nameF: 'Restaurant de la Tour CN',
-                    cuisine: 'Canadian Fine Dining',
-                    cuisineF: 'Grande Cuisine Canadienne',
-                    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop',
-                    phone: '(416) 362-5411',
-                    address: '290 Bremner Blvd, Toronto, ON M5V 3L9'
-                },
-                date: tomorrow.toISOString().split('T')[0],
-                time: '19:00',
-                partySize: 4,
-                preferences: ['heated-patio', 'window-seat'],
-                customer: {
-                    firstName: 'John',
-                    lastName: 'Smith',
-                    phone: '(416) 555-0123',
-                    email: 'john.smith@email.com'
-                },
-                specialRequests: 'Anniversary celebration - please prepare a special dessert',
-                language: 'en',
-                status: 'confirmed',
-                timestamp: new Date().toISOString()
-            },
-            {
-                confirmationNumber: 'MT250132002',
-                restaurant: {
-                    id: 2,
-                    name: 'Schwartz\'s Hebrew Delicatessen',
-                    nameF: 'Charcuterie Hébraïque Schwartz\'s',
-                    cuisine: 'Montreal Deli',
-                    cuisineF: 'Charcuterie de Montréal',
-                    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=200&fit=crop',
-                    phone: '(514) 842-4813',
-                    address: '3895 Saint-Laurent Blvd, Montreal, QC H2W 1X9'
-                },
-                date: nextWeek.toISOString().split('T')[0],
-                time: '12:30',
-                partySize: 2,
-                preferences: ['quiet-area'],
-                customer: {
-                    firstName: 'Marie',
-                    lastName: 'Dubois',
-                    phone: '(514) 555-0456',
-                    email: 'marie.dubois@email.com'
-                },
-                specialRequests: 'Vegetarian options needed',
-                language: 'fr',
-                status: 'confirmed',
-                timestamp: new Date().toISOString()
-            },
-            {
-                confirmationNumber: 'MT250118003',
-                restaurant: {
-                    id: 3,
-                    name: 'Granville Island Public Market',
-                    nameF: 'Marché Public de Granville Island',
-                    cuisine: 'West Coast Fresh Market',
-                    cuisineF: 'Marché Frais de la Côte Ouest',
-                    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=200&fit=crop',
-                    phone: '(604) 666-5784',
-                    address: '1669 Johnston St, Vancouver, BC V6H 3R9'
-                },
-                date: lastWeek.toISOString().split('T')[0],
-                time: '13:00',
-                partySize: 6,
-                preferences: ['wheelchair-accessible'],
-                customer: {
-                    firstName: 'David',
-                    lastName: 'Wong',
-                    phone: '(604) 555-0789',
-                    email: 'david.wong@email.com'
-                },
-                specialRequests: 'Family gathering - high chair needed',
-                language: 'en',
-                status: 'completed',
-                timestamp: new Date(lastWeek.getTime() - 86400000).toISOString()
-            }
-        ];
+        if (this.isMerchantMode && this.restaurantId) {
+            // 商家模式：只显示自己餐厅的预订
+            this.reservations = allReservations.filter(reservation => 
+                reservation.restaurantId === this.restaurantId || 
+                reservation.restaurantName?.includes(this.merchantName)
+            );
+            console.log(`🏪 已加载 ${this.merchantName} 的预订:`, this.reservations.length);
+        } else {
+            // 顾客模式：显示所有预订
+            this.reservations = allReservations;
+            console.log('👤 已加载顾客预订:', this.reservations.length);
+        }
     }
     
     setupEventListeners() {
-        // 页面加载时检查URL参数
-        const urlParams = new URLSearchParams(window.location.search);
-        const filter = urlParams.get('filter');
-        if (filter && ['all', 'upcoming', 'past', 'cancelled'].includes(filter)) {
-            this.currentFilter = filter;
-        }
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const filter = tab.getAttribute('data-filter');
+                this.filterReservations(filter);
+            });
+        });
+        
+        // Modal close handlers
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-btn') || e.target.classList.contains('modal')) {
+                this.closeModal();
+            }
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeModal();
+            }
+        });
     }
     
-    renderReservations() {
-        const container = document.getElementById('reservationsList');
-        const emptyState = document.getElementById('emptyState');
+    filterReservations(filter) {
+        this.currentFilter = filter;
         
-        const filtered = this.getFilteredReservations();
-        
-        if (filtered.length === 0) {
-            container.style.display = 'none';
-            emptyState.style.display = 'block';
-            return;
-        }
-        
-        container.style.display = 'flex';
-        emptyState.style.display = 'none';
-        container.innerHTML = '';
-        
-        filtered.forEach((reservation, index) => {
-            const card = this.createReservationCard(reservation, index);
-            container.appendChild(card);
+        // Update active tab
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.getAttribute('data-filter') === filter) {
+                tab.classList.add('active');
+            }
         });
+        
+        this.renderReservations();
     }
     
     getFilteredReservations() {
         const now = new Date();
-        now.setHours(0, 0, 0, 0);
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         
         return this.reservations.filter(reservation => {
             const reservationDate = new Date(reservation.date);
-            reservationDate.setHours(0, 0, 0, 0);
+            const reservationDateTime = new Date(`${reservation.date}T${reservation.time}:00`);
             
             switch (this.currentFilter) {
                 case 'upcoming':
-                    return reservationDate >= now && reservation.status === 'confirmed';
+                    return reservationDateTime >= now && reservation.status !== 'cancelled';
                 case 'past':
-                    return reservationDate < now || reservation.status === 'completed';
+                    return reservationDateTime < now && reservation.status !== 'cancelled';
                 case 'cancelled':
                     return reservation.status === 'cancelled';
                 default:
                     return true;
             }
+        }).sort((a, b) => {
+            // Sort by date and time, most recent first
+            const dateA = new Date(`${a.date}T${a.time}:00`);
+            const dateB = new Date(`${b.date}T${b.time}:00`);
+            return dateB - dateA;
         });
     }
     
-    createReservationCard(reservation, index) {
+    updateCounts() {
+        const now = new Date();
+        const counts = {
+            all: this.reservations.length,
+            upcoming: 0,
+            past: 0,
+            cancelled: 0
+        };
+        
+        this.reservations.forEach(reservation => {
+            const reservationDateTime = new Date(`${reservation.date}T${reservation.time}:00`);
+            
+            if (reservation.status === 'cancelled') {
+                counts.cancelled++;
+            } else if (reservationDateTime >= now) {
+                counts.upcoming++;
+            } else {
+                counts.past++;
+            }
+        });
+        
+        // Update count badges
+        document.getElementById('allCount').textContent = counts.all;
+        document.getElementById('upcomingCount').textContent = counts.upcoming;
+        document.getElementById('pastCount').textContent = counts.past;
+        document.getElementById('cancelledCount').textContent = counts.cancelled;
+    }
+    
+    renderReservations() {
+        const container = document.getElementById('reservationsList');
+        const emptyState = document.getElementById('emptyState');
+        const filteredReservations = this.getFilteredReservations();
+        
+        container.innerHTML = '';
+        
+        if (filteredReservations.length === 0) {
+            container.style.display = 'none';
+            emptyState.style.display = 'flex';
+            return;
+        }
+        
+        container.style.display = 'block';
+        emptyState.style.display = 'none';
+        
+        filteredReservations.forEach(reservation => {
+            const card = this.createReservationCard(reservation);
+            container.appendChild(card);
+        });
+    }
+    
+    createReservationCard(reservation) {
         const card = document.createElement('div');
-        card.className = `reservation-card ${this.getReservationClass(reservation)}`;
-        card.style.animationDelay = `${index * 0.1}s`;
-        card.onclick = () => this.showReservationDetails(reservation);
+        card.className = 'reservation-card';
         
-        const restaurantName = this.currentLanguage === 'fr' && reservation.restaurant.nameF ? 
-                              reservation.restaurant.nameF : reservation.restaurant.name;
-        const cuisine = this.currentLanguage === 'fr' && reservation.restaurant.cuisineF ? 
-                       reservation.restaurant.cuisineF : reservation.restaurant.cuisine;
+        const reservationDate = new Date(reservation.date);
+        const reservationDateTime = new Date(`${reservation.date}T${reservation.time}:00`);
+        const now = new Date();
+        const isUpcoming = reservationDateTime >= now;
+        const isPast = reservationDateTime < now;
         
-        const formattedDate = new Date(reservation.date).toLocaleDateString(
-            this.currentLanguage === 'fr' ? 'fr-CA' : 'en-CA',
-            { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }
-        );
+        // Determine status
+        let statusClass = 'confirmed';
+        let statusText = this.currentLanguage === 'fr' ? 'Confirmée' : 'Confirmed';
         
-        const statusText = this.getStatusText(reservation.status);
-        const statusClass = `status-${reservation.status}`;
+        if (reservation.status === 'cancelled') {
+            statusClass = 'cancelled';
+            statusText = this.currentLanguage === 'fr' ? 'Annulée' : 'Cancelled';
+        } else if (isPast) {
+            statusClass = 'completed';
+            statusText = this.currentLanguage === 'fr' ? 'Terminée' : 'Completed';
+        }
         
         const guestsText = this.currentLanguage === 'fr' ? 'invités' : 'guests';
         
         card.innerHTML = `
-            <div class="card-header">
-                <img src="${reservation.restaurant.image}" alt="${restaurantName}" class="restaurant-image">
-                <div class="reservation-info">
-                    <h3 class="restaurant-name">${restaurantName}</h3>
-                    <p class="restaurant-cuisine">${cuisine}</p>
-                    <p class="confirmation-number">#${reservation.confirmationNumber}</p>
+            <div class="reservation-header">
+                <div class="restaurant-info">
+                    <h3 class="restaurant-name">${reservation.restaurantName}</h3>
+                    <p class="confirmation-number">${reservation.id}</p>
                 </div>
-                <div class="reservation-status ${statusClass}">${statusText}</div>
+                <div class="reservation-status ${statusClass}">
+                    <span>${statusText}</span>
+                </div>
             </div>
             
-            <div class="card-content">
-                <div class="reservation-details">
-                    <div class="detail-item">
-                        <i class="fas fa-calendar"></i>
-                        <span>${formattedDate}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-clock"></i>
-                        <span>${reservation.time}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-users"></i>
-                        <span>${reservation.partySize} ${guestsText}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-phone"></i>
-                        <span>${reservation.restaurant.phone}</span>
-                    </div>
-                    ${this.hasWinterFeatures(reservation) ? `
-                        <div class="detail-item winter-feature">
-                            <i class="fas fa-snowflake"></i>
-                            <span>${this.currentLanguage === 'fr' ? 'Prêt pour le repas d\'hiver' : 'Winter dining ready'}</span>
-                        </div>
-                    ` : ''}
+            <div class="reservation-details">
+                <div class="detail-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>${this.formatDate(reservationDate)}</span>
                 </div>
-                
-                ${reservation.specialRequests ? `
-                    <div class="special-requests">
-                        <h5>${this.currentLanguage === 'fr' ? 'Demandes Spéciales' : 'Special Requests'}</h5>
-                        <p>${reservation.specialRequests}</p>
+                <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <span>${reservation.time}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-users"></i>
+                    <span>${reservation.partySize} ${guestsText}</span>
+                </div>
+                ${reservation.assignedTable ? `
+                    <div class="detail-item">
+                        <i class="fas fa-chair"></i>
+                        <span>${this.currentLanguage === 'fr' ? 'Table' : 'Table'} ${reservation.assignedTable.id}</span>
                     </div>
                 ` : ''}
-                
-                <div class="card-actions">
-                    <button class="action-btn btn-view" onclick="event.stopPropagation(); reservationsManager.showReservationDetails('${reservation.confirmationNumber}')">
-                        <i class="fas fa-eye"></i>
-                        ${this.currentLanguage === 'fr' ? 'Voir' : 'View'}
-                    </button>
-                    ${this.canModifyReservation(reservation) ? `
-                        <button class="action-btn btn-modify" onclick="event.stopPropagation(); reservationsManager.showModifyModal('${reservation.confirmationNumber}')">
-                            <i class="fas fa-edit"></i>
-                            ${this.currentLanguage === 'fr' ? 'Modifier' : 'Modify'}
-                        </button>
-                        <button class="action-btn btn-cancel" onclick="event.stopPropagation(); reservationsManager.showCancelModal('${reservation.confirmationNumber}')">
-                            <i class="fas fa-times"></i>
-                            ${this.currentLanguage === 'fr' ? 'Annuler' : 'Cancel'}
-                        </button>
-                    ` : `
-                        <button class="action-btn btn-call" onclick="event.stopPropagation(); reservationsManager.callRestaurant('${reservation.restaurant.phone}')">
-                            <i class="fas fa-phone"></i>
-                            ${this.currentLanguage === 'fr' ? 'Appeler' : 'Call'}
-                        </button>
-                    `}
+            </div>
+            
+            ${reservation.specialRequests ? `
+                <div class="special-requests">
+                    <i class="fas fa-comment"></i>
+                    <span>${reservation.specialRequests}</span>
                 </div>
+            ` : ''}
+            
+            <div class="reservation-actions">
+                <button class="action-btn secondary" onclick="reservationsManager.viewDetails('${reservation.id}')">
+                    <i class="fas fa-eye"></i>
+                    ${this.currentLanguage === 'fr' ? 'Détails' : 'Details'}
+                </button>
+                
+                ${isUpcoming && reservation.status !== 'cancelled' ? `
+                    <button class="action-btn secondary" onclick="reservationsManager.modifyReservation('${reservation.id}')">
+                        <i class="fas fa-edit"></i>
+                        ${this.currentLanguage === 'fr' ? 'Modifier' : 'Modify'}
+                    </button>
+                    <button class="action-btn danger" onclick="reservationsManager.cancelReservation('${reservation.id}')">
+                        <i class="fas fa-times"></i>
+                        ${this.currentLanguage === 'fr' ? 'Annuler' : 'Cancel'}
+                    </button>
+                ` : ''}
+                
+                ${isPast && reservation.status !== 'cancelled' ? `
+                    <button class="action-btn primary" onclick="reservationsManager.leaveReview('${reservation.id}')">
+                        <i class="fas fa-star"></i>
+                        ${this.currentLanguage === 'fr' ? 'Avis' : 'Review'}
+                    </button>
+                ` : ''}
             </div>
         `;
         
         return card;
     }
     
-    getReservationClass(reservation) {
-        const now = new Date();
-        const reservationDate = new Date(reservation.date);
-        
-        if (reservation.status === 'cancelled') return 'cancelled';
-        if (reservation.status === 'completed' || reservationDate < now) return 'past';
-        return 'upcoming';
-    }
-    
-    getStatusText(status) {
-        const statusTexts = {
-            confirmed: this.currentLanguage === 'fr' ? 'Confirmée' : 'Confirmed',
-            completed: this.currentLanguage === 'fr' ? 'Terminée' : 'Completed',
-            cancelled: this.currentLanguage === 'fr' ? 'Annulée' : 'Cancelled'
-        };
-        return statusTexts[status] || status;
-    }
-    
-    hasWinterFeatures(reservation) {
-        return reservation.preferences && 
-               reservation.preferences.some(pref => pref.includes('heated') || pref.includes('winter'));
-    }
-    
-    canModifyReservation(reservation) {
-        if (reservation.status !== 'confirmed') return false;
-        
-        const now = new Date();
-        const reservationDateTime = new Date(`${reservation.date}T${reservation.time}:00`);
-        const timeDiff = reservationDateTime.getTime() - now.getTime();
-        const hoursDiff = timeDiff / (1000 * 60 * 60);
-        
-        return hoursDiff > 2; // 可以在预订时间2小时前修改
-    }
-    
-    showReservationDetails(confirmationNumber) {
-        const reservation = typeof confirmationNumber === 'string' ? 
-                          this.reservations.find(r => r.confirmationNumber === confirmationNumber) :
-                          confirmationNumber;
-        
+    viewDetails(reservationId) {
+        const reservation = this.reservations.find(r => r.id === reservationId);
         if (!reservation) return;
         
-        this.selectedReservation = reservation;
         const modal = document.getElementById('reservationModal');
-        const body = document.getElementById('reservationDetailsBody');
+        const modalBody = document.getElementById('reservationDetailsBody');
         
-        const restaurantName = this.currentLanguage === 'fr' && reservation.restaurant.nameF ? 
-                              reservation.restaurant.nameF : reservation.restaurant.name;
-        const cuisine = this.currentLanguage === 'fr' && reservation.restaurant.cuisineF ? 
-                       reservation.restaurant.cuisineF : reservation.restaurant.cuisine;
-        
-        const formattedDate = new Date(reservation.date).toLocaleDateString(
-            this.currentLanguage === 'fr' ? 'fr-CA' : 'en-CA',
-            { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }
-        );
-        
+        const reservationDate = new Date(reservation.date);
         const guestsText = this.currentLanguage === 'fr' ? 'invités' : 'guests';
         
-        body.innerHTML = `
+        modalBody.innerHTML = `
             <div class="reservation-detail-header">
-                <img src="${reservation.restaurant.image}" alt="${restaurantName}" class="detail-restaurant-image">
-                <div class="detail-restaurant-info">
-                    <h3>${restaurantName}</h3>
-                    <p>${cuisine}</p>
-                    <div class="detail-confirmation">#${reservation.confirmationNumber}</div>
+                <div class="restaurant-image">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&h=200&fit=crop" alt="${reservation.restaurantName}">
+                </div>
+                <div class="restaurant-info">
+                    <h3>${reservation.restaurantName}</h3>
+                    <p class="confirmation-id">${this.currentLanguage === 'fr' ? 'Confirmation' : 'Confirmation'}: ${reservation.id}</p>
                 </div>
             </div>
             
             <div class="detail-sections">
                 <div class="detail-section">
-                    <h4><i class="fas fa-calendar-check"></i> ${this.currentLanguage === 'fr' ? 'Détails de la Réservation' : 'Reservation Details'}</h4>
+                    <h4><i class="fas fa-info-circle"></i> ${this.currentLanguage === 'fr' ? 'Détails de la Réservation' : 'Reservation Details'}</h4>
                     <div class="detail-grid">
-                        <div class="detail-grid-item">
-                            <span class="label">${this.currentLanguage === 'fr' ? 'Date' : 'Date'}:</span>
-                            <span class="value">${formattedDate}</span>
+                        <div class="detail-item">
+                            <label>${this.currentLanguage === 'fr' ? 'Date' : 'Date'}:</label>
+                            <span>${this.formatDate(reservationDate)}</span>
                         </div>
-                        <div class="detail-grid-item">
-                            <span class="label">${this.currentLanguage === 'fr' ? 'Heure' : 'Time'}:</span>
-                            <span class="value">${reservation.time}</span>
+                        <div class="detail-item">
+                            <label>${this.currentLanguage === 'fr' ? 'Heure' : 'Time'}:</label>
+                            <span>${reservation.time}</span>
                         </div>
-                        <div class="detail-grid-item">
-                            <span class="label">${this.currentLanguage === 'fr' ? 'Invités' : 'Guests'}:</span>
-                            <span class="value">${reservation.partySize} ${guestsText}</span>
+                        <div class="detail-item">
+                            <label>${this.currentLanguage === 'fr' ? 'Nombre de Personnes' : 'Party Size'}:</label>
+                            <span>${reservation.partySize} ${guestsText}</span>
                         </div>
-                        <div class="detail-grid-item">
-                            <span class="label">${this.currentLanguage === 'fr' ? 'Statut' : 'Status'}:</span>
-                            <span class="value">${this.getStatusText(reservation.status)}</span>
-                        </div>
+                        ${reservation.assignedTable ? `
+                            <div class="detail-item">
+                                <label>${this.currentLanguage === 'fr' ? 'Table Assignée' : 'Assigned Table'}:</label>
+                                <span>${reservation.assignedTable.id} (${reservation.assignedTable.type})</span>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
                 
                 <div class="detail-section">
                     <h4><i class="fas fa-user"></i> ${this.currentLanguage === 'fr' ? 'Informations de Contact' : 'Contact Information'}</h4>
                     <div class="detail-grid">
-                        <div class="detail-grid-item">
-                            <span class="label">${this.currentLanguage === 'fr' ? 'Nom' : 'Name'}:</span>
-                            <span class="value">${reservation.customer.firstName} ${reservation.customer.lastName}</span>
+                        <div class="detail-item">
+                            <label>${this.currentLanguage === 'fr' ? 'Nom' : 'Name'}:</label>
+                            <span>${reservation.customerInfo.firstName} ${reservation.customerInfo.lastName}</span>
                         </div>
-                        <div class="detail-grid-item">
-                            <span class="label">${this.currentLanguage === 'fr' ? 'Téléphone' : 'Phone'}:</span>
-                            <span class="value">${reservation.customer.phone}</span>
+                        <div class="detail-item">
+                            <label>${this.currentLanguage === 'fr' ? 'Téléphone' : 'Phone'}:</label>
+                            <span>${reservation.customerInfo.phone}</span>
                         </div>
-                        <div class="detail-grid-item">
-                            <span class="label">Email:</span>
-                            <span class="value">${reservation.customer.email}</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="detail-section">
-                    <h4><i class="fas fa-map-marker-alt"></i> ${this.currentLanguage === 'fr' ? 'Restaurant' : 'Restaurant'}</h4>
-                    <div class="detail-grid">
-                        <div class="detail-grid-item">
-                            <span class="label">${this.currentLanguage === 'fr' ? 'Téléphone' : 'Phone'}:</span>
-                            <span class="value">${reservation.restaurant.phone}</span>
-                        </div>
-                        <div class="detail-grid-item">
-                            <span class="label">${this.currentLanguage === 'fr' ? 'Adresse' : 'Address'}:</span>
-                            <span class="value">${reservation.restaurant.address}</span>
+                        <div class="detail-item">
+                            <label>${this.currentLanguage === 'fr' ? 'Email' : 'Email'}:</label>
+                            <span>${reservation.customerInfo.email}</span>
                         </div>
                     </div>
                 </div>
                 
                 ${reservation.preferences && reservation.preferences.length > 0 ? `
                     <div class="detail-section">
-                        <h4><i class="fas fa-cog"></i> ${this.currentLanguage === 'fr' ? 'Préférences' : 'Preferences'}</h4>
+                        <h4><i class="fas fa-heart"></i> ${this.currentLanguage === 'fr' ? 'Préférences' : 'Preferences'}</h4>
                         <div class="preferences-list">
-                            ${reservation.preferences.map(pref => `
-                                <span class="preference-tag">${this.formatPreference(pref)}</span>
-                            `).join('')}
+                            ${reservation.preferences.map(pref => `<span class="preference-tag">${this.translatePreference(pref)}</span>`).join('')}
                         </div>
                     </div>
                 ` : ''}
@@ -455,34 +402,23 @@ class ReservationsManager {
                 ${reservation.specialRequests ? `
                     <div class="detail-section">
                         <h4><i class="fas fa-comment"></i> ${this.currentLanguage === 'fr' ? 'Demandes Spéciales' : 'Special Requests'}</h4>
-                        <div class="special-requests-detail">
-                            <p>${reservation.specialRequests}</p>
-                        </div>
+                        <p class="special-requests-text">${reservation.specialRequests}</p>
                     </div>
                 ` : ''}
             </div>
             
-            ${this.hasWinterFeatures(reservation) ? `
-                <div class="winter-reminder">
-                    <i class="fas fa-snowflake"></i>
-                    <div>
-                        <strong>${this.currentLanguage === 'fr' ? 'Rappel d\'hiver' : 'Winter Reminder'}:</strong>
-                        ${this.currentLanguage === 'fr' ? 
-                          'Habillez-vous chaudement pour votre réservation. Le restaurant offre un chauffage.' :
-                          'Dress warmly for your reservation. The restaurant provides heating.'
-                        }
-                    </div>
-                </div>
-            ` : ''}
-            
-            <div class="modal-actions">
+            <div class="detail-actions">
                 ${this.canModifyReservation(reservation) ? `
-                    <button class="btn btn-secondary" onclick="reservationsManager.showModifyModal('${reservation.confirmationNumber}')">
+                    <button class="btn btn-secondary" onclick="reservationsManager.modifyReservation('${reservation.id}')">
                         <i class="fas fa-edit"></i>
                         ${this.currentLanguage === 'fr' ? 'Modifier' : 'Modify'}
                     </button>
+                    <button class="btn btn-danger" onclick="reservationsManager.cancelReservation('${reservation.id}')">
+                        <i class="fas fa-times"></i>
+                        ${this.currentLanguage === 'fr' ? 'Annuler' : 'Cancel'}
+                    </button>
                 ` : ''}
-                <button class="btn btn-primary" onclick="reservationsManager.callRestaurant('${reservation.restaurant.phone}')">
+                <button class="btn btn-primary" onclick="reservationsManager.callRestaurant('${reservation.customerInfo.phone}')">
                     <i class="fas fa-phone"></i>
                     ${this.currentLanguage === 'fr' ? 'Appeler Restaurant' : 'Call Restaurant'}
                 </button>
@@ -492,73 +428,87 @@ class ReservationsManager {
         modal.classList.add('show');
     }
     
-    formatPreference(preference) {
-        const preferences = {
-            'heated-patio': this.currentLanguage === 'fr' ? 'Terrasse chauffée' : 'Heated patio',
-            'window-seat': this.currentLanguage === 'fr' ? 'Siège fenêtre' : 'Window seat',
-            'quiet-area': this.currentLanguage === 'fr' ? 'Zone calme' : 'Quiet area',
-            'wheelchair-accessible': this.currentLanguage === 'fr' ? 'Accessible fauteuil roulant' : 'Wheelchair accessible'
+    canModifyReservation(reservation) {
+        const reservationDateTime = new Date(`${reservation.date}T${reservation.time}:00`);
+        const now = new Date();
+        const hoursDiff = (reservationDateTime - now) / (1000 * 60 * 60);
+        
+        return hoursDiff > 2 && reservation.status !== 'cancelled';
+    }
+    
+    translatePreference(preference) {
+        const translations = {
+            'heated-patio': this.currentLanguage === 'fr' ? 'Terrasse Chauffée' : 'Heated Patio',
+            'window-seat': this.currentLanguage === 'fr' ? 'Vue sur Fenêtre' : 'Window View',
+            'quiet-area': this.currentLanguage === 'fr' ? 'Zone Calme' : 'Quiet Area',
+            'wheelchair-accessible': this.currentLanguage === 'fr' ? 'Accessible Fauteuil Roulant' : 'Wheelchair Accessible'
         };
-        return preferences[preference] || preference;
+        return translations[preference] || preference;
     }
     
-    showCancelModal(confirmationNumber) {
-        this.selectedReservation = this.reservations.find(r => r.confirmationNumber === confirmationNumber);
-        if (!this.selectedReservation) return;
+    cancelReservation(reservationId) {
+        const reservation = this.reservations.find(r => r.id === reservationId);
+        if (!reservation) return;
         
-        const modal = document.getElementById('cancelModal');
-        modal.classList.add('show');
-    }
-    
-    showModifyModal(confirmationNumber) {
-        this.selectedReservation = this.reservations.find(r => r.confirmationNumber === confirmationNumber);
-        if (!this.selectedReservation) return;
-        
-        const modal = document.getElementById('modifyModal');
-        modal.classList.add('show');
+        // Show cancel confirmation modal
+        const cancelModal = document.getElementById('cancelModal');
+        this.currentCancelId = reservationId;
+        cancelModal.classList.add('show');
     }
     
     confirmCancellation() {
-        if (!this.selectedReservation) return;
+        if (!this.currentCancelId) return;
         
-        const reason = document.querySelector('input[name="cancelReason"]:checked')?.value || 'no-reason';
-        
-        // 更新预订状态
-        const index = this.reservations.findIndex(r => r.confirmationNumber === this.selectedReservation.confirmationNumber);
-        if (index !== -1) {
-            this.reservations[index].status = 'cancelled';
-            this.reservations[index].cancelReason = reason;
-            this.reservations[index].cancelledAt = new Date().toISOString();
+        const reservationIndex = this.reservations.findIndex(r => r.id === this.currentCancelId);
+        if (reservationIndex !== -1) {
+            this.reservations[reservationIndex].status = 'cancelled';
+            this.reservations[reservationIndex].cancelledAt = new Date().toISOString();
             
-            // 保存到本地存储
+            // Get cancellation reason
+            const selectedReason = document.querySelector('input[name="cancelReason"]:checked');
+            if (selectedReason) {
+                this.reservations[reservationIndex].cancellationReason = selectedReason.value;
+            }
+            
+            // Update localStorage
             localStorage.setItem('mapleTableBookings', JSON.stringify(this.reservations));
             
-            // 刷新显示
-            this.renderReservations();
-            this.updateCounts();
-            
-            // 关闭模态框
-            this.closeModal();
-            
-            // 显示成功消息
+            // Show success message
             this.showNotification(
                 this.currentLanguage === 'fr' ? 
                 'Réservation annulée avec succès' : 
                 'Reservation cancelled successfully',
                 'success'
             );
+            
+            // Refresh display
+            this.renderReservations();
+            this.updateCounts();
         }
+        
+        this.closeModal();
+        this.currentCancelId = null;
     }
     
-    modifyReservation(type) {
-        if (!this.selectedReservation) return;
+    modifyReservation(reservationId) {
+        const reservation = this.reservations.find(r => r.id === reservationId);
+        if (!reservation) return;
         
-        // 关闭当前模态框
-        this.closeModal();
-        
-        // 根据修改类型跳转到相应页面
-        const bookingUrl = `booking.html?restaurant=${this.selectedReservation.restaurant.id}&modify=${this.selectedReservation.confirmationNumber}&type=${type}`;
+        // For demo, redirect to booking page with pre-filled data
+        const bookingUrl = `booking.html?restaurant=${reservation.restaurantId}&modify=${reservationId}`;
         window.location.href = bookingUrl;
+    }
+    
+    leaveReview(reservationId) {
+        const reservation = this.reservations.find(r => r.id === reservationId);
+        if (!reservation) return;
+        
+        this.showNotification(
+            this.currentLanguage === 'fr' ? 
+            'Système d\'avis bientôt disponible!' : 
+            'Review system coming soon!',
+            'info'
+        );
     }
     
     callRestaurant(phone) {
@@ -567,65 +517,54 @@ class ReservationsManager {
         }
     }
     
-    filterReservations(filter) {
-        // 更新激活状态
-        document.querySelectorAll('.filter-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
-        
-        this.currentFilter = filter;
-        this.renderReservations();
+    formatDate(date) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return this.currentLanguage === 'fr' ? 
+            date.toLocaleDateString('fr-CA', options) : 
+            date.toLocaleDateString('en-CA', options);
     }
     
-    updateCounts() {
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        
-        const counts = {
-            all: this.reservations.length,
-            upcoming: 0,
-            past: 0,
-            cancelled: 0
-        };
-        
-        this.reservations.forEach(reservation => {
-            const reservationDate = new Date(reservation.date);
-            reservationDate.setHours(0, 0, 0, 0);
-            
-            if (reservation.status === 'cancelled') {
-                counts.cancelled++;
-            } else if (reservationDate >= now && reservation.status === 'confirmed') {
-                counts.upcoming++;
-            } else {
-                counts.past++;
-            }
-        });
-        
-        // 更新计数显示
-        Object.keys(counts).forEach(key => {
-            const element = document.getElementById(`${key}Count`);
-            if (element) {
-                element.textContent = counts[key];
-            }
+    closeModal() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.classList.remove('show');
         });
     }
     
-    // 语言切换
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: ${type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#007bff'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 4000;
+            font-weight: 600;
+            animation: slideInDown 0.3s ease;
+            max-width: 90vw;
+            text-align: center;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOutUp 0.3s ease forwards';
+            setTimeout(() => notification.remove(), 300);
+        }, 4000);
+    }
+    
     toggleLanguage() {
         this.currentLanguage = this.currentLanguage === 'en' ? 'fr' : 'en';
         document.getElementById('currentLang').textContent = this.currentLanguage.toUpperCase();
-        localStorage.setItem('mapleTableLanguage', this.currentLanguage);
         this.updateTranslations();
         this.renderReservations();
-        this.updateCounts();
-    }
-    
-    loadLanguageFromStorage() {
-        const savedLanguage = localStorage.getItem('mapleTableLanguage');
-        if (savedLanguage && savedLanguage !== this.currentLanguage) {
-            this.toggleLanguage();
-        }
+        localStorage.setItem('mapleTableLanguage', this.currentLanguage);
     }
     
     updateTranslations() {
@@ -638,53 +577,41 @@ class ReservationsManager {
                 element.textContent = enText;
             }
         });
-        
-        // 更新页面标题
-        document.title = this.currentLanguage === 'fr' ? 
-            'Mes Réservations - MapleTable' : 
-            'My Reservations - MapleTable';
     }
     
-    closeModal() {
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.classList.remove('show');
-        });
-        this.selectedReservation = null;
-    }
-    
-    showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.style.cssText = `
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            z-index: 5000;
-            font-weight: 600;
-            animation: slideInDown 0.3s ease;
-            max-width: 90%;
-            text-align: center;
-        `;
-        notification.textContent = message;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.animation = 'slideOutUp 0.3s ease forwards';
-            setTimeout(() => notification.remove(), 300);
-        }, 4000);
+    loadLanguageFromStorage() {
+        const savedLang = localStorage.getItem('mapleTableLanguage');
+        if (savedLang && savedLang !== this.currentLanguage) {
+            this.currentLanguage = savedLang;
+            document.getElementById('currentLang').textContent = this.currentLanguage.toUpperCase();
+            this.updateTranslations();
+        }
     }
 }
 
-// 全局函数
+// Global functions for HTML onclick handlers
 function goBack() {
-    window.history.back() || (window.location.href = 'index.html');
+    window.history.back();
+}
+
+function goToHome() {
+    window.location.href = 'index.html';
+}
+
+function goToSearch() {
+    window.location.href = 'index.html#search';
+}
+
+function goToRestaurants() {
+    window.location.href = 'index.html';
+}
+
+function goToFavorites() {
+    window.location.href = 'index.html#favorites';
+}
+
+function goToProfile() {
+    window.location.href = 'index.html#profile';
 }
 
 function toggleLanguage() {
@@ -704,75 +631,17 @@ function confirmCancellation() {
 }
 
 function modifyReservation(type) {
-    reservationsManager.modifyReservation(type);
+    reservationsManager.showNotification(
+        reservationsManager.currentLanguage === 'fr' ? 
+        'Fonctionnalité de modification bientôt disponible!' : 
+        'Modification feature coming soon!',
+        'info'
+    );
+    reservationsManager.closeModal();
 }
 
-// 导航函数
-function goToRestaurants() {
-    window.location.href = 'index.html';
-}
-
-function goToHome() {
-    window.location.href = 'index.html';
-}
-
-function goToSearch() {
-    window.location.href = 'index.html#search';
-}
-
-function goToFavorites() {
-    window.location.href = 'index.html#favorites';
-}
-
-function goToProfile() {
-    window.location.href = 'index.html#profile';
-}
-
-// 初始化预订管理器
+// Initialize reservations manager
 let reservationsManager;
 document.addEventListener('DOMContentLoaded', () => {
     reservationsManager = new ReservationsManager();
 });
-
-// 添加CSS动画
-const reservationStyles = document.createElement('style');
-reservationStyles.textContent = `
-    @keyframes slideInDown {
-        from { transform: translate(-50%, -100%); opacity: 0; }
-        to { transform: translate(-50%, 0); opacity: 1; }
-    }
-    
-    @keyframes slideOutUp {
-        to { transform: translate(-50%, -100%); opacity: 0; }
-    }
-    
-    .preferences-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--spacing-sm);
-    }
-    
-    .preference-tag {
-        background: var(--background);
-        color: var(--medium-text);
-        padding: var(--spacing-xs) var(--spacing-sm);
-        border-radius: 12px;
-        font-size: var(--font-xs);
-        font-weight: 500;
-        border: 1px solid var(--border-color);
-    }
-    
-    .special-requests-detail {
-        background: var(--background);
-        padding: var(--spacing-md);
-        border-radius: 8px;
-        border-left: 3px solid var(--canadian-red);
-    }
-    
-    .special-requests-detail p {
-        margin: 0;
-        color: var(--medium-text);
-        line-height: 1.5;
-    }
-`;
-document.head.appendChild(reservationStyles);

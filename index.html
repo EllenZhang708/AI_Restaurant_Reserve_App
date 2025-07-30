@@ -13,8 +13,216 @@
             MapleTable - Discover Canada's Best Restaurants
         </title>
         <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="button-fix.css" />
+        <link rel="stylesheet" href="toolbar-styles.css" />
         <link
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            /* 确保商家按钮正确显示 */
+            .merchant-btn {
+                display: flex !important;
+                align-items: center !important;
+                gap: 6px !important;
+                padding: 8px 12px !important;
+                background: linear-gradient(
+                    135deg,
+                    #667eea 0%,
+                    #764ba2 100%
+                ) !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 20px !important;
+                cursor: pointer !important;
+                font-size: 14px !important;
+                font-weight: 600 !important;
+                text-decoration: none !important;
+                transition: all 0.2s ease !important;
+            }
+
+            .merchant-btn:hover {
+                background: linear-gradient(
+                    135deg,
+                    #5a6fd8 0%,
+                    #6b42c2 100%
+                ) !important;
+                color: white !important;
+                transform: translateY(-1px) !important;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+            }
+
+            .merchant-btn i {
+                font-size: 14px !important;
+            }
+
+            /* 确保整个用户操作区域显示 */
+            .user-actions {
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px !important;
+                flex-shrink: 0 !important;
+            }
+
+            .toolbar-divider {
+                width: 1px !important;
+                height: 30px !important;
+                background: #e2e8f0 !important;
+                margin: 0 8px !important;
+            }
+            
+            /* 商家横幅样式 */
+            .merchant-banner {
+                background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+                color: white !important;
+                padding: 12px 0 !important;
+                box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2) !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                position: relative !important;
+                z-index: 90 !important;
+            }
+            
+            .merchant-banner-content {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                max-width: 1400px !important;
+                margin: 0 auto !important;
+                padding: 0 24px !important;
+            }
+            
+            .merchant-info {
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px !important;
+            }
+            
+            .merchant-avatar {
+                width: 40px !important;
+                height: 40px !important;
+                background: rgba(255, 255, 255, 0.2) !important;
+                border-radius: 8px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 18px !important;
+                color: white !important;
+            }
+            
+            .merchant-details h3 {
+                margin: 0 !important;
+                font-size: 16px !important;
+                font-weight: 600 !important;
+                color: white !important;
+            }
+            
+            .merchant-details p {
+                margin: 2px 0 0 0 !important;
+                font-size: 13px !important;
+                opacity: 0.9 !important;
+                color: white !important;
+            }
+            
+            .status-online {
+                color: #6ee7b7 !important;
+                font-weight: 500 !important;
+            }
+            
+            .merchant-actions {
+                display: flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+            }
+            
+            .merchant-dashboard-btn,
+            .merchant-logout-btn {
+                display: flex !important;
+                align-items: center !important;
+                gap: 6px !important;
+                padding: 8px 16px !important;
+                background: rgba(255, 255, 255, 0.15) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                border-radius: 6px !important;
+                color: white !important;
+                cursor: pointer !important;
+                font-size: 13px !important;
+                font-weight: 500 !important;
+                transition: all 0.2s ease !important;
+                text-decoration: none !important;
+            }
+            
+            .merchant-dashboard-btn:hover {
+                background: rgba(255, 255, 255, 0.25) !important;
+                border-color: rgba(255, 255, 255, 0.3) !important;
+                transform: translateY(-1px) !important;
+                color: white !important;
+            }
+            
+            .merchant-logout-btn:hover {
+                background: rgba(239, 68, 68, 0.8) !important;
+                border-color: rgba(239, 68, 68, 0.9) !important;
+                transform: translateY(-1px) !important;
+                color: white !important;
+            }
+            
+            .merchant-dashboard-btn i,
+            .merchant-logout-btn i {
+                font-size: 12px !important;
+            }
+            
+            /* 确保商家CTA区域正确显示 */
+            .merchant-cta {
+                background: linear-gradient(135deg, #FF0000, #8B0000) !important;
+                border-radius: 12px !important;
+                padding: 1.5rem !important;
+                text-align: center !important;
+                color: white !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .merchant-cta .cta-content h4 {
+                font-size: 1rem !important;
+                font-weight: 700 !important;
+                margin-bottom: 0.5rem !important;
+                color: white !important;
+            }
+            
+            .merchant-cta .cta-content p {
+                font-size: 0.875rem !important;
+                opacity: 0.9 !important;
+                margin-bottom: 1rem !important;
+                color: white !important;
+            }
+            
+            .cta-btn.secondary {
+                background: #CC0000 !important;
+                color: white !important;
+                border: 1px solid #CC0000 !important;
+                border-radius: 20px !important;
+                padding: 0.5rem 1rem !important;
+                font-weight: 600 !important;
+                cursor: pointer !important;
+                transition: all 0.3s ease !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 0.5rem !important;
+                text-decoration: none !important;
+            }
+            
+            .cta-btn.secondary:hover {
+                background: #AA0000 !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3) !important;
+                color: white !important;
+            }
+            
+            .cta-btn.secondary i {
+                font-size: 14px !important;
+            }
+        </style>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css"
             rel="stylesheet"
         />
         <link rel="manifest" href="manifest.json" />
@@ -42,16 +250,431 @@
 
             <!-- 主应用界面 -->
             <div id="mainApp" class="main-app" style="display: none">
-                <!-- 商家快速入口 -->
-                <div class="merchant-quick-access">
-                    <button class="merchant-btn" onclick="goToMerchantAuth()">
-                        <i class="fas fa-store"></i>
-                        <span
-                            data-en="Business Login"
-                            data-fr="Connexion Entreprise"
-                            >Business Login</span
+                <!-- 顶部工具栏 -->
+                <div class="top-toolbar">
+                    <div class="toolbar-content">
+                        <!-- 左侧 Logo 和品牌 -->
+                        <div class="brand-section">
+                            <div class="app-brand">
+                                <span class="brand-icon">🍁</span>
+                                <span class="brand-name">MapleTable</span>
+                            </div>
+                            <div
+                                class="location-indicator"
+                                onclick="showLocationSelector()"
+                            >
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="currentLocation">Toronto, ON</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+
+                        <!-- 中间搜索栏 -->
+                        <div class="toolbar-search">
+                            <div class="search-input-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input
+                                    type="text"
+                                    placeholder="Search restaurants, cuisines..."
+                                    class="toolbar-search-input"
+                                />
+                                <button
+                                    class="voice-search-mini"
+                                    onclick="startVoiceSearch()"
+                                >
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 右侧用户操作区 -->
+                        <div class="user-actions">
+                            <button
+                                class="action-btn notification-btn"
+                                onclick="showNotifications()"
+                            >
+                                <i class="fas fa-bell"></i>
+                                <span
+                                    class="notification-badge"
+                                    id="notificationCount"
+                                    >3</span
+                                >
+                            </button>
+
+                            <div class="user-menu-section">
+                                <!-- 顾客登录按钮 -->
+                                <div class="login-btn-group">
+                                    <button
+                                        class="action-btn customer-login-btn main-login"
+                                        onclick="goToCustomerLogin()"
+                                        id="customerLoginBtn"
+                                    >
+                                        <i class="fas fa-user-circle"></i>
+                                        <span
+                                            data-en="Sign In"
+                                            data-fr="Se Connecter"
+                                            >Sign In</span
+                                        >
+                                    </button>
+                                    <button
+                                        class="action-btn customer-login-btn dropdown-trigger"
+                                        onclick="showCustomerLogin()"
+                                        title="More options"
+                                    >
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+
+                                <!-- 已登录用户头像（初始隐藏）-->
+                                <div
+                                    class="user-profile-section"
+                                    id="userProfileSection"
+                                    style="display: none"
+                                >
+                                    <button
+                                        class="user-profile-btn"
+                                        onclick="showUserMenu()"
+                                    >
+                                        <img
+                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
+                                            alt="User"
+                                            class="user-avatar"
+                                        />
+                                        <span class="user-name" id="userName"
+                                            >John D.</span
+                                        >
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="toolbar-divider"></div>
+
+                            <button
+                                class="action-btn merchant-btn"
+                                onclick="goToMerchantLogin()"
+                            >
+                                <i class="fas fa-store"></i>
+                                <span
+                                    data-en="For Business"
+                                    data-fr="Pour Entreprises"
+                                    >For Business</span
+                                >
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 顾客登录下拉菜单 -->
+                <div
+                    id="customerLoginDropdown"
+                    class="dropdown-menu customer-dropdown"
+                >
+                    <div class="dropdown-header">
+                        <h4
+                            data-en="Welcome to MapleTable"
+                            data-fr="Bienvenue sur MapleTable"
                         >
-                    </button>
+                            Welcome to MapleTable
+                        </h4>
+                        <p
+                            data-en="Sign in to save favorites and manage reservations"
+                            data-fr="Connectez-vous pour sauvegarder vos favoris et gérer vos réservations"
+                        >
+                            Sign in to save favorites and manage reservations
+                        </p>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="showCustomerAuth('login')">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <div>
+                                <strong data-en="Sign In" data-fr="Se Connecter"
+                                    >Sign In</strong
+                                >
+                                <small
+                                    data-en="Access your account"
+                                    data-fr="Accédez à votre compte"
+                                    >Access your account</small
+                                >
+                            </div>
+                        </a>
+                        <a href="#" onclick="showCustomerAuth('register')">
+                            <i class="fas fa-user-plus"></i>
+                            <div>
+                                <strong
+                                    data-en="Create Account"
+                                    data-fr="Créer un Compte"
+                                    >Create Account</strong
+                                >
+                                <small
+                                    data-en="Join thousands of food lovers"
+                                    data-fr="Rejoignez des milliers d'amoureux de la cuisine"
+                                    >Join thousands of food lovers</small
+                                >
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="continueAsGuest()">
+                            <i class="fas fa-user-secret"></i>
+                            <div>
+                                <strong
+                                    data-en="Continue as Guest"
+                                    data-fr="Continuer en tant qu'Invité"
+                                    >Continue as Guest</strong
+                                >
+                                <small
+                                    data-en="Browse without account"
+                                    data-fr="Naviguer sans compte"
+                                    >Browse without account</small
+                                >
+                            </div>
+                        </a>
+                    </div>
+                    <div class="dropdown-footer">
+                        <div class="social-login">
+                            <p
+                                data-en="Or sign in with:"
+                                data-fr="Ou connectez-vous avec:"
+                            >
+                                Or sign in with:
+                            </p>
+                            <div class="social-buttons">
+                                <button
+                                    class="social-btn google"
+                                    onclick="loginWithGoogle()"
+                                >
+                                    <i class="fab fa-google"></i>
+                                    Google
+                                </button>
+                                <button
+                                    class="social-btn facebook"
+                                    onclick="loginWithFacebook()"
+                                >
+                                    <i class="fab fa-facebook-f"></i>
+                                    Facebook
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 已登录用户菜单 -->
+                <div id="userMenuDropdown" class="dropdown-menu user-dropdown">
+                    <div class="dropdown-header user-profile-header">
+                        <img
+                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face"
+                            alt="User"
+                            class="user-avatar-large"
+                        />
+                        <div class="user-info">
+                            <h4 id="userDisplayName">John Doe</h4>
+                            <p id="userEmail">john.doe@example.com</p>
+                            <span class="user-status premium">
+                                <i class="fas fa-crown"></i>
+                                <span
+                                    data-en="Premium Member"
+                                    data-fr="Membre Premium"
+                                    >Premium Member</span
+                                >
+                            </span>
+                        </div>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="reservations.html">
+                            <i class="fas fa-calendar-check"></i>
+                            <div>
+                                <strong
+                                    data-en="My Reservations"
+                                    data-fr="Mes Réservations"
+                                    >My Reservations</strong
+                                >
+                                <small
+                                    data-en="View upcoming bookings"
+                                    data-fr="Voir les réservations à venir"
+                                    >View upcoming bookings</small
+                                >
+                            </div>
+                            <span class="notification-count">2</span>
+                        </a>
+                        <a href="#" onclick="showFavorites()">
+                            <i class="fas fa-heart"></i>
+                            <div>
+                                <strong
+                                    data-en="Favorite Restaurants"
+                                    data-fr="Restaurants Favoris"
+                                    >Favorite Restaurants</strong
+                                >
+                                <small
+                                    data-en="Your saved places"
+                                    data-fr="Vos endroits sauvegardés"
+                                    >Your saved places</small
+                                >
+                            </div>
+                        </a>
+                        <a href="#" onclick="showReviews()">
+                            <i class="fas fa-star"></i>
+                            <div>
+                                <strong data-en="My Reviews" data-fr="Mes Avis"
+                                    >My Reviews</strong
+                                >
+                                <small
+                                    data-en="Reviews you've written"
+                                    data-fr="Avis que vous avez écrits"
+                                    >Reviews you've written</small
+                                >
+                            </div>
+                        </a>
+                        <a href="#" onclick="showLoyaltyProgram()">
+                            <i class="fas fa-gift"></i>
+                            <div>
+                                <strong
+                                    data-en="Rewards Program"
+                                    data-fr="Programme de Récompenses"
+                                    >Rewards Program</strong
+                                >
+                                <small
+                                    data-en="Earn points & discounts"
+                                    data-fr="Gagnez des points et remises"
+                                    >Earn points & discounts</small
+                                >
+                            </div>
+                            <span class="points-badge">1,250 pts</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="showUserSettings()">
+                            <i class="fas fa-cog"></i>
+                            <div>
+                                <strong
+                                    data-en="Account Settings"
+                                    data-fr="Paramètres du Compte"
+                                    >Account Settings</strong
+                                >
+                                <small
+                                    data-en="Preferences & privacy"
+                                    data-fr="Préférences et confidentialité"
+                                    >Preferences & privacy</small
+                                >
+                            </div>
+                        </a>
+                        <a href="#" onclick="showHelp()">
+                            <i class="fas fa-question-circle"></i>
+                            <div>
+                                <strong
+                                    data-en="Help & Support"
+                                    data-fr="Aide et Support"
+                                    >Help & Support</strong
+                                >
+                                <small
+                                    data-en="Get assistance"
+                                    data-fr="Obtenir de l'aide"
+                                    >Get assistance</small
+                                >
+                            </div>
+                        </a>
+                    </div>
+                    <div class="dropdown-footer">
+                        <button class="logout-btn" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span data-en="Sign Out" data-fr="Se Déconnecter"
+                                >Sign Out</span
+                            >
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 商家选项下拉菜单 -->
+                <div
+                    id="merchantOptionsDropdown"
+                    class="dropdown-menu merchant-dropdown"
+                >
+                    <div class="dropdown-header">
+                        <h4
+                            data-en="For Restaurants"
+                            data-fr="Pour Restaurants"
+                        >
+                            For Restaurants
+                        </h4>
+                        <p
+                            data-en="Join thousands of restaurants on MapleTable"
+                            data-fr="Rejoignez des milliers de restaurants sur MapleTable"
+                        >
+                            Join thousands of restaurants on MapleTable
+                        </p>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="goToMerchantAuth('login')">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <div>
+                                <strong
+                                    data-en="Restaurant Login"
+                                    data-fr="Connexion Restaurant"
+                                    >Restaurant Login</strong
+                                >
+                                <small
+                                    data-en="Access your dashboard"
+                                    data-fr="Accédez à votre tableau de bord"
+                                    >Access your dashboard</small
+                                >
+                            </div>
+                        </a>
+                        <a href="#" onclick="goToMerchantAuth('register')">
+                            <i class="fas fa-plus-circle"></i>
+                            <div>
+                                <strong
+                                    data-en="Add Your Restaurant"
+                                    data-fr="Ajoutez Votre Restaurant"
+                                    >Add Your Restaurant</strong
+                                >
+                                <small
+                                    data-en="Start taking bookings today"
+                                    data-fr="Commencez à prendre des réservations aujourd'hui"
+                                    >Start taking bookings today</small
+                                >
+                            </div>
+                        </a>
+                        <a href="#" onclick="showPricingInfo()">
+                            <i class="fas fa-dollar-sign"></i>
+                            <div>
+                                <strong
+                                    data-en="Pricing & Plans"
+                                    data-fr="Tarifs & Plans"
+                                    >Pricing & Plans</strong
+                                >
+                                <small
+                                    data-en="From $49/month"
+                                    data-fr="À partir de 49$/mois"
+                                    >From $49/month</small
+                                >
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" onclick="showMerchantSupport()">
+                            <i class="fas fa-headset"></i>
+                            <div>
+                                <strong
+                                    data-en="Support & Help"
+                                    data-fr="Support & Aide"
+                                    >Support & Help</strong
+                                >
+                                <small
+                                    data-en="Get help setting up"
+                                    data-fr="Obtenez de l'aide pour la configuration"
+                                    >Get help setting up</small
+                                >
+                            </div>
+                        </a>
+                    </div>
+                    <div class="dropdown-footer">
+                        <button
+                            class="cta-primary"
+                            onclick="goToMerchantAuth('demo')"
+                        >
+                            <i class="fas fa-play"></i>
+                            <span data-en="Watch Demo" data-fr="Voir la Démo"
+                                >Watch Demo</span
+                            >
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 头部导航 -->
@@ -509,7 +1132,7 @@
                                         data-en="Prairie BBQ"
                                         data-fr="BBQ des Prairies"
                                     >
-                                        Prairie BBQ
+                                        Prairie BBQ，
                                     </h3>
                                     <span class="restaurant-count"
                                         >92 restaurants</span
@@ -625,42 +1248,80 @@
                     data-page="home"
                     onclick="switchTab('home')"
                 >
-                    <i class="fas fa-home"></i>
-                    <span data-en="Home" data-fr="Accueil">Home</span>
+                    <div class="nav-icon-wrapper">
+                        <i class="fas fa-home"></i>
+                        <span
+                            class="nav-notification-dot"
+                            style="display: none"
+                        ></span>
+                    </div>
+                    <span class="nav-label" data-en="Home" data-fr="Accueil"
+                        >Home</span
+                    >
                 </button>
+
                 <button
                     class="nav-item"
-                    data-page="search"
-                    onclick="switchTab('search')"
+                    data-page="explore"
+                    onclick="switchTab('explore')"
                 >
-                    <i class="fas fa-search"></i>
-                    <span data-en="Search" data-fr="Recherche">Search</span>
+                    <div class="nav-icon-wrapper">
+                        <i class="fas fa-compass"></i>
+                        <span
+                            class="nav-notification-dot"
+                            style="display: none"
+                        ></span>
+                    </div>
+                    <span class="nav-label" data-en="Explore" data-fr="Explorer"
+                        >Explore</span
+                    >
                 </button>
+
+                <button class="nav-item book-center" onclick="quickBook()">
+                    <div class="book-icon-wrapper">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <span class="nav-label" data-en="Book" data-fr="Réserver"
+                        >Book</span
+                    >
+                </button>
+
                 <button
                     class="nav-item"
                     data-page="reservations"
                     onclick="switchTab('reservations')"
                 >
-                    <i class="fas fa-calendar-check"></i>
-                    <span data-en="Bookings" data-fr="Réservations"
+                    <div class="nav-icon-wrapper">
+                        <i class="fas fa-calendar-check"></i>
+                        <span
+                            class="nav-notification-dot reservation-dot"
+                            id="reservationDot"
+                            >2</span
+                        >
+                    </div>
+                    <span
+                        class="nav-label"
+                        data-en="Bookings"
+                        data-fr="Réservations"
                         >Bookings</span
                     >
                 </button>
-                <button
-                    class="nav-item"
-                    data-page="favorites"
-                    onclick="switchTab('favorites')"
-                >
-                    <i class="fas fa-heart"></i>
-                    <span data-en="Favorites" data-fr="Favoris">Favorites</span>
-                </button>
+
                 <button
                     class="nav-item"
                     data-page="profile"
                     onclick="switchTab('profile')"
                 >
-                    <i class="fas fa-user"></i>
-                    <span data-en="Profile" data-fr="Profil">Profile</span>
+                    <div class="nav-icon-wrapper">
+                        <i class="fas fa-user-circle"></i>
+                        <span
+                            class="nav-notification-dot"
+                            style="display: none"
+                        ></span>
+                    </div>
+                    <span class="nav-label" data-en="Profile" data-fr="Profil"
+                        >Profile</span
+                    >
                 </button>
             </nav>
 
@@ -692,6 +1353,39 @@
             </div>
         </div>
 
-        <script src="app.js"></script>
+        <script src="api-service.js?v=1.2.1"></script>
+        <script src="websocket-service.js?v=1.2.1"></script>
+        <script src="ai-table-allocation.js?v=1.2.1"></script>
+        <script src="enhanced-table-ai.js?v=1.2.1"></script>
+        <script src="fix-ui.js?v=1.2.1"></script>
+        <script src="ai-sync-bridge.js?v=1.2.1"></script>
+        <script src="force-booking-sync.js?v=1.2.1"></script>
+        <script src="app.js?v=1.2.1"></script>
+        <script src="debug-booking.js?v=1.2.1"></script>
+        <script src="debug-data-sync.js?v=1.2.1"></script>
+        <script src="system-check.js?v=1.2.1"></script>
+
+        <script>
+            // 强制清除缓存的调试代码
+            console.log(
+                "🔄 MapleTable 加载时间:",
+                new Date().toLocaleTimeString()
+            );
+            console.log(
+                "📝 app 是否存在:",
+                typeof app !== "undefined" ? "YES" : "NO"
+            );
+
+            // 添加一个全局测试函数
+            window.testBookFunction = function (restaurantId) {
+                console.log("🧪 测试函数被调用, ID:", restaurantId);
+                if (window.app && window.app.bookRestaurant) {
+                    window.app.bookRestaurant(restaurantId);
+                } else {
+                    console.error("❌ app.bookRestaurant 不存在");
+                    alert("App 还未初始化完成，请稍后再试");
+                }
+            };
+        </script>
     </body>
 </html>

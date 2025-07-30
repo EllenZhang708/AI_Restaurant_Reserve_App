@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>One-Click Booking Fix</title>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                margin: 0;
+                padding: 20px;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .fix-container {
+                background: white;
+                border-radius: 20px;
+                padding: 40px;
+                max-width: 600px;
+                text-align: center;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            }
+            h1 {
+                color: #2d3748;
+                margin-bottom: 20px;
+            }
+            .problem-desc {
+                color: #718096;
+                margin-bottom: 30px;
+                font-size: 1.1rem;
+                line-height: 1.6;
+            }
+            .fix-button {
+                background: linear-gradient(45deg, #48bb78, #38a169);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 16px 32px;
+                font-size: 1.2rem;
+                font-weight: 600;
+                cursor: pointer;
+                margin: 10px;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .fix-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(72, 187, 120, 0.3);
+            }
+            .test-button {
+                background: linear-gradient(45deg, #4299e1, #3182ce);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 12px 24px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                margin: 10px;
+                transition: all 0.3s ease;
+            }
+            .test-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(66, 153, 225, 0.3);
+            }
+            .status {
+                margin: 20px 0;
+                padding: 15px;
+                border-radius: 8px;
+                font-family: "Courier New", monospace;
+                font-size: 14px;
+                white-space: pre-wrap;
+                max-height: 200px;
+                overflow-y: auto;
+                text-align: left;
+                background: #f7fafc;
+                border: 1px solid #e2e8f0;
+            }
+            .status.success {
+                background: #f0fff4;
+                border-color: #48bb78;
+                color: #22543d;
+            }
+            .status.error {
+                background: #fed7d7;
+                border-color: #f56565;
+                color: #742a2a;
+            }
+            .navigation {
+                margin-top: 30px;
+            }
+            .nav-link {
+                display: inline-block;
+                background: #667eea;
+                color: white;
+                text-decoration: none;
+                padding: 10px 20px;
+                border-radius: 8px;
+                margin: 5px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+            .nav-link:hover {
+                background: #5a67d8;
+                transform: translateY(-1px);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="fix-container">
+            <h1>🔧 One-Click Booking Fix</h1>
+
+            <div class="problem-desc">
+                If bookings made from the main page aren't showing up in the
+                merchant dashboard, this tool will automatically fix the
+                synchronization issue.
+            </div>
+
+            <button class="fix-button" onclick="performCompleteFix()">
+                <span>🔧</span>
+                Fix Booking Synchronization
+            </button>
+
+            <div class="status" id="fixStatus">
+                Ready to fix booking synchronization issues...
+            </div>
+
+            <div style="margin: 20px 0">
+                <button class="test-button" onclick="createTestBooking()">
+                    📝 Create Test Booking
+                </button>
+                <button class="test-button" onclick="checkSyncStatus()">
+                    📊 Check Sync Status
+                </button>
+                <button class="test-button" onclick="clearAllData()">
+                    🗑️ Clear All Data
+                </button>
+            </div>
+
+            <div class="navigation">
+                <a href="index.html" class="nav-link">🏠 Main Page</a>
+                <a href="booking.html?restaurant=rest_001" class="nav-link"
+                    >📝 Book Maple Restaurant</a
+                >
+                <a href="live-booking-test.html" class="nav-link"
+                    >🧪 Live Test</a
+                >
+                <button class="nav-link" onclick="openMerchantDashboard()">
+                    📊 Merchant Dashboard
+                </button>
+            </div>
+        </div>
+
+        <script src="force-booking-sync.js"></script>
+        <script>
+            function setStatus(message, type = "normal") {
+                const element = document.getElementById("fixStatus");
+                element.textContent = message;
+                element.className = `status ${type}`;
+            }
+
+            function addToStatus(message) {
+                const element = document.getElementById("fixStatus");
+                element.textContent += "\n" + message;
+                element.scrollTop = element.scrollHeight;
+            }
+
+            async function performCompleteFix() {
+                setStatus(
+                    "🔧 Starting complete booking synchronization fix..."
+                );
+
+                try {
+                    // Step 1: Set up merchant login
+                    addToStatus("👔 Step 1: Setting up merchant login...");
+                    const merchantData = {
+                        id: "merchant_001",
+                        restaurantName: "The Maple Leaf Restaurant",
+                        restaurant: {
+                            id: "rest_001",
+                            name: "The Maple Leaf Restaurant",
+                            cuisine: "Canadian Fine Dining",
+                            address: "123 Maple Street, Toronto, ON",
+                            phone: "(416) 555-MAPLE",
+                        },
+                        setupTime: new Date().toISOString(),
+                    };
+
+                    localStorage.setItem(
+                        "merchantLogin",
+                        JSON.stringify(merchantData)
+                    );
+                    localStorage.setItem(
+                        "merchantLoginData",
+                        JSON.stringify(merchantData)
+                    );
+                    localStorage.setItem("userType", "merchant");
+                    localStorage.setItem("isLoggedIn", "true");
+
+                    addToStatus("✅ Merchant login configured");
+
+                    // Step 2: Force sync all bookings
+                    addToStatus("🔄 Step 2: Force syncing all bookings...");
+
+                    if (window.forceBookingSync) {
+                        const syncResult =
+                            window.forceBookingSync.forceSyncAll();
+                        if (syncResult.success) {
+                            addToStatus(
+                                `✅ Force sync completed: ${syncResult.syncedCount} bookings synchronized`
+                            );
+                        } else {
+                            addToStatus(
+                                `❌ Force sync failed: ${syncResult.error}`
+                            );
+                        }
+                    } else {
+                        addToStatus(
+                            "⚠️ Force sync system not available, using fallback..."
+                        );
+                        await fallbackSync();
+                    }
+
+                    // Step 3: Specific Maple restaurant sync
+                    addToStatus(
+                        "🍁 Step 3: Syncing Maple restaurant bookings..."
+                    );
+
+                    if (window.forceBookingSync) {
+                        const mapleResult =
+                            window.forceBookingSync.syncMapleRestaurantBookings();
+                        addToStatus(
+                            `🍁 Maple sync: ${mapleResult.mapleBookings} found, ${mapleResult.syncedCount} synced`
+                        );
+                    } else {
+                        await fallbackMapleSync();
+                    }
+
+                    // Step 4: Verify fix
+                    addToStatus("🔍 Step 4: Verifying fix...");
+
+                    const customerBookings = JSON.parse(
+                        localStorage.getItem("mapleTableBookings") || "[]"
+                    );
+                    const merchantBookings = JSON.parse(
+                        localStorage.getItem("mapleTableMerchantBookings") ||
+                            "[]"
+                    );
+
+                    const mapleCustomer = customerBookings.filter(
+                        (b) =>
+                            b.restaurantId === "rest_001" ||
+                            b.restaurantName?.includes("Maple")
+                    );
+                    const mapleMerchant = merchantBookings.filter(
+                        (b) =>
+                            b.restaurantId === "rest_001" ||
+                            b.merchantId === "rest_001" ||
+                            b.restaurantName?.includes("Maple")
+                    );
+
+                    addToStatus(`📊 Verification results:`);
+                    addToStatus(
+                        `   Customer bookings: ${customerBookings.length} total, ${mapleCustomer.length} Maple`
+                    );
+                    addToStatus(
+                        `   Merchant bookings: ${merchantBookings.length} total, ${mapleMerchant.length} Maple`
+                    );
+
+                    if (mapleMerchant.length >= mapleCustomer.length) {
+                        addToStatus(
+                            "\n🎉 FIX SUCCESSFUL! Bookings should now appear in merchant dashboard."
+                        );
+                        setStatus(
+                            document.getElementById("fixStatus").textContent,
+                            "success"
+                        );
+                    } else {
+                        addToStatus(
+                            "\n⚠️ Fix partially successful. Some issues may remain."
+                        );
+                    }
+                } catch (error) {
+                    addToStatus(`\n❌ Fix failed: ${error.message}`);
+                    setStatus(
+                        document.getElementById("fixStatus").textContent,
+                        "error"
+                    );
+                }
+            }
+
+            async function fallbackSync() {
+                const customerBookings = JSON.parse(
+                    localStorage.getItem("mapleTableBookings") || "[]"
+                );
+                const merchantBookings = JSON.parse(
+                    localStorage.getItem("mapleTableMerchantBookings") || "[]"
+                );
+
+                let syncCount = 0;
+
+                customerBookings.forEach((customerBooking) => {
+                    const existsInMerchant = merchantBookings.find(
+                        (mb) => mb.id === customerBooking.id
+                    );
+
+                    if (!existsInMerchant) {
+                        merchantBookings.push({
+                            ...customerBooking,
+                            merchantId:
+                                customerBooking.restaurantId || "rest_001",
+                            syncTime: new Date().toISOString(),
+                            syncMethod: "fallback",
+                        });
+                        syncCount++;
+                    }
+                });
+
+                localStorage.setItem(
+                    "mapleTableMerchantBookings",
+                    JSON.stringify(merchantBookings)
+                );
+                addToStatus(
+                    `✅ Fallback sync: ${syncCount} bookings synchronized`
+                );
+            }
+
+            async function fallbackMapleSync() {
+                const customerBookings = JSON.parse(
+                    localStorage.getItem("mapleTableBookings") || "[]"
+                );
+                const merchantBookings = JSON.parse(
+                    localStorage.getItem("mapleTableMerchantBookings") || "[]"
+                );
+
+                const mapleBookings = customerBookings.filter(
+                    (booking) =>
+                        booking.restaurantId === "rest_001" ||
+                        booking.restaurantName?.includes("Maple")
+                );
+
+                let syncCount = 0;
+
+                mapleBookings.forEach((booking) => {
+                    const existsInMerchant = merchantBookings.find(
+                        (mb) => mb.id === booking.id
+                    );
+
+                    if (!existsInMerchant) {
+                        merchantBookings.push({
+                            ...booking,
+                            restaurantId: "rest_001",
+                            merchantId: "rest_001",
+                            restaurantName: "The Maple Leaf Restaurant",
+                            syncTime: new Date().toISOString(),
+                            syncMethod: "maple-fallback",
+                        });
+                        syncCount++;
+                    }
+                });
+
+                localStorage.setItem(
+                    "mapleTableMerchantBookings",
+                    JSON.stringify(merchantBookings)
+                );
+                addToStatus(
+                    `🍁 Fallback Maple sync: ${syncCount} bookings synchronized`
+                );
+            }
+
+            function createTestBooking() {
+                setStatus("📝 Creating test booking for Maple restaurant...");
+
+                const testBooking = {
+                    id: "FIX_TEST_" + Date.now(),
+                    restaurantId: "rest_001",
+                    restaurantName: "The Maple Leaf Restaurant",
+                    date: new Date().toISOString().split("T")[0],
+                    time: "18:30",
+                    partySize: 2,
+                    preferences: ["window-seat"],
+                    assignedTable: {
+                        id: "T6",
+                        type: "window",
+                        capacity: 2,
+                        aiScore: 91,
+                        aiReasoning: [
+                            "Test booking for sync verification",
+                            "Window seat preference matched",
+                            "Optimal table assignment",
+                        ],
+                        combinationType: "single",
+                    },
+                    customerInfo: {
+                        firstName: "Fix",
+                        lastName: "Test",
+                        phone: "(416) 555-FIX",
+                        email: "fixtest@mapletable.ca",
+                    },
+                    specialRequests: "One-click fix test booking",
+                    status: "confirmed",
+                    createdAt: new Date().toISOString(),
+                };
+
+                // Save to both systems
+                const customerBookings = JSON.parse(
+                    localStorage.getItem("mapleTableBookings") || "[]"
+                );
+                customerBookings.push(testBooking);
+                localStorage.setItem(
+                    "mapleTableBookings",
+                    JSON.stringify(customerBookings)
+                );
+
+                const merchantBookings = JSON.parse(
+                    localStorage.getItem("mapleTableMerchantBookings") || "[]"
+                );
+                merchantBookings.push({
+                    ...testBooking,
+                    merchantId: "rest_001",
+                });
+                localStorage.setItem(
+                    "mapleTableMerchantBookings",
+                    JSON.stringify(merchantBookings)
+                );
+
+                addToStatus(`✅ Test booking created: ${testBooking.id}`);
+                addToStatus(
+                    `📊 Total bookings: Customer ${customerBookings.length}, Merchant ${merchantBookings.length}`
+                );
+
+                setStatus(
+                    document.getElementById("fixStatus").textContent,
+                    "success"
+                );
+            }
+
+            function checkSyncStatus() {
+                if (
+                    window.forceBookingSync &&
+                    window.forceBookingSync.showSyncStatus
+                ) {
+                    const status = window.forceBookingSync.showSyncStatus();
+
+                    setStatus("📊 Current synchronization status:\n\n");
+                    addToStatus(
+                        `Customer bookings: ${status.customerBookings}`
+                    );
+                    addToStatus(
+                        `Merchant bookings: ${status.merchantBookings}`
+                    );
+                    addToStatus(
+                        `Missing in merchant: ${status.missingInMerchant}`
+                    );
+                    addToStatus(
+                        `Maple customer bookings: ${status.mapleCustomer}`
+                    );
+                    addToStatus(
+                        `Maple merchant bookings: ${status.mapleMerchant}`
+                    );
+                    addToStatus(
+                        `\nSync status: ${
+                            status.healthy ? "✅ HEALTHY" : "❌ NEEDS ATTENTION"
+                        }`
+                    );
+
+                    if (status.healthy) {
+                        setStatus(
+                            document.getElementById("fixStatus").textContent,
+                            "success"
+                        );
+                    } else {
+                        setStatus(
+                            document.getElementById("fixStatus").textContent,
+                            "error"
+                        );
+                    }
+                } else {
+                    // Fallback status check
+                    const customerBookings = JSON.parse(
+                        localStorage.getItem("mapleTableBookings") || "[]"
+                    );
+                    const merchantBookings = JSON.parse(
+                        localStorage.getItem("mapleTableMerchantBookings") ||
+                            "[]"
+                    );
+
+                    setStatus(
+                        `📊 Basic sync status:\n\nCustomer bookings: ${customerBookings.length}\nMerchant bookings: ${merchantBookings.length}`
+                    );
+                }
+            }
+
+            function clearAllData() {
+                const keys = [
+                    "mapleTableBookings",
+                    "mapleTableMerchantBookings",
+                    "selectedRestaurant",
+                    "merchantLogin",
+                    "merchantLoginData",
+                    "currentMerchant",
+                    "userType",
+                    "isLoggedIn",
+                ];
+
+                keys.forEach((key) => localStorage.removeItem(key));
+
+                // Initialize empty arrays
+                localStorage.setItem("mapleTableBookings", JSON.stringify([]));
+                localStorage.setItem(
+                    "mapleTableMerchantBookings",
+                    JSON.stringify([])
+                );
+
+                setStatus(
+                    "🗑️ All data cleared. Ready for fresh testing.",
+                    "success"
+                );
+            }
+
+            function openMerchantDashboard() {
+                // Ensure merchant is logged in
+                const merchantData = {
+                    id: "merchant_001",
+                    restaurantName: "The Maple Leaf Restaurant",
+                    restaurant: {
+                        id: "rest_001",
+                        name: "The Maple Leaf Restaurant",
+                    },
+                };
+
+                localStorage.setItem(
+                    "merchantLogin",
+                    JSON.stringify(merchantData)
+                );
+                localStorage.setItem(
+                    "merchantLoginData",
+                    JSON.stringify(merchantData)
+                );
+                localStorage.setItem("userType", "merchant");
+                localStorage.setItem("isLoggedIn", "true");
+
+                window.open(
+                    "merchant-dashboard.html?restaurant=rest_001&merchant=The%20Maple%20Leaf%20Restaurant",
+                    "_blank"
+                );
+            }
+        </script>
+    </body>
+</html>
